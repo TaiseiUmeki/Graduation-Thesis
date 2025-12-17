@@ -1,0 +1,280 @@
+"""
+特徴ベクトル生成エンジン（フェーズC）
+解釈案から特徴ベクトルを生成し、関連属性を推薦
+"""
+from typing import List, Dict, Optional, Tuple
+import json
+
+from utils.openai_client import OpenAIClient
+from models.attribute_space import AttributeVector, ATTR_SPACE
+from models.session import Interpretation
+from models.constraints import Constraint
+from config import Config
+
+
+class VectorGenerator:
+    """特徴ベクトル生成エンジン"""
+    
+    def __init__(self, client: Optional[OpenAIClient] = None):
+        self.client = client or OpenAIClient()
+        self.attr_space = ATTR_SPACE
+    
+    def generate_vector_from_interpretation(
+        self,
+        interpretation: Interpretation,
+        constraints: Optional[List[Constraint]] = None
+    ) -> AttributeVector:
+        """
+        解釈案から特徴ベクトルを生成
+        
+        Args:
+            interpretation: 解釈案
+            constraints: 既存の制約
+        
+        Returns:
+            特徴ベクトル
+        """
+        # プロンプトの構築
+        prompt = self._build_vector_generation_prompt(interpretation, constraints)
+        
+        # GPTで属性の重みを生成
+        response = self.client.generate_with_json_response(
+            prompt,
+            system_prompt=self._get_vector_system_prompt()
+        )
+        
+        # レスポンスから特徴ベクトルを構築
+        vector = self._parse_vector_response(response)
+        
+        return vector
+    
+    def find_related_attributes(
+        self,
+        interpretation: Interpretation,
+        query: str,
+        top_k: int = 10
+    ) -> List[Tuple[str, str, float]]:
+        """
+        解釈案とクエリに関連性の高い属性を検索
+        
+        Args:
+            interpretation: 解釈案
+            query: 元のクエリ
+            top_k: 返す属性の数
+        
+        Returns:
+            (属性キー, 属性名, 関連度スコア)のリスト
+        """
+        prompt = self._build_attribute_search_prompt(interpretation, query, top_k)
+        
+        response = self.client.generate_with_json_response(
+            prompt,
+            system_prompt=self._get_attribute_search_system_prompt()
+        )
+        
+        # レスポンスをパース
+        related_attrs = self._parse_related_attributes(response)
+        
+        return related_attrs
+    
+    def update_vector_with_constraint(
+        self,
+        current_vector: AttributeVector,
+        constraint: Constraint,
+        interpretation: Interpretation
+    ) -> AttributeVector:
+        """
+        制約を考慮して特徴ベクトルを更新
+        
+        Args:
+            current_vector: 現在の特徴ベクトル
+            constraint: 新しい制約
+            interpretation: 解釈案
+        
+        Returns:
+            更新された特徴ベクトル
+        """
+        prompt = self._build_constraint_update_prompt(
+            current_vector,
+            constraint,
+            interpretation
+        )
+        
+        response = self.client.generate_with_json_response(
+            prompt,
+            system_prompt=self._get_vector_system_prompt()
+        )
+        
+        updated_vector = self._parse_vector_response(response)
+        
+        return updated_vector
+    
+    def _get_vector_system_prompt(self) -> str:
+        """ベクトル生成用のシステムプロンプト"""
+        return """あなたは創作物の特徴を属性ベクトルで表現する専門家です。
+与えられた解釈や説明から、適切な属性とその重み（0.0〜1.0）を決定してください。
+重みは以下の基準で設定してください：
+- 0.0: その属性は全く該当しない
+- 0.3: 弱く該当する
+- 0.5: 中程度に該当する
+- 0.7: 強く該当する
+- 1.0: 非常に強く該当する
+
+制約がある場合は、それを必ず満たすように重みを設定してください。"""
+    
+    def _get_attribute_search_system_prompt(self) -> str:
+        """属性検索用のシステムプロンプト"""
+        return """あなたは創作物の特徴を分析する専門家です。
+与えられた解釈やクエリに関連性の高い属性を、属性リストから選んでください。
+関連度スコアは0.0〜1.0の範囲で、高いほど関連性が強いことを示します。"""
+    
+    def _build_vector_generation_prompt(
+        self,
+        interpretation: Interpretation,
+        constraints: Optional[List[Constraint]] = None
+    ) -> str:
+        """ベクトル生成用のプロンプトを構築"""
+        # 属性グループの情報を整形
+        attr_info = self._format_attribute_groups()
+        
+        prompt_parts = [
+            "以下の解釈に基づいて、特徴ベクトルを生成してください。",
+            f"\n解釈: {interpretation.text}",
+            f"根拠: {interpretation.reasoning}",
+        ]
+        
+        if constraints:
+            prompt_parts.append("\n制約条件:")
+            for c in constraints:
+                if c.is_active:
+                    prompt_parts.append(f"- {c.to_natural_language()}")
+        
+        prompt_parts.append(f"\n利用可能な属性:\n{attr_info}")
+        
+        prompt_parts.append("""
+以下のJSON形式で、関連する属性とその重み（0.0〜1.0）を返してください。
+重要な属性のみを含め、重み0.3未満の属性は省略してください。
+
+{
+  "attributes": {
+    "material:wood_oak": 0.8,
+    "shape:rounded_large": 0.6,
+    ...
+  },
+  "reasoning": "各属性を選んだ理由の簡単な説明"
+}
+""")
+        
+        return "\n".join(prompt_parts)
+    
+    def _build_attribute_search_prompt(
+        self,
+        interpretation: Interpretation,
+        query: str,
+        top_k: int
+    ) -> str:
+        """属性検索用のプロンプトを構築"""
+        attr_info = self._format_attribute_groups()
+        
+        prompt = f"""以下のクエリと解釈に最も関連性の高い属性を{top_k}個選んでください。
+
+クエリ: {query}
+解釈: {interpretation.text}
+
+利用可能な属性:
+{attr_info}
+
+以下のJSON形式で返してください：
+{{
+  "related_attributes": [
+    {{
+      "attribute_key": "material:wood_oak",
+      "attribute_name": "木（オーク）",
+      "relevance_score": 0.9,
+      "reason": "選んだ理由"
+    }},
+    ...
+  ]
+}}
+"""
+        return prompt
+    
+    def _build_constraint_update_prompt(
+        self,
+        current_vector: AttributeVector,
+        constraint: Constraint,
+        interpretation: Interpretation
+    ) -> str:
+        """制約を考慮したベクトル更新用のプロンプト"""
+        # 現在の主要な属性を取得
+        top_attrs = self.attr_space.get_top_attributes(current_vector, top_k=10)
+        current_attrs_text = "\n".join([
+            f"- {attr}: {weight:.2f}" for attr, weight in top_attrs
+        ])
+        
+        prompt = f"""現在の特徴ベクトルに新しい制約を適用して更新してください。
+
+解釈: {interpretation.text}
+
+現在の主要属性:
+{current_attrs_text}
+
+新しい制約: {constraint.to_natural_language()}
+説明: {constraint.description}
+
+この制約を満たすように、特徴ベクトルの重みを調整してください。
+制約に関連する属性だけでなく、バランスを保つために他の属性も調整してください。
+
+以下のJSON形式で返してください：
+{{
+  "attributes": {{
+    "material:wood_oak": 0.8,
+    ...
+  }},
+  "reasoning": "どのように調整したかの説明"
+}}
+"""
+        return prompt
+    
+    def _format_attribute_groups(self) -> str:
+        """属性グループを読みやすく整形"""
+        lines = []
+        for group_name, attrs in self.attr_space.groups.items():
+            lines.append(f"\n【{group_name}】")
+            for key, name in list(attrs.items())[:15]:  # 各グループ15個まで表示
+                full_key = f"{group_name}:{key}"
+                lines.append(f"  {full_key} = {name}")
+            if len(attrs) > 15:
+                lines.append(f"  ... 他{len(attrs) - 15}個")
+        
+        return "\n".join(lines)
+    
+    def _parse_vector_response(self, response: Dict) -> AttributeVector:
+        """レスポンスから特徴ベクトルを構築"""
+        attributes = response.get("attributes", {})
+        
+        # 属性キーの検証と正規化
+        validated_weights = {}
+        for attr_key, weight in attributes.items():
+            if attr_key in self.attr_space.all_attributes:
+                validated_weights[attr_key] = max(0.0, min(1.0, float(weight)))
+            else:
+                print(f"警告: 不明な属性 '{attr_key}' を無視します")
+        
+        return AttributeVector(weights=validated_weights)
+    
+    def _parse_related_attributes(
+        self,
+        response: Dict
+    ) -> List[Tuple[str, str, float]]:
+        """関連属性のレスポンスをパース"""
+        related = []
+        for item in response.get("related_attributes", []):
+            attr_key = item.get("attribute_key", "")
+            attr_name = item.get("attribute_name", "")
+            score = float(item.get("relevance_score", 0.0))
+            
+            if attr_key in self.attr_space.all_attributes:
+                related.append((attr_key, attr_name, score))
+        
+        return related
