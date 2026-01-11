@@ -1,6 +1,6 @@
 """
 OpenAI APIクライアントモジュール
-GPT-4, GPT-4 Vision, DALL-E 3のAPIラッパー
+GPT-4, GPT-4 Vision, gpt-image-1のAPIラッパー
 """
 from typing import List, Optional, Dict, Any
 import base64
@@ -114,18 +114,17 @@ class OpenAIClient:
         size: Optional[str] = None,
         quality: Optional[str] = None,
         model: Optional[str] = None
-    ) -> Dict[str, str]:
+    ) -> Dict[str, Optional[str]]:
         """
-        DALL-E 3で画像を生成
+        テキストのみで画像を生成
         
         Args:
             prompt: 画像生成プロンプト
             size: 画像サイズ（"1024x1024", "1792x1024", "1024x1792"）
             quality: 品質（"standard" or "hd"）
-            model: モデル名（デフォルト: dall-e-3）
-        
+            model: モデル名（デフォルト: gpt-image-1）
         Returns:
-            {"url": 画像URL, "revised_prompt": 改訂されたプロンプト}
+            {"url": 画像URL, "b64_json": Base64画像, "revised_prompt": 改訂されたプロンプト}
         """
         model = model or Config.IMAGE_MODEL
         size = size or Config.IMAGE_SIZE
@@ -140,7 +139,48 @@ class OpenAIClient:
         )
         
         return {
-            "url": response.data[0].url,
+            "url": getattr(response.data[0], "url", None),
+            "b64_json": getattr(response.data[0], "b64_json", None),
+            "revised_prompt": response.data[0].revised_prompt or prompt
+        }
+
+    def generate_image_from_image(
+        self,
+        image_path: str,
+        prompt: str,
+        size: Optional[str] = None,
+        quality: Optional[str] = None,
+        model: Optional[str] = None
+    ) -> Dict[str, Optional[str]]:
+        """
+        参照画像とテキストで画像を生成
+        
+        Args:
+            image_path: 参照画像のパス
+            prompt: 生成指示
+            size: 画像サイズ
+            quality: 品質（"standard" or "hd"）
+            model: モデル名（デフォルト: gpt-image-1）
+        Returns:
+            {"url": 画像URL, "b64_json": Base64画像, "revised_prompt": 改訂されたプロンプト}
+        """
+        model = model or Config.IMAGE_MODEL
+        size = size or Config.IMAGE_SIZE
+        quality = quality or Config.IMAGE_QUALITY
+        
+        with open(image_path, "rb") as image_file:
+            response = self.client.images.edit(
+                model=model,
+                image=image_file,
+                prompt=prompt,
+                size=size,
+                quality=quality,
+                n=1
+            )
+        
+        return {
+            "url": getattr(response.data[0], "url", None),
+            "b64_json": getattr(response.data[0], "b64_json", None),
             "revised_prompt": response.data[0].revised_prompt or prompt
         }
     

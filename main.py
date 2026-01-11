@@ -8,6 +8,7 @@ from typing import Optional
 from config import Config
 from models.session import Session
 from models.constraints import Constraint, ConstraintType
+from models.attribute_space import ATTR_SPACE
 from engines.query_interpreter import QueryInterpreter
 from engines.vector_generator import VectorGenerator
 from engines.image_generator import ImageGenerator
@@ -212,6 +213,14 @@ class TrueCodingSystem:
         )
         
         self.session.set_vector(vector)
+
+        # 探索木のルートノードを作成
+        if self.session.current_node_id is None:
+            self.session.add_root_node(
+                vector,
+                self.session.constraints,
+                note="root"
+            )
         
         # 主要な属性を表示
         from models.attribute_space import ATTR_SPACE
@@ -263,34 +272,34 @@ class TrueCodingSystem:
         
         self.session.current_phase = "D"
         
-        # 元画像の説明を取得
-        print("\n元画像を分析中...")
-        base_description = self.image_generator.extract_description_from_image(
-            self.session.initial_image_path
-        )
-        print(f"元画像の説明: {base_description}")
-        
         # 画像を生成
         print("\n画像を生成中...")
         generated = self.image_generator.generate_from_vector(
-            base_description,
+            self.session.initial_image_path,
             self.session.current_vector,
             self.session.get_active_constraints()
         )
         
         self.session.add_generated_image(generated)
+
+        # 現在ノードに画像パスを記録
+        self.session.update_current_node_image(generated.image_path, generated.prompt)
         
         print(f"\n画像を生成しました: {generated.image_path}")
         
         # 制約候補の属性を提案
         suggestions = self.image_generator.suggest_constraint_attributes(
             self.session.current_vector,
-            num_suggestions=5
+            num_suggestions=10
         )
         
         print("\n制約追加の候補属性:")
         for i, (attr_key, attr_name, current_value, group) in enumerate(suggestions, 1):
-            print(f"  [{i}] {attr_name} (現在値: {current_value:.2f}, グループ: {group})")
+            # 属性キーも併記して、入力時に迷わないようにする
+            print(
+                f"  [{i}] {attr_name} ({attr_key}) "
+                f"(現在値: {current_value:.2f}, グループ: {group})"
+            )
         
         # セッションを保存
         self.session.save(Config.SESSIONS_DIR)
@@ -343,7 +352,26 @@ class TrueCodingSystem:
             self.session.selected_interpretation
         )
         
+        # クローズドノードからの斥力を適用
+        closed_nodes = self.session.get_closed_nodes()
+        if closed_nodes:
+            print(f"\nクローズドノードからの斥力を適用中（{len(closed_nodes)}個）...")
+            closed_vectors = [node.vector for node in closed_nodes]
+            updated_vector = self.vector_generator.apply_repulsion(
+                updated_vector,
+                closed_vectors,
+                min_squared_distance=0.5,  # この値を調整可能
+                repulsion_strength=0.3     # この値を調整可能
+            )
+        
         self.session.set_vector(updated_vector)
+
+        # 探索木に子ノードを追加
+        self.session.add_child_node(
+            updated_vector,
+            self.session.constraints,
+            note=f"add_constraint:{attribute_key}"
+        )
         
         # セッションを保存
         self.session.save(Config.SESSIONS_DIR)
@@ -395,6 +423,132 @@ class TrueCodingSystem:
             "latest_image": self.session.get_latest_image().image_path if self.session.get_latest_image() else None
         }
 
+    # ========== 探索木ユーティリティ ==========
+
+    def get_attribute_value(self, attribute_key: str) -> Optional[float]:
+        """
+        現在の特徴ベクトルから指定属性の値を取得
+        
+        Args:
+            attribute_key: 属性キー（例: "material:stone", "color:pastel"）
+        
+        Returns:
+            属性値（0.0～1.0）、存在しない場合はNone
+        """
+        if not self.session or not self.session.current_vector:
+            print("特徴ベクトルが存在しません")
+            return None
+        
+        value = self.session.current_vector.weights.get(attribute_key)
+        if value is None:
+            print(f"属性 '{attribute_key}' が見つかりません")
+            # 属性名の候補を表示
+            matching = [k for k in self.session.current_vector.weights.keys() if attribute_key.split(':')[-1] in k]
+            if matching:
+                print(f"類似の属性: {', '.join(matching[:5])}")
+            return None
+        
+        # 属性名も表示
+        attr_name = self.session.attribute_space.get_attribute_name(attribute_key)
+        if attr_name:
+            print(f"{attribute_key} ({attr_name}): {value:.4f}")
+        else:
+            print(f"{attribute_key}: {value:.4f}")
+        
+        return value
+    
+    def show_vector(self, threshold: float = 0.0, top_k: Optional[int] = None):
+        """
+        現在の特徴ベクトルを表示
+        
+        Args:
+            threshold: 表示する最小絶対値（デフォルト: 0.0）
+            top_k: 上位k個のみ表示（指定しない場合は閾値以上すべて）
+        """
+        if not self.session or not self.session.current_vector:
+            print("特徴ベクトルが存在しません")
+            return
+        
+        # 値でソート（絶対値の大きい順）
+        sorted_attrs = sorted(
+            self.session.current_vector.weights.items(),
+            key=lambda x: abs(x[1]),
+            reverse=True
+        )
+        
+        # フィルタリング（絶対値で判定）
+        filtered = [(attr, val) for attr, val in sorted_attrs if abs(val) > threshold]
+        
+        if top_k:
+            filtered = filtered[:top_k]
+        
+        if not filtered:
+            print(f"閾値 {threshold} 以上の属性がありません")
+            return
+        
+        print(f"\n現在の特徴ベクトル（{len(filtered)}個の属性）:")
+        print("（負値は属性を避ける/逆方向探索を意味します）")
+        for attr, val in filtered:
+            attr_name = ATTR_SPACE.get_attribute_name(attr)
+            if val >= 0:
+                indicator = "強調"
+            else:
+                indicator = "回避"
+            
+            if attr_name:
+                print(f"  {attr:40s} ({attr_name:20s}): {val:7.4f} [{indicator}]")
+            else:
+                print(f"  {attr:40s}: {val:7.4f} [{indicator}]")
+
+    def list_nodes(self):
+        if not self.session:
+            return []
+        return self.session.list_nodes()
+
+    def get_node_details(self, node_id: int):
+        """特定ノードの詳細（制約含む）を表示"""
+        if not self.session:
+            raise ValueError("セッションが開始されていません")
+        
+        node = self.session._find_node(node_id)
+        if not node:
+            print(f"ノード {node_id} が見つかりません")
+            return None
+        
+        print(f"\n{'='*60}")
+        print(f"ノード {node_id} の詳細")
+        print(f"{'='*60}")
+        print(f"親ノード: {node.parent_id}")
+        print(f"クローズド: {node.is_closed}")
+        print(f"メモ: {node.note}")
+        print(f"作成日時: {node.timestamp.isoformat()}")
+        
+        if node.constraints:
+            print(f"\n制約 ({len(node.constraints)}個):")
+            for i, c in enumerate(node.constraints, 1):
+                print(f"  [{i}] {c.to_natural_language()}")
+        else:
+            print("\n制約: なし")
+        
+        if node.generated_image_path:
+            print(f"\n生成画像: {node.generated_image_path}")
+        else:
+            print("\n生成画像: なし")
+        
+        return node
+
+    def revert_to_node(self, node_id: int):
+        if not self.session:
+            raise ValueError("セッションが開始されていません")
+        self.session.revert_to_node(node_id)
+        print(f"ノード {node_id} に戻りました")
+
+    def mark_node_closed(self, node_id: int):
+        if not self.session:
+            raise ValueError("セッションが開始されていません")
+        self.session.mark_closed(node_id)
+        print(f"ノード {node_id} をクローズドにしました")
+
 
 def main():
     """デモ実行"""
@@ -406,7 +560,7 @@ def main():
     
     # ========== 以下を編集: 画像パスとクエリを指定 ==========
     image_path = "data/images/original_tank.jpg"  # 粘土画像のパスを指定
-    query = "もっとかわいいデザインにしたい"                  # クエリを指定
+    query = "「ガキーン!」という感じのかっこいいデザインにしたい"                  # クエリを指定
     
     # フェーズA: セッション開始
     print("\n### フェーズA: 入力 ###")
@@ -471,6 +625,13 @@ def main():
     print("5. system.generate_image() で画像生成")
     print("6. system.add_constraint(...) で制約追加と再生成")
     print("7. system.analyze_current_image() で画像分析")
+    
+    print("\n探索木操作:")
+    print("- system.list_nodes() でノード一覧表示")
+    print("- system.get_node_details(node_id) でノード詳細表示（制約含む）")
+    print("- system.revert_to_node(node_id) で過去のノードに戻す")
+    print("- system.mark_node_closed(node_id) でノードをクローズド化（斥力適用対象に）")
+    print("- system.show_vector(top_k=10) で現在の特徴ベクトル表示")
     
     print("\n詳細は各メソッドのdocstringを参照してください。")
     

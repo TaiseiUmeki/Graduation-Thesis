@@ -168,6 +168,32 @@ class ImageUtils:
         img = Image.open(BytesIO(image_data))
         img.save(output_path)
         return output_path
+
+    @staticmethod
+    def save_base64_image(
+        base64_str: str,
+        output_dir: Path,
+        prefix: str = "generated"
+    ) -> str:
+        """
+        Base64画像をファイルとして保存
+        
+        Args:
+            base64_str: Base64文字列
+            output_dir: 出力ディレクトリ
+            prefix: ファイル名の接頭辞
+        
+        Returns:
+            保存先のパス
+        """
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        unique_id = str(uuid.uuid4())[:8]
+        filename = f"{prefix}_{timestamp}_{unique_id}.png"
+        
+        output_path = output_dir / filename
+        return ImageUtils.base64_to_image(base64_str, str(output_path))
     
     @staticmethod
     def get_image_info(image_path: str) -> dict:

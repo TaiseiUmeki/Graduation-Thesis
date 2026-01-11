@@ -23,7 +23,7 @@ class ImageGenerator:
     
     def generate_from_vector(
         self,
-        base_image_description: str,
+        base_image_path: str,
         vector: AttributeVector,
         constraints: Optional[List[Constraint]] = None,
         output_dir: Optional[Path] = None
@@ -32,7 +32,7 @@ class ImageGenerator:
         特徴ベクトルから画像を生成
         
         Args:
-            base_image_description: 元画像の説明
+            base_image_path: 元画像のパス
             vector: 特徴ベクトル
             constraints: 制約リスト
             output_dir: 出力ディレクトリ
@@ -43,19 +43,25 @@ class ImageGenerator:
         output_dir = output_dir or Config.IMAGES_DIR
         
         # ベクトルからプロンプトを生成
-        prompt = self._build_image_prompt(base_image_description, vector, constraints)
+        prompt = self._build_image_prompt(vector, constraints)
         
         print(f"\n画像生成プロンプト:\n{prompt}\n")
         
-        # DALL-E 3で画像生成
-        result = self.client.generate_image(prompt)
+        # 参照画像 + プロンプトで画像生成
+        result = self.client.generate_image_from_image(base_image_path, prompt)
         
-        # 画像をダウンロードして保存
-        image_path = self.image_utils.download_image_from_url(
-            result["url"],
-            output_dir,
-            prefix="generated"
-        )
+        if result.get("b64_json"):
+            image_path = self.image_utils.save_base64_image(
+                result["b64_json"],
+                output_dir,
+                prefix="generated"
+            )
+        else:
+            image_path = self.image_utils.download_image_from_url(
+                result["url"],
+                output_dir,
+                prefix="generated"
+            )
         
         # GeneratedImageオブジェクトを作成
         generated_image = GeneratedImage(
@@ -188,21 +194,19 @@ class ImageGenerator:
     
     def _build_image_prompt(
         self,
-        base_description: str,
         vector: AttributeVector,
         constraints: Optional[List[Constraint]] = None
     ) -> str:
         """画像生成用のプロンプトを構築"""
         prompt_parts = []
+        prompt_parts.append("参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。")
+        prompt_parts.append("（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）")
         
-        # ベースの説明
-        prompt_parts.append(base_description)
-        
-        # 特徴ベクトルから主要な属性を抽出
-        top_attributes = self.attr_space.get_top_attributes(vector, top_k=15)
+        # 特徴ベクトルから主要な属性を抽出（負値も含める）
+        top_attributes = self.attr_space.get_top_attributes(vector, top_k=20, threshold=0.0)
         
         if top_attributes:
-            # 属性をグループごとに整理
+            # 属性をグループごとに整理（重み値付き、負値対応）
             grouped_attrs = {}
             for attr_key, weight in top_attributes:
                 group_name = attr_key.split(':')[0]
@@ -218,37 +222,67 @@ class ImageGenerator:
             
             # 材質
             if "material" in grouped_attrs:
-                materials = [name for name, _ in grouped_attrs["material"][:3]]
+                materials = []
+                for name, weight in grouped_attrs["material"][:3]:
+                    if weight >= 0:
+                        materials.append(f"{name}({weight:.2f})")
+                    else:
+                        materials.append(f"（{name}を避ける{weight:.2f}）")
                 if materials:
                     attr_descriptions.append(f"材質: {', '.join(materials)}")
             
             # 仕上げ
             if "finish" in grouped_attrs:
-                finishes = [name for name, _ in grouped_attrs["finish"][:3]]
+                finishes = []
+                for name, weight in grouped_attrs["finish"][:3]:
+                    if weight >= 0:
+                        finishes.append(f"{name}({weight:.2f})")
+                    else:
+                        finishes.append(f"（{name}を避ける{weight:.2f}）")
                 if finishes:
                     attr_descriptions.append(f"仕上げ: {', '.join(finishes)}")
             
             # 形状
             if "shape" in grouped_attrs:
-                shapes = [name for name, _ in grouped_attrs["shape"][:3]]
+                shapes = []
+                for name, weight in grouped_attrs["shape"][:3]:
+                    if weight >= 0:
+                        shapes.append(f"{name}({weight:.2f})")
+                    else:
+                        shapes.append(f"（{name}を避ける{weight:.2f}）")
                 if shapes:
                     attr_descriptions.append(f"形状: {', '.join(shapes)}")
             
             # 色
             if "color" in grouped_attrs:
-                colors = [name for name, _ in grouped_attrs["color"][:3]]
+                colors = []
+                for name, weight in grouped_attrs["color"][:3]:
+                    if weight >= 0:
+                        colors.append(f"{name}({weight:.2f})")
+                    else:
+                        colors.append(f"（{name}を避ける{weight:.2f}）")
                 if colors:
                     attr_descriptions.append(f"色: {', '.join(colors)}")
             
             # 質感
             if "texture" in grouped_attrs:
-                textures = [name for name, _ in grouped_attrs["texture"][:2]]
+                textures = []
+                for name, weight in grouped_attrs["texture"][:2]:
+                    if weight >= 0:
+                        textures.append(f"{name}({weight:.2f})")
+                    else:
+                        textures.append(f"（{name}を避ける{weight:.2f}）")
                 if textures:
                     attr_descriptions.append(f"質感: {', '.join(textures)}")
             
             # スタイル
             if "style" in grouped_attrs:
-                styles = [name for name, _ in grouped_attrs["style"][:2]]
+                styles = []
+                for name, weight in grouped_attrs["style"][:2]:
+                    if weight >= 0:
+                        styles.append(f"{name}({weight:.2f})")
+                    else:
+                        styles.append(f"（{name}を避ける{weight:.2f}）")
                 if styles:
                     attr_descriptions.append(f"スタイル: {', '.join(styles)}")
             

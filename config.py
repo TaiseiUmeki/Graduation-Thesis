@@ -24,7 +24,7 @@ class Config:
     # モデル設定
     GPT_MODEL = "gpt-4o"  # クエリ解釈・特徴ベクトル生成用
     VISION_MODEL = "gpt-4o"  # 画像理解用
-    IMAGE_MODEL = "dall-e-3"  # 画像生成用
+    IMAGE_MODEL = "gpt-image-1"  # 画像生成用
     
     # パラメータ設定
     TEMPERATURE = 0.7  # 生成の多様性（0.0-2.0）
@@ -33,7 +33,8 @@ class Config:
     
     # 画像生成設定
     IMAGE_SIZE = "1024x1024"  # 生成画像サイズ
-    IMAGE_QUALITY = "standard"  # standard or hd
+    IMAGE_QUALITY = "auto"  # low, medium, high, auto
+    IMAGE_RESPONSE_FORMAT = "b64_json"  # url or b64_json
     
     @classmethod
     def ensure_directories(cls):

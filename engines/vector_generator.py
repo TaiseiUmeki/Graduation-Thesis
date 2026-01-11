@@ -4,6 +4,7 @@
 """
 from typing import List, Dict, Optional, Tuple
 import json
+import numpy as np
 
 from utils.openai_client import OpenAIClient
 from models.attribute_space import AttributeVector, ATTR_SPACE
@@ -112,7 +113,7 @@ class VectorGenerator:
     def _get_vector_system_prompt(self) -> str:
         """ベクトル生成用のシステムプロンプト"""
         return """あなたは創作物の特徴を属性ベクトルで表現する専門家です。
-与えられた解釈や説明から、適切な属性とその重み（0.0〜1.0）を決定してください。
+与えられた解釈や説明から、適切な属性とその重み（-1.0～1.0：正値は強調、負値は回避）を決定してください。
 重みは以下の基準で設定してください：
 - 0.0: その属性は全く該当しない
 - 0.3: 弱く該当する
@@ -126,7 +127,7 @@ class VectorGenerator:
         """属性検索用のシステムプロンプト"""
         return """あなたは創作物の特徴を分析する専門家です。
 与えられた解釈やクエリに関連性の高い属性を、属性リストから選んでください。
-関連度スコアは0.0〜1.0の範囲で、高いほど関連性が強いことを示します。"""
+関連度スコアは-1.0～1.0の範囲で、正値は関連度が高く、負値は回避すべき属性を示します。"""
     
     def _build_vector_generation_prompt(
         self,
@@ -152,7 +153,7 @@ class VectorGenerator:
         prompt_parts.append(f"\n利用可能な属性:\n{attr_info}")
         
         prompt_parts.append("""
-以下のJSON形式で、関連する属性とその重み（0.0〜1.0）を返してください。
+以下のJSON形式で、関連する属性とその重み（-1.0～1.0）を返してください。
 重要な属性のみを含め、重み0.3未満の属性は省略してください。
 
 {
@@ -257,7 +258,7 @@ class VectorGenerator:
         validated_weights = {}
         for attr_key, weight in attributes.items():
             if attr_key in self.attr_space.all_attributes:
-                validated_weights[attr_key] = max(0.0, min(1.0, float(weight)))
+                validated_weights[attr_key] = max(-1.0, min(1.0, float(weight)))
             else:
                 print(f"警告: 不明な属性 '{attr_key}' を無視します")
         
@@ -278,3 +279,50 @@ class VectorGenerator:
                 related.append((attr_key, attr_name, score))
         
         return related
+    
+    def apply_repulsion(
+        self,
+        vector: AttributeVector,
+        closed_vectors: List[AttributeVector],
+        min_squared_distance: float = 0.5,
+        repulsion_strength: float = 0.3
+    ) -> AttributeVector:
+        """
+        クローズドノードからの斥力を適用してベクトルを調整
+        
+        Args:
+            vector: 調整対象のベクトル
+            closed_vectors: クローズドノードのベクトルリスト
+            min_squared_distance: 最小距離の2乗（これより近い場合は斥力を適用）
+            repulsion_strength: 斥力の強さ（0.0-1.0）
+        
+        Returns:
+            斥力適用後のベクトル
+        """
+        if not closed_vectors:
+            return vector
+        
+        adjusted_weights = dict(vector.weights)
+        
+        for closed_vector in closed_vectors:
+            squared_dist = vector.squared_distance(closed_vector)
+            
+            if squared_dist < min_squared_distance:
+                # 距離が近すぎる場合は斥力を適用
+                print(f"  斥力適用: 距離の2乗 {squared_dist:.4f} < {min_squared_distance}")
+                
+                # 差分ベクトルを計算（遠ざける方向）
+                all_keys = set(vector.weights.keys()) | set(closed_vector.weights.keys())
+                for key in all_keys:
+                    current_w = adjusted_weights.get(key, 0.0)
+                    closed_w = closed_vector.weights.get(key, 0.0)
+                    
+                    # 差分の方向に調整（closed_vectorから遠ざける）
+                    diff = current_w - closed_w
+                    adjustment = repulsion_strength * diff
+                    
+                    # 新しい重みを計算（-1.0～1.0の範囲にクリップ）
+                    new_w = np.clip(current_w + adjustment, -1.0, 1.0)
+                    adjusted_weights[key] = new_w
+        
+        return AttributeVector(weights=adjusted_weights)

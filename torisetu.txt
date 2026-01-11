@@ -1,0 +1,53 @@
+実行
+python -i main.py
+
+# 制約追加
+system.add_constraint(
+    attribute_key="color:pastel",
+    constraint_type="greater_than",
+    value=0.9,
+    description="パステルカラーをさらに強調"
+)
+このメソッドは特著ベクトルの更新もやってくれる
+
+# 画像再生成
+system.generate_image()
+
+# ノード確認
+system.list_nodes()
+
+# ノードに戻る
+system.revert_to_node(node_id)
+
+# ノード探索継続
+system.add_constraint(...)
+system.generate_image()
+
+# 特徴ベクトルの確認
+system.show_vector(top_k=10)  # 上位10個を表示
+system.show_vector(threshold=0.3)  # 0.3以上の属性すべてを表示
+system.get_attribute_value("color:pastel")  # 特定属性の値を表示
+
+
+
+
+次すること
+特徴ベクトルの属性名を入力すると現特徴ベクトルでのその属性の値をみられるようにしてもらったので試す
+system.get_attribute_value("color:pastel")
+
+
+
+
+
+
+
+
+
+
+自由スペース
+system.add_constraint(
+    attribute_key="visual:light",
+    constraint_type="greater_than",
+    value=0.9,
+    description="もっと軽そうな感じ"
+)

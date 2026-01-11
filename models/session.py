@@ -14,6 +14,47 @@ from models.constraints import Constraint
 
 
 @dataclass
+class ExplorationNode:
+    """探索木のノードを表すクラス"""
+    node_id: int
+    parent_id: Optional[int]
+    vector: AttributeVector
+    constraints: List['Constraint']
+    generated_image_path: Optional[str] = None
+    prompt: Optional[str] = None
+    is_closed: bool = False
+    timestamp: datetime = field(default_factory=datetime.now)
+    note: str = ""
+
+    def to_dict(self) -> Dict:
+        return {
+            "node_id": self.node_id,
+            "parent_id": self.parent_id,
+            "vector": self.vector.to_dict(),
+            "constraints": [c.to_dict() for c in self.constraints],
+            "generated_image_path": self.generated_image_path,
+            "prompt": self.prompt,
+            "is_closed": self.is_closed,
+            "timestamp": self.timestamp.isoformat(),
+            "note": self.note,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict) -> 'ExplorationNode':
+        return cls(
+            node_id=data["node_id"],
+            parent_id=data.get("parent_id"),
+            vector=AttributeVector.from_dict(data["vector"]),
+            constraints=[Constraint.from_dict(c) for c in data.get("constraints", [])],
+            generated_image_path=data.get("generated_image_path"),
+            prompt=data.get("prompt"),
+            is_closed=data.get("is_closed", False),
+            timestamp=datetime.fromisoformat(data["timestamp"]),
+            note=data.get("note", ""),
+        )
+
+
+@dataclass
 class Interpretation:
     """解釈案を表すクラス"""
     id: int
@@ -74,6 +115,11 @@ class Session:
         # フェーズD: 画像生成と批評
         self.generated_images: List[GeneratedImage] = []
         self.constraints: List['Constraint'] = []  # 制約の履歴
+
+        # 探索木
+        self.exploration_nodes: List[ExplorationNode] = []
+        self.current_node_id: Optional[int] = None
+        self._next_node_id: int = 0
         
         # 現在のフェーズ
         self.current_phase: str = "A"  # A, B, C, D
@@ -90,7 +136,8 @@ class Session:
     
     def select_interpretation(self, interpretation_id: int) -> Optional[Interpretation]:
         """解釈案を選択"""
-        for interp in self.interpretations:
+        # 最新の解釈案セットで選択できるよう、逆順で探索する
+        for interp in reversed(self.interpretations):
             if interp.id == interpretation_id:
                 self.selected_interpretation = interp
                 self.updated_at = datetime.now()
@@ -111,6 +158,98 @@ class Session:
         """生成画像を追加"""
         self.generated_images.append(image)
         self.updated_at = datetime.now()
+
+    def add_root_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "") -> int:
+        """探索木のルートノードを追加"""
+        node = ExplorationNode(
+            node_id=self._next_node_id,
+            parent_id=None,
+            vector=self._clone_vector(vector),
+            constraints=self._clone_constraints(constraints),
+            note=note,
+        )
+        self.exploration_nodes.append(node)
+        self.current_node_id = node.node_id
+        self._next_node_id += 1
+        self.updated_at = datetime.now()
+        return node.node_id
+
+    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "") -> int:
+        """現在のノードの子ノードを追加"""
+        node = ExplorationNode(
+            node_id=self._next_node_id,
+            parent_id=self.current_node_id,
+            vector=self._clone_vector(vector),
+            constraints=self._clone_constraints(constraints),
+            note=note,
+        )
+        self.exploration_nodes.append(node)
+        self.current_node_id = node.node_id
+        self._next_node_id += 1
+        self.updated_at = datetime.now()
+        return node.node_id
+
+    def update_current_node_image(self, image_path: str, prompt: Optional[str] = None):
+        """現在ノードに生成画像パスを保存"""
+        node = self._get_current_node()
+        if node:
+            node.generated_image_path = image_path
+            if prompt:
+                node.prompt = prompt
+            self.updated_at = datetime.now()
+
+    def mark_closed(self, node_id: int):
+        """ノードをクローズドとしてマーク"""
+        node = self._find_node(node_id)
+        if node:
+            node.is_closed = True
+            self.updated_at = datetime.now()
+
+    def revert_to_node(self, node_id: int):
+        """指定ノードのベクトルと制約に戻す"""
+        node = self._find_node(node_id)
+        if node:
+            self.current_node_id = node.node_id
+            self.current_vector = self._clone_vector(node.vector)
+            self.constraints = self._clone_constraints(node.constraints)
+            self.updated_at = datetime.now()
+        else:
+            raise ValueError(f"ノード {node_id} が見つかりません")
+
+    def list_nodes(self) -> List[Dict]:
+        """ノード一覧を返す"""
+        result = []
+        for n in self.exploration_nodes:
+            result.append({
+                "node_id": n.node_id,
+                "parent_id": n.parent_id,
+                "is_closed": n.is_closed,
+                "generated_image": n.generated_image_path,
+                "timestamp": n.timestamp.isoformat(),
+                "note": n.note,
+            })
+        return result
+
+    def _find_node(self, node_id: int) -> Optional[ExplorationNode]:
+        for n in self.exploration_nodes:
+            if n.node_id == node_id:
+                return n
+        return None
+
+    def _get_current_node(self) -> Optional[ExplorationNode]:
+        if self.current_node_id is None:
+            return None
+        return self._find_node(self.current_node_id)
+    
+    def get_closed_nodes(self) -> List[ExplorationNode]:
+        """クローズド（探索終了）ノードのリストを取得"""
+        return [n for n in self.exploration_nodes if n.is_closed]
+
+    def _clone_constraints(self, constraints: List['Constraint']) -> List['Constraint']:
+        return [Constraint.from_dict(c.to_dict()) for c in constraints]
+
+    def _clone_vector(self, vector: AttributeVector) -> AttributeVector:
+        return AttributeVector.from_dict(vector.to_dict())
     
     def get_latest_image(self) -> Optional[GeneratedImage]:
         """最新の生成画像を取得"""
@@ -136,7 +275,10 @@ class Session:
             "recommended_attributes": self.recommended_attributes,
             "generated_images": [img.to_dict() for img in self.generated_images],
             "constraints": [c.to_dict() for c in self.constraints],
-            "current_phase": self.current_phase
+            "current_phase": self.current_phase,
+            "exploration_nodes": [n.to_dict() for n in self.exploration_nodes],
+            "current_node_id": self.current_node_id,
+            "next_node_id": self._next_node_id,
         }
     
     def save(self, directory: Path):
@@ -160,6 +302,8 @@ class Session:
         session.additional_image_path = data.get("additional_image_path")
         session.recommended_attributes = data.get("recommended_attributes", [])
         session.current_phase = data.get("current_phase", "A")
+        session._next_node_id = data.get("next_node_id", 0)
+        session.current_node_id = data.get("current_node_id")
         
         # 解釈案の復元
         for interp_data in data.get("interpretations", []):
@@ -185,6 +329,24 @@ class Session:
         if data.get("current_vector"):
             session.current_vector = AttributeVector.from_dict(data["current_vector"])
         
-        # TODO: 生成画像と制約の復元は後で実装
+        # 生成画像の復元
+        for img_data in data.get("generated_images", []):
+            session.generated_images.append(
+                GeneratedImage(
+                    image_path=img_data["image_path"],
+                    prompt=img_data["prompt"],
+                    vector=AttributeVector.from_dict(img_data["vector"]) if img_data.get("vector") else None,
+                    constraints=[Constraint.from_dict(c) for c in img_data.get("constraints", [])],
+                    timestamp=datetime.fromisoformat(img_data["timestamp"]),
+                )
+            )
+
+        # 制約の復元
+        for constraint_data in data.get("constraints", []):
+            session.constraints.append(Constraint.from_dict(constraint_data))
+
+        # 探索ノードの復元
+        for node_data in data.get("exploration_nodes", []):
+            session.exploration_nodes.append(ExplorationNode.from_dict(node_data))
         
         return session

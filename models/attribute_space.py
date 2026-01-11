@@ -291,7 +291,7 @@ ATTRIBUTE_GROUPS = {
 @dataclass
 class AttributeVector:
     """特徴ベクトルを表すクラス"""
-    weights: Dict[str, float]  # 属性名: 重み（0.0-1.0）
+    weights: Dict[str, float]  # 属性名: 重み（-1.0～1.0、正:強調、負:回避）
     
     def to_dict(self) -> Dict:
         """辞書形式に変換"""
@@ -310,6 +310,16 @@ class AttributeVector:
     def from_json(cls, json_str: str) -> 'AttributeVector':
         """JSON文字列から生成"""
         return cls.from_dict(json.loads(json_str))
+    
+    def squared_distance(self, other: 'AttributeVector') -> float:
+        """他のベクトルとのユークリッド距離の2乗を計算"""
+        all_keys = set(self.weights.keys()) | set(other.weights.keys())
+        squared_dist = 0.0
+        for key in all_keys:
+            w1 = self.weights.get(key, 0.0)
+            w2 = other.weights.get(key, 0.0)
+            squared_dist += (w1 - w2) ** 2
+        return squared_dist
 
 
 class AttributeSpace:
@@ -337,7 +347,7 @@ class AttributeSpace:
         vector = self.zero_vector()
         for attr, weight in weights.items():
             if attr in self.all_attributes:
-                vector.weights[attr] = np.clip(weight, 0.0, 1.0)
+                vector.weights[attr] = np.clip(weight, -1.0, 1.0)
         return vector
     
     def get_attribute_name(self, attr_key: str) -> Optional[str]:
@@ -352,14 +362,14 @@ class AttributeSpace:
         """指定グループの属性を取得"""
         return self.groups.get(group_name, {})
     
-    def get_top_attributes(self, vector: AttributeVector, top_k: int = 10) -> List[Tuple[str, float]]:
-        """ベクトルから上位k個の属性を取得"""
+    def get_top_attributes(self, vector: AttributeVector, top_k: int = 10, threshold: float = 0.0) -> List[Tuple[str, float]]:
+        """ベクトルから上位k個の属性を取得（絶対値の大きい順、負値も含む）"""
         sorted_attrs = sorted(
             vector.weights.items(),
-            key=lambda x: x[1],
+            key=lambda x: abs(x[1]),
             reverse=True
         )
-        return [(attr, weight) for attr, weight in sorted_attrs[:top_k] if weight > 0]
+        return [(attr, weight) for attr, weight in sorted_attrs[:top_k] if abs(weight) >= threshold]
     
     def vector_to_description(self, vector: AttributeVector, threshold: float = 0.3) -> str:
         """特徴ベクトルを自然言語説明に変換"""
