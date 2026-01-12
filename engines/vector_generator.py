@@ -279,6 +279,91 @@ class VectorGenerator:
                 related.append((attr_key, attr_name, score))
         
         return related
+
+    def suggest_attribute_adjustments_from_text(
+        self,
+        user_text: str,
+        current_vector: AttributeVector,
+        max_suggestions: int = 6,
+        default_delta: float = 0.25
+    ) -> List[Tuple[str, float, str]]:
+        """
+        ユーザーの自由入力テキストを属性調整候補にマッピング
+        戻り値: [(attribute_key, delta, reason), ...]
+        """
+        # 現在の上位属性（文脈として渡す）
+        top_attrs = self.attr_space.get_top_attributes(
+            current_vector,
+            top_k=12,
+            threshold=0.0
+        )
+
+        top_attrs_text = "\n".join(
+            [f"- {attr_key} ({self.attr_space.get_attribute_name(attr_key)}) = {weight:.2f}" for attr_key, weight in top_attrs]
+        ) or "- なし"
+
+        # 属性カタログ（各グループから最大10件）
+        catalog_lines = []
+        for group_name, attrs in self.attr_space.groups.items():
+            catalog_lines.append(f"[{group_name}]")
+            for key, name in list(attrs.items())[:10]:
+                catalog_lines.append(f"  {group_name}:{key} = {name}")
+            if len(attrs) > 10:
+                catalog_lines.append(f"  ...他{len(attrs) - 10}件")
+        catalog_text = "\n".join(catalog_lines)
+
+        system_prompt = (
+            "あなたはプロダクトデザイン用のパラメータ調整アシスタントです。"\
+            "属性は -1.0～1.0 の実数で、正の値は強調、負の値は避ける/削ぎ落とすことを表します。"\
+            "指定された属性リスト以外は使わないでください。"
+        )
+
+        user_prompt = f"""
+ユーザー入力: "{user_text}"
+現在の主要属性:
+{top_attrs_text}
+
+利用可能な属性一覧（抜粋）:
+{catalog_text}
+
+指示:
+- ユーザー意図に合う属性を最大 {max_suggestions} 件選び、deltaを -1.0～1.0 で提案してください。
+- 典型的な調整幅の初期値は ±{default_delta:.2f} とし、必要に応じて増減してください。
+- delta>0 なら強調、delta<0 なら抑制/回避。
+- 属性キーは上記リストのものだけを使用。
+- JSON形式で返すこと。
+
+出力形式:
+{{
+  "adjustments": [
+    {{"attribute_key": "group:key", "delta": 0.3, "reason": "why"}},
+    ... (最大 {max_suggestions} 件)
+  ]
+}}
+"""
+
+        response = self.client.generate_with_json_response(
+            user_prompt,
+            system_prompt=system_prompt
+        )
+
+        adjustments = []
+        for item in response.get("adjustments", []):
+            attr_key = item.get("attribute_key")
+            delta = float(item.get("delta", 0.0))
+            reason = item.get("reason", "")
+
+            if attr_key in self.attr_space.all_attributes:
+                # クリップして登録
+                delta = float(np.clip(delta, -1.0, 1.0))
+                adjustments.append((attr_key, delta, reason))
+            else:
+                print(f"警告: 不明な属性 '{attr_key}' を無視します")
+
+            if len(adjustments) >= max_suggestions:
+                break
+
+        return adjustments
     
     def apply_repulsion(
         self,

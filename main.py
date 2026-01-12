@@ -3,12 +3,13 @@
 A→B→C→Dのフロー統合
 """
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List, Tuple
+import numpy as np
 
 from config import Config
 from models.session import Session
 from models.constraints import Constraint, ConstraintType
-from models.attribute_space import ATTR_SPACE
+from models.attribute_space import ATTR_SPACE, AttributeVector
 from engines.query_interpreter import QueryInterpreter
 from engines.vector_generator import VectorGenerator
 from engines.image_generator import ImageGenerator
@@ -377,6 +378,63 @@ class TrueCodingSystem:
         self.session.save(Config.SESSIONS_DIR)
         
         print("特徴ベクトルを更新しました")
+
+    # ========== フェーズD: ファジー属性調整（LLMマッピング） ==========
+    def apply_fuzzy_adjustment(
+        self,
+        user_text: str,
+        max_suggestions: int = 6,
+        default_delta: float = 0.25,
+        auto_generate_image: bool = False
+    ) -> List[Tuple[str, float, str]]:
+        """
+        自由入力テキストを属性調整にマッピングしてベクトルを更新
+        Args:
+            user_text: ユーザーの意図（例: "もっとサイバーに"）
+            max_suggestions: 最大提案数
+            default_delta: 典型的な調整幅（±）
+            auto_generate_image: Trueなら更新後に画像も生成
+        Returns:
+            提案リスト [(attribute_key, delta, reason), ...]
+        """
+        if not self.session or not self.session.current_vector:
+            raise ValueError("特徴ベクトルが生成されていません")
+
+        print("\nファジー調整を実行中...")
+        adjustments = self.vector_generator.suggest_attribute_adjustments_from_text(
+            user_text,
+            self.session.current_vector,
+            max_suggestions=max_suggestions,
+            default_delta=default_delta
+        )
+
+        if not adjustments:
+            print("提案がありませんでした")
+            return []
+
+        # ベクトルを更新
+        updated_weights = dict(self.session.current_vector.weights)
+        for attr_key, delta, reason in adjustments:
+            before = updated_weights.get(attr_key, 0.0)
+            after = float(np.clip(before + delta, -1.0, 1.0))
+            updated_weights[attr_key] = after
+            attr_name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
+            print(f"  {attr_name}: {before:+.2f} -> {after:+.2f} (delta {delta:+.2f}) {reason if reason else ''}")
+
+        new_vector = AttributeVector(weights=updated_weights)
+        self.session.set_vector(new_vector)
+
+        # 探索木に子ノードを追加（メモ付き）
+        note = f"fuzzy:{user_text[:30]}" if user_text else "fuzzy"
+        self.session.add_child_node(new_vector, self.session.constraints, note=note)
+        self.session.save(Config.SESSIONS_DIR)
+
+        print("ベクトルを更新しました（ファジー調整）")
+
+        if auto_generate_image:
+            self.generate_image()
+
+        return adjustments
     
     def analyze_current_image(self) -> str:
         """
