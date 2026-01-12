@@ -264,27 +264,27 @@ class ImageGenerator:
                 if colors:
                     attr_descriptions.append(f"色: {', '.join(colors)}")
             
-            # 質感
-            if "texture" in grouped_attrs:
-                textures = []
-                for name, weight in grouped_attrs["texture"][:2]:
+            # 機能的な見た目
+            if "function_visual" in grouped_attrs:
+                functions = []
+                for name, weight in grouped_attrs["function_visual"][:2]:
                     if weight >= 0:
-                        textures.append(f"{name}({weight:.2f})")
+                        functions.append(f"{name}({weight:.2f})")
                     else:
-                        textures.append(f"（{name}を避ける{weight:.2f}）")
-                if textures:
-                    attr_descriptions.append(f"質感: {', '.join(textures)}")
+                        functions.append(f"（{name}を避ける{weight:.2f}）")
+                if functions:
+                    attr_descriptions.append(f"機能的要素: {', '.join(functions)}")
             
-            # スタイル
-            if "style" in grouped_attrs:
-                styles = []
-                for name, weight in grouped_attrs["style"][:2]:
+            # パターン・模様
+            if "pattern" in grouped_attrs:
+                patterns = []
+                for name, weight in grouped_attrs["pattern"][:2]:
                     if weight >= 0:
-                        styles.append(f"{name}({weight:.2f})")
+                        patterns.append(f"{name}({weight:.2f})")
                     else:
-                        styles.append(f"（{name}を避ける{weight:.2f}）")
-                if styles:
-                    attr_descriptions.append(f"スタイル: {', '.join(styles)}")
+                        patterns.append(f"（{name}を避ける{weight:.2f}）")
+                if patterns:
+                    attr_descriptions.append(f"パターン: {', '.join(patterns)}")
             
             if attr_descriptions:
                 prompt_parts.append("、".join(attr_descriptions))
