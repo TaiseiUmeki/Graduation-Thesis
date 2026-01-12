@@ -458,6 +458,45 @@ class TrueCodingSystem:
         
         return analysis
     
+    def search_attributes(
+        self,
+        user_text: str,
+        max_results: int = 5,
+        return_expanded: bool = True
+    ):
+        """
+        自由テキストから属性を検索（LLMマッピング）
+        
+        Args:
+            user_text: 検索クエリ（例: "サイバーな"）
+            max_results: 最大件数
+            return_expanded: Trueなら拡張版、Falseなら簡易版
+        
+        Returns:
+            拡張版: [{"attribute_key": str, "attribute_name": str}, ...]
+            簡易版: ["group:key", ...]
+        """
+        print(f"\n属性を検索中: 「{user_text}」")
+        results = self.vector_generator.map_text_to_attributes(
+            user_text,
+            max_results=max_results,
+            return_expanded=return_expanded
+        )
+        
+        if not results:
+            print("該当する属性が見つかりませんでした")
+        else:
+            print(f"\n検索結果 ({len(results)}件):")
+            if return_expanded:
+                for i, item in enumerate(results, 1):
+                    print(f"  [{i}] {item['attribute_name']} ({item['attribute_key']})")
+            else:
+                for i, key in enumerate(results, 1):
+                    name = ATTR_SPACE.get_attribute_name(key) or key
+                    print(f"  [{i}] {name} ({key})")
+        
+        return results
+    
     def get_session_summary(self) -> dict:
         """
         現在のセッションの要約を取得
@@ -682,7 +721,9 @@ def main():
     print("4. system.generate_vector() で特徴ベクトル生成")
     print("5. system.generate_image() で画像生成")
     print("6. system.add_constraint(...) で制約追加と再生成")
-    print("7. system.analyze_current_image() で画像分析")
+    print("7. system.apply_fuzzy_adjustment('もっとサイバーに') でファジー調整（自由入力からLLMが属性を推論）")
+    print("8. system.search_attributes('サイバーな') で属性検索（LLMが自由テキストから関連属性を推論）")
+    print("9. system.analyze_current_image() で画像分析")
     
     print("\n探索木操作:")
     print("- system.list_nodes() でノード一覧表示")

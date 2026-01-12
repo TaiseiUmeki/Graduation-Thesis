@@ -280,6 +280,105 @@ class VectorGenerator:
         
         return related
 
+    def map_text_to_attributes(
+        self,
+        user_text: str,
+        max_results: int = 5,
+        return_expanded: bool = True
+    ):
+        """
+        自由テキストを属性空間の既存属性にマッピング（捏造禁止）
+        
+        Args:
+            user_text: ユーザーの自由入力
+            max_results: 返却最大件数
+            return_expanded: Trueなら拡張版、Falseなら簡易版
+        
+        Returns:
+            拡張版: [{"attribute_key": str, "attribute_name": str}, ...]
+            簡易版: ["group:key", ...]
+        """
+        # 属性カタログ（全件）
+        catalog_lines = []
+        for group_name, attrs in self.attr_space.groups.items():
+            catalog_lines.append(f"[{group_name}]")
+            for key, name in attrs.items():
+                catalog_lines.append(f"  {group_name}:{key} = {name}")
+        catalog_text = "\n".join(catalog_lines)
+
+        system_prompt = (
+            "あなたはユーザー入力を属性空間の既存属性にマッピングするアシスタントです。"
+            "提供されたカタログ以外の属性を作成してはなりません。"
+            "該当が全くない場合は空リストを返してください。"
+            "出力はJSONのみで、追加説明は含めないでください。"
+        )
+
+        if return_expanded:
+            output_format = (
+                '{\n  "attributes": [\n'
+                '    {"attribute_key": "group:key", "attribute_name": "日本語名"}\n'
+                '  ]\n}'
+            )
+        else:
+            output_format = (
+                '{\n  "attributes": [\n'
+                '    "group:key"\n'
+                '  ]\n}'
+            )
+
+        user_prompt = f"""
+ユーザー入力: "{user_text}"
+
+属性カタログ:
+{catalog_text}
+
+制約:
+- カタログに存在しない属性を返してはいけません
+- 最大 {max_results} 件まで
+- 該当が全くない場合は空のリスト
+- 出力はJSONのみ
+
+出力形式:
+{output_format}
+"""
+
+        response = self.client.generate_with_json_response(
+            user_prompt,
+            system_prompt=system_prompt
+        )
+
+        raw_attrs = response.get("attributes", []) or []
+
+        # 正規化と検証
+        if return_expanded:
+            results = []
+            for item in raw_attrs:
+                try:
+                    key = item.get("attribute_key", "")
+                    name = item.get("attribute_name", "")
+                except (AttributeError, TypeError):
+                    # 文字列だけ来た場合
+                    key = str(item) if item else ""
+                    name = self.attr_space.get_attribute_name(key) or ""
+
+                if key in self.attr_space.all_attributes:
+                    # nameが空なら辞書から補完
+                    if not name:
+                        name = self.attr_space.get_attribute_name(key) or ""
+                    results.append({"attribute_key": key, "attribute_name": name})
+                if len(results) >= max_results:
+                    break
+            return results
+        else:
+            results_keys = []
+            for item in raw_attrs:
+                key = item if isinstance(item, str) else (item.get("attribute_key", "") if isinstance(item, dict) else "")
+                if key in self.attr_space.all_attributes:
+                    results_keys.append(key)
+                if len(results_keys) >= max_results:
+                    break
+            return results_keys
+
     def suggest_attribute_adjustments_from_text(
         self,
         user_text: str,
