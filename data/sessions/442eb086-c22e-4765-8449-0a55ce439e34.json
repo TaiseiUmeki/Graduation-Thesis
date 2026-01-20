@@ -1,0 +1,102 @@
+{
+  "session_id": "442eb086-c22e-4765-8449-0a55ce439e34",
+  "created_at": "2026-01-19T15:50:41.035679",
+  "updated_at": "2026-01-19T15:53:41.304842",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_155041_2f857afc.jpg",
+  "initial_query": "機能性を高くして",
+  "query_history": [
+    "機能性を高くして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を円柱状にし、直線的に整える。トップヘビーな部分を小さくし、バランスをとる。",
+      "reasoning": "機能性を高めるためには、安定した形状が必要と考え、円柱状で均一な重心に整えることを提案。",
+      "timestamp": "2026-01-19T15:50:51.187460"
+    },
+    {
+      "id": 2,
+      "text": "エッジを立てて幾何学的にし、直角を多用することで、積み重ねやすくする。",
+      "reasoning": "幾何学的な形状にすることで、積み重ねやすさや収納性が向上するため、機能性が高まると考えた。",
+      "timestamp": "2026-01-19T15:50:51.187467"
+    },
+    {
+      "id": 3,
+      "text": "足の部分を広げてボトムヘビーにし、全体の安定性を高める。",
+      "reasoning": "機能性を高くするためには、しっかりとした土台が重要と考え、底面を拡張して安定性を向上させることを提案。",
+      "timestamp": "2026-01-19T15:50:51.187469"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 2,
+    "text": "エッジを立てて幾何学的にし、直角を多用することで、積み重ねやすくする。",
+    "reasoning": "幾何学的な形状にすることで、積み重ねやすさや収納性が向上するため、機能性が高まると考えた。",
+    "timestamp": "2026-01-19T15:50:51.187467"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:cubic": 1.0,
+      "line:straight": 0.7,
+      "line:parallel": 0.5,
+      "edge:right_angle": 1.0,
+      "balance:symmetrical": 0.7,
+      "texture:smooth": 0.5
+    }
+  },
+  "recommended_attributes": [
+    "form:cubic",
+    "line:straight",
+    "edge:right_angle",
+    "balance:symmetrical",
+    "form:assembly",
+    "form:solid",
+    "balance:flat",
+    "form:planar",
+    "line:parallel"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_155341_c058872f.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 立方体・箱型(1.00)、line: 直線的(0.70), 平行的(0.50)、edge: 直角(1.00)、balance: 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:cubic": 1.0,
+          "line:straight": 0.7,
+          "line:parallel": 0.5,
+          "edge:right_angle": 1.0,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T15:53:41.304833"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cubic": 1.0,
+          "line:straight": 0.7,
+          "line:parallel": 0.5,
+          "edge:right_angle": 1.0,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_155341_c058872f.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 立方体・箱型(1.00)、line: 直線的(0.70), 平行的(0.50)、edge: 直角(1.00)、balance: 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T15:52:38.421741",
+      "note": "root"
+    }
+  ],
+  "current_node_id": 0,
+  "next_node_id": 1
+}

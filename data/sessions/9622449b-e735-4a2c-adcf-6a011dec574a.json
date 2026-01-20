@@ -1,0 +1,189 @@
+{
+  "session_id": "9622449b-e735-4a2c-adcf-6a011dec574a",
+  "created_at": "2026-01-18T16:36:35.700540",
+  "updated_at": "2026-01-18T16:47:10.835429",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260118_163635_1cf961ad.png",
+  "initial_query": "近未来的なデザインにして",
+  "query_history": [
+    "近未来的なデザインにして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "形状を有機的曲線に変更し、エッジを角丸にして滑らかにする。表面にはエンボスを加え、未来的なパターンを施す。",
+      "reasoning": "未来的なデザインは滑らかで流線型の形状を持つことが多いため、有機的曲線と角丸エッジを採用し、エンボスによってテクスチャーに動きを加えることで、より未来的な印象を与えることができる。",
+      "timestamp": "2026-01-18T16:37:00.262087"
+    },
+    {
+      "id": 2,
+      "text": "全体のバランスを非対称にし、片側をトップヘビーに変更する。表面はリブを追加し、シャープな直線で構成する。",
+      "reasoning": "非対称性とトップヘビーなデザインは、近未来的な建築やインテリアにしばしば見られるため、ユニークな形状を実現する。リブと直線で未来的な印象を強調する。",
+      "timestamp": "2026-01-18T16:37:00.262104"
+    },
+    {
+      "id": 3,
+      "text": "形状を立方体から球状に変更し、全体を平滑なテクスチャーにする。さらに、部分的に透明な素材感を表現する。",
+      "reasoning": "球状の形状と透明感は、未来の技術や素材を想起させるため、全体が滑らかであることにより洗練された未来的なデザインを実現できる。",
+      "timestamp": "2026-01-18T16:37:00.262106"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "形状を有機的曲線に変更し、エッジを角丸にして滑らかにする。表面にはエンボスを加え、未来的なパターンを施す。",
+    "reasoning": "未来的なデザインは滑らかで流線型の形状を持つことが多いため、有機的曲線と角丸エッジを採用し、エンボスによってテクスチャーに動きを加えることで、より未来的な印象を与えることができる。",
+    "timestamp": "2026-01-18T16:37:00.262087"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "line:organic_curve": 1.0,
+      "surface:embossed": 1.0,
+      "form:shell": 0.6,
+      "edge:filleted": 0.7,
+      "texture:smooth": 0.7,
+      "form:single_mass": 0.4,
+      "balance:top_heavy": 0.7
+    }
+  },
+  "recommended_attributes": [
+    "line:organic_curve",
+    "edge:filleted",
+    "surface:embossed",
+    "texture:smooth",
+    "form:shell",
+    "line:geometric_curve",
+    "surface:convex",
+    "balance:symmetrical",
+    "line:curved",
+    "balance:slender"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260118_163843_4463e897.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。line: 有機的曲線（不規則なうねり）(1.00), 曲線的(0.50)、edge: 角丸（R加工）(1.00)、surface: エンボス（浮き出し）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "line:organic_curve": 1.0,
+          "edge:filleted": 1.0,
+          "surface:embossed": 0.7,
+          "line:curved": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-18T16:38:43.392812"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260118_163942_1c5dcfe1.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.70), 単一塊（継ぎ目なし）(0.50)、line: 有機的曲線（不規則なうねり）(1.00)、edge: 角丸（R加工）(0.70)、surface: エンボス（浮き出し）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:organic_curve": 1.0,
+          "edge:filleted": 0.7,
+          "surface:embossed": 1.0,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-18T16:39:42.501089"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260118_164710_b2c4ba42.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.60), 単一塊（継ぎ目なし）(0.40)、line: 有機的曲線（不規則なうねり）(1.00)、edge: 角丸（R加工）(0.70)、surface: エンボス（浮き出し）(1.00)、balance: トップヘビー（上部が大きい）(0.70)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "line:organic_curve": 1.0,
+          "surface:embossed": 1.0,
+          "form:shell": 0.6,
+          "edge:filleted": 0.7,
+          "texture:smooth": 0.7,
+          "form:single_mass": 0.4,
+          "balance:top_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-18T16:46:08.075302"
+        }
+      ],
+      "timestamp": "2026-01-18T16:47:10.835419"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "balance:top_heavy",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-18T16:46:08.075302"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "line:organic_curve": 1.0,
+          "edge:filleted": 1.0,
+          "surface:embossed": 0.7,
+          "line:curved": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260118_163942_1c5dcfe1.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.70), 単一塊（継ぎ目なし）(0.50)、line: 有機的曲線（不規則なうねり）(1.00)、edge: 角丸（R加工）(0.70)、surface: エンボス（浮き出し）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-18T16:37:30.043589",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "line:organic_curve": 1.0,
+          "surface:embossed": 1.0,
+          "form:shell": 0.6,
+          "edge:filleted": 0.7,
+          "texture:smooth": 0.7,
+          "form:single_mass": 0.4,
+          "balance:top_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-18T16:46:08.075302"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260118_164710_b2c4ba42.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.60), 単一塊（継ぎ目なし）(0.40)、line: 有機的曲線（不規則なうねり）(1.00)、edge: 角丸（R加工）(0.70)、surface: エンボス（浮き出し）(1.00)、balance: トップヘビー（上部が大きい）(0.70)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-18T16:46:11.193537",
+      "note": "add_constraint:balance:top_heavy"
+    }
+  ],
+  "current_node_id": 1,
+  "next_node_id": 2
+}

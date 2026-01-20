@@ -30,6 +30,7 @@ class Config:
     TEMPERATURE = 0.7  # 生成の多様性（0.0-2.0）
     MAX_TOKENS = 2000  # 最大トークン数
     NUM_INTERPRETATIONS = 3  # 解釈案の数
+    MAX_ATTRS_PER_GROUP = 5  # プロンプト内の属性グループごとの最大属性数
     
     # 画像生成設定
     IMAGE_SIZE = "1024x1024"  # 生成画像サイズ

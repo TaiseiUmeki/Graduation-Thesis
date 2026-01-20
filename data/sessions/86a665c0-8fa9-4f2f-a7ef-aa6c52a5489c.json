@@ -1,0 +1,362 @@
+{
+  "session_id": "86a665c0-8fa9-4f2f-a7ef-aa6c52a5489c",
+  "created_at": "2026-01-19T00:34:28.934741",
+  "updated_at": "2026-01-19T00:42:31.666285",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_003428_13210805.jpg",
+  "initial_query": "もふもふ椅子",
+  "query_history": [
+    "もふもふ椅子"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "椅子全体に細かい粒状のテクスチャを追加し、もふもふした感触を表現する。",
+      "reasoning": "もふもふという言葉から、柔らかくて触感がある表面を連想しました。粒状のテクスチャを加えることで、視覚的に柔らかさを表現できます。",
+      "timestamp": "2026-01-19T00:34:40.933875"
+    },
+    {
+      "id": 2,
+      "text": "椅子の背もたれと座面に有機的な曲線を加え、全体的に丸みを帯びた形状にする。",
+      "reasoning": "有機的な曲線を使うことで、自然で柔らかい印象を与えられます。丸みを帯びた形状にすることで、よりリラックスしたもふもふ感を演出できます。",
+      "timestamp": "2026-01-19T00:34:40.933887"
+    },
+    {
+      "id": 3,
+      "text": "椅子の表面にエンボス加工を施し、ふわふわした模様を浮き出させる。",
+      "reasoning": "エンボス加工により、模様が浮き出ることで視覚的にも触覚的にもふもふした印象を与えることができます。視覚的な立体感がもふもふ感を強調します。",
+      "timestamp": "2026-01-19T00:34:40.933891"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "椅子の表面にエンボス加工を施し、ふわふわした模様を浮き出させる。",
+    "reasoning": "エンボス加工により、模様が浮き出ることで視覚的にも触覚的にもふもふした印象を与えることができます。視覚的な立体感がもふもふ感を強調します。",
+    "timestamp": "2026-01-19T00:34:40.933891"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "surface:embossed": 1.0,
+      "line:organic_curve": 0.6,
+      "surface:convex": 0.47000000000000003,
+      "form:spherical": 0.63,
+      "texture:rough": 0.17,
+      "texture:smooth": 0.82
+    }
+  },
+  "recommended_attributes": [
+    "surface:embossed",
+    "texture:rough",
+    "surface:convex",
+    "line:organic_curve",
+    "texture:granular",
+    "form:solid",
+    "edge:rounded_fully",
+    "balance:wide",
+    "balance:thick",
+    "surface:ribbed"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003544_af3a2d87.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。line: 有機的曲線（不規則なうねり）(0.50)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.50)、texture: 粗面（不規則なザラつき）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "texture:rough": 0.7,
+          "line:organic_curve": 0.5,
+          "surface:convex": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T00:35:44.551663"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003813_6e903d2b.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.30)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.60)、texture: 粗面（不規則なザラつき）(0.50)。制約: 表面をもっと球体を追加して。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "texture:rough": 0.5,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.6,
+          "form:spherical": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        }
+      ],
+      "timestamp": "2026-01-19T00:38:13.818557"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003952_51a121b6.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.50)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.60)、texture: 粗面（不規則なザラつき）(0.30), 平滑（凹凸なし）(0.30)。制約: 表面をもっと球体を追加して, 表面をもっと球体を追加して。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.6,
+          "texture:rough": 0.3,
+          "form:spherical": 0.5,
+          "texture:smooth": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:38:50.087176"
+        }
+      ],
+      "timestamp": "2026-01-19T00:39:52.996309"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_004231_8c944ac2.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.63)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.47)、texture: 平滑（凹凸なし）(0.82), 粗面（不規則なザラつき）(0.17)。制約: 表面をもっと球体を追加して, 表面をもっと球体を追加して, 表面をもっと平滑な球体を追加した椅子のような何か。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.47000000000000003,
+          "form:spherical": 0.63,
+          "texture:rough": 0.17,
+          "texture:smooth": 0.82
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:38:50.087176"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと平滑な球体を追加した椅子のような何か",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:41:27.650806"
+        }
+      ],
+      "timestamp": "2026-01-19T00:42:31.666272"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "form:spherical",
+      "constraint_type": "greater_than",
+      "value": 0.3,
+      "min_value": null,
+      "max_value": null,
+      "description": "表面をもっと球体を追加して",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:37:10.772384"
+    },
+    {
+      "attribute": "texture:smooth",
+      "constraint_type": "greater_than",
+      "value": 0.3,
+      "min_value": null,
+      "max_value": null,
+      "description": "表面をもっと球体を追加して",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:38:50.087176"
+    },
+    {
+      "attribute": "texture:smooth",
+      "constraint_type": "greater_than",
+      "value": 0.6,
+      "min_value": null,
+      "max_value": null,
+      "description": "表面をもっと平滑な球体を追加した椅子のような何か",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:41:27.650806"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "texture:rough": 0.7,
+          "line:organic_curve": 0.5,
+          "surface:convex": 0.5
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003544_af3a2d87.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。line: 有機的曲線（不規則なうねり）(0.50)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.50)、texture: 粗面（不規則なザラつき）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:34:51.458886",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "texture:rough": 0.5,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.6,
+          "form:spherical": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003813_6e903d2b.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.30)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.60)、texture: 粗面（不規則なザラつき）(0.50)。制約: 表面をもっと球体を追加して。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:37:13.563411",
+      "note": "add_constraint:form:spherical"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.6,
+          "texture:rough": 0.3,
+          "form:spherical": 0.5,
+          "texture:smooth": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:38:50.087176"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_003952_51a121b6.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.50)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.60)、texture: 粗面（不規則なザラつき）(0.30), 平滑（凹凸なし）(0.30)。制約: 表面をもっと球体を追加して, 表面をもっと球体を追加して。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": true,
+      "timestamp": "2026-01-19T00:38:54.140138",
+      "note": "add_constraint:texture:smooth"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "surface:embossed": 1.0,
+          "line:organic_curve": 0.6,
+          "surface:convex": 0.47000000000000003,
+          "form:spherical": 0.63,
+          "texture:rough": 0.17,
+          "texture:smooth": 0.82
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:spherical",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:37:10.772384"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.3,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと球体を追加して",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:38:50.087176"
+        },
+        {
+          "attribute": "texture:smooth",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "表面をもっと平滑な球体を追加した椅子のような何か",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:41:27.650806"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_004231_8c944ac2.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 球状(0.63)、line: 有機的曲線（不規則なうねり）(0.60)、surface: エンボス（浮き出し）(1.00), 凸面（膨らみ）(0.47)、texture: 平滑（凹凸なし）(0.82), 粗面（不規則なザラつき）(0.17)。制約: 表面をもっと球体を追加して, 表面をもっと球体を追加して, 表面をもっと平滑な球体を追加した椅子のような何か。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:41:31.666869",
+      "note": "add_constraint:texture:smooth"
+    }
+  ],
+  "current_node_id": 3,
+  "next_node_id": 4
+}

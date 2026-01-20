@@ -1,0 +1,541 @@
+{
+  "session_id": "41e2413d-08cf-4f35-85ea-c5d4c090a4af",
+  "created_at": "2026-01-19T00:08:30.093625",
+  "updated_at": "2026-01-19T00:16:57.045207",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_000830_ebe5a02d.jpg",
+  "initial_query": "安心できる椅子",
+  "query_history": [
+    "安心できる椅子"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "背もたれと座面を一体化し、包み込むような半球形にする。",
+      "reasoning": "全体を包み込む形状は安心感を与える。半球形の背もたれは後ろに倒れる心配が少なく、安心できる印象を強調する。",
+      "timestamp": "2026-01-19T00:08:43.310482"
+    },
+    {
+      "id": 2,
+      "text": "アームレストを長くし、座面を広げてゆったりとした形にする。",
+      "reasoning": "広い座面と長いアームレストは、ゆったりと座れる印象を与え、リラックスできる。これにより、心地よさと安心感が増す。",
+      "timestamp": "2026-01-19T00:08:43.310495"
+    },
+    {
+      "id": 3,
+      "text": "椅子全体をクッション状にし、表面を柔らかい曲線で仕上げる。",
+      "reasoning": "クッションのような柔らかい表面は触覚的に安心感を与える。柔らかい曲線は視覚的にも心地よさを提供し、安心できる椅子のイメージに合致する。",
+      "timestamp": "2026-01-19T00:08:43.310500"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "椅子全体をクッション状にし、表面を柔らかい曲線で仕上げる。",
+    "reasoning": "クッションのような柔らかい表面は触覚的に安心感を与える。柔らかい曲線は視覚的にも心地よさを提供し、安心できる椅子のイメージに合致する。",
+    "timestamp": "2026-01-19T00:08:43.310500"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "edge:rounded_fully": 0.8,
+      "line:curved": 0.7,
+      "texture:smooth": 0.7,
+      "form:hollow": 0.7,
+      "balance:bottom_heavy": 0.5,
+      "surface:convex": 0.6,
+      "balance:thick": 0.5,
+      "form:single_mass": 0.3,
+      "form:spherical": 0.3
+    }
+  },
+  "recommended_attributes": [
+    "line:curved",
+    "edge:rounded_fully",
+    "texture:smooth",
+    "form:solid",
+    "balance:bottom_heavy",
+    "surface:convex",
+    "form:shell",
+    "balance:wide",
+    "line:organic_curve",
+    "form:single_mass"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001112_9532af22.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 単一塊（継ぎ目なし）(0.70), 球状(0.50)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:spherical": 0.5,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.8,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T00:11:12.229961"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001404_38965709.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 単一塊（継ぎ目なし）(0.70), 球状(0.50)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: ボトムヘビー（下部が大きい/安定）(0.70), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:spherical": 0.5,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "balance:bottom_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        }
+      ],
+      "timestamp": "2026-01-19T00:14:05.081615"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001409_27a98241.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 単一塊（継ぎ目なし）(0.70), 球状(0.50)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: ボトムヘビー（下部が大きい/安定）(0.70), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:spherical": 0.5,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "balance:bottom_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        }
+      ],
+      "timestamp": "2026-01-19T00:14:09.308882"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001633_73319b2b.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 中空（内部が空洞）(0.70), 単一塊（継ぎ目なし）(0.30), 球状(0.30)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: ボトムヘビー（下部が大きい/安定）(0.50), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.3,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "balance:bottom_heavy": 0.5,
+          "form:spherical": 0.3,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "form:hollow": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:43.351685"
+        }
+      ],
+      "timestamp": "2026-01-19T00:16:33.645530"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001656_935408de.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 中空（内部が空洞）(0.70), 単一塊（継ぎ目なし）(0.30), 球状(0.30)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.60)、balance: ボトムヘビー（下部が大きい/安定）(0.50), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:hollow": 0.7,
+          "balance:bottom_heavy": 0.5,
+          "surface:convex": 0.6,
+          "balance:thick": 0.5,
+          "form:single_mass": 0.3,
+          "form:spherical": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:43.351685"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:52.113150"
+        }
+      ],
+      "timestamp": "2026-01-19T00:16:57.045192"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "balance:bottom_heavy",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:13:01.189606"
+    },
+    {
+      "attribute": "balance:bottom_heavy",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:13:04.191219"
+    },
+    {
+      "attribute": "form:hollow",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:15:43.351685"
+    },
+    {
+      "attribute": "form:hollow",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T00:15:52.113150"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:spherical": 0.5,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.8,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001112_9532af22.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 単一塊（継ぎ目なし）(0.70), 球状(0.50)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:10:01.426690",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:spherical": 0.5,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "balance:bottom_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        }
+      ],
+      "generated_image_path": null,
+      "prompt": null,
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:13:05.770090",
+      "note": "add_constraint:balance:bottom_heavy"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.7,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:spherical": 0.5,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "balance:bottom_heavy": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001409_27a98241.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 単一塊（継ぎ目なし）(0.70), 球状(0.50)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.50)、balance: ボトムヘビー（下部が大きい/安定）(0.70), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": true,
+      "timestamp": "2026-01-19T00:13:07.523767",
+      "note": "add_constraint:balance:bottom_heavy"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "form:single_mass": 0.3,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "balance:bottom_heavy": 0.5,
+          "form:spherical": 0.3,
+          "surface:convex": 0.5,
+          "balance:thick": 0.5,
+          "form:hollow": 0.7
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:43.351685"
+        }
+      ],
+      "generated_image_path": null,
+      "prompt": null,
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:15:49.281380",
+      "note": "add_constraint:form:hollow"
+    },
+    {
+      "node_id": 4,
+      "parent_id": 3,
+      "vector": {
+        "weights": {
+          "edge:rounded_fully": 0.8,
+          "line:curved": 0.7,
+          "texture:smooth": 0.7,
+          "form:hollow": 0.7,
+          "balance:bottom_heavy": 0.5,
+          "surface:convex": 0.6,
+          "balance:thick": 0.5,
+          "form:single_mass": 0.3,
+          "form:spherical": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:01.189606"
+        },
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:13:04.191219"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:43.351685"
+        },
+        {
+          "attribute": "form:hollow",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T00:15:52.113150"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_001656_935408de.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 中空（内部が空洞）(0.70), 単一塊（継ぎ目なし）(0.30), 球状(0.30)、line: 曲線的(0.70)、edge: 全体的に丸い(0.80)、surface: 凸面（膨らみ）(0.60)、balance: ボトムヘビー（下部が大きい/安定）(0.50), 肉厚(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T00:15:55.732906",
+      "note": "add_constraint:form:hollow"
+    }
+  ],
+  "current_node_id": 4,
+  "next_node_id": 5
+}

@@ -288,225 +288,364 @@ import json
 # }
 
 # 属性グループの定義 (Refined Version)
-ATTRIBUTE_GROUPS = {
+#ATTRIBUTE_GROUPS = {
     # ---------------------------------------------------------
     # 1. MATERIAL (素材)
     # 物理的な材質。SUN AttributeのMaterialsカテゴリを拡充
     # ---------------------------------------------------------
-    "material": {
-        # Stone / Earth
-        "stone_natural": "石（天然石）",
-        "stone_marble": "石（大理石）",
-        "stone_concrete": "コンクリート",
-        "clay_terracotta": "土（素焼き/テラコッタ）",
-        "clay_ceramic": "土（陶器/セラミック）",
-        "clay_jomon": "土（縄文土器風）",
+    # "material": {
+    #     # Stone / Earth
+    #     "stone_natural": "石（天然石）",
+    #     "stone_marble": "石（大理石）",
+    #     "stone_concrete": "コンクリート",
+    #     "clay_terracotta": "土（素焼き/テラコッタ）",
+    #     "clay_ceramic": "土（陶器/セラミック）",
+    #     "clay_jomon": "土（縄文土器風）",
         
-        # Metal
-        "metal_iron": "金属（鉄/アイアン）",
-        "metal_steel": "金属（鋼/スチール）",
-        "metal_aluminum": "金属（アルミ）",
-        "metal_copper": "金属（銅）",
-        "metal_brass": "金属（真鍮）",
-        "metal_bronze": "金属（青銅/ブロンズ）",
+    #     # Metal
+    #     "metal_iron": "金属（鉄/アイアン）",
+    #     "metal_steel": "金属（鋼/スチール）",
+    #     "metal_aluminum": "金属（アルミ）",
+    #     "metal_copper": "金属（銅）",
+    #     "metal_brass": "金属（真鍮）",
+    #     "metal_bronze": "金属（青銅/ブロンズ）",
         
-        # Wood
-        "wood_solid": "木（無垢材）",
-        "wood_plywood": "木（合板）",
-        "wood_grain_visible": "木（木目強調）",
-        "wood_dark_walnut": "木（ウォルナット/暗い）",
-        "wood_light_oak": "木（オーク/明るい）",
+    #     # Wood
+    #     "wood_solid": "木（無垢材）",
+    #     "wood_plywood": "木（合板）",
+    #     "wood_grain_visible": "木（木目強調）",
+    #     "wood_dark_walnut": "木（ウォルナット/暗い）",
+    #     "wood_light_oak": "木（オーク/明るい）",
         
-        # Soft Materials
-        "leather_aged": "革（なめし革/エイジング）",
-        "leather_suede": "革（スエード/起毛）",
-        "fabric_canvas": "布（キャンバス/帆布）",
-        "fabric_linen": "布（リネン/麻）",
-        "fabric_tech": "布（テック系/ナイロン）",
+    #     # Soft Materials
+    #     "leather_aged": "革（なめし革/エイジング）",
+    #     "leather_suede": "革（スエード/起毛）",
+    #     "fabric_canvas": "布（キャンバス/帆布）",
+    #     "fabric_linen": "布（リネン/麻）",
+    #     "fabric_tech": "布（テック系/ナイロン）",
         
-        # Synthetics / Glass
-        "plastic_glossy": "プラスチック（光沢ABS）",
-        "plastic_matte": "プラスチック（梨地）",
-        "plastic_clear": "アクリル/透明樹脂",
-        "glass_clear": "ガラス（透明）",
-        "glass_frosted": "ガラス（曇り/フロスト）",
-        "resin_translucent": "樹脂（半透明）",
-        "rubber_matte": "ゴム（マット）",
+    #     # Synthetics / Glass
+    #     "plastic_glossy": "プラスチック（光沢ABS）",
+    #     "plastic_matte": "プラスチック（梨地）",
+    #     "plastic_clear": "アクリル/透明樹脂",
+    #     "glass_clear": "ガラス（透明）",
+    #     "glass_frosted": "ガラス（曇り/フロスト）",
+    #     "resin_translucent": "樹脂（半透明）",
+    #     "rubber_matte": "ゴム（マット）",
         
-        # Composites
-        "composite_carbon_fiber": "カーボンファイバー",
-        "paper_washi": "和紙",
-        "paper_cardboard": "クラフト紙/段ボール",
-    },
+    #     # Composites
+    #     "composite_carbon_fiber": "カーボンファイバー",
+    #     "paper_washi": "和紙",
+    #     "paper_cardboard": "クラフト紙/段ボール",
+    # },
 
     # ---------------------------------------------------------
     # 2. SURFACE & FINISH (表面処理)
     # ---------------------------------------------------------
-    "finish": {
-        # --- A. Reflectivity & Sheen (光沢・反射) ---
-        "polished_mirror": "鏡面仕上げ（ポリッシュ）",
-        "satin": "サテン（半光沢）",
-        "matte_smooth": "マット（平滑）",
-        "matte_rough": "マット（ザラザラ/梨地）",
-        "glowing": "発光/自己発光",
+    # "finish": {
+    #     # --- A. Reflectivity & Sheen (光沢・反射) ---
+    #     "polished_mirror": "鏡面仕上げ（ポリッシュ）",
+    #     "satin": "サテン（半光沢）",
+    #     "matte_smooth": "マット（平滑）",
+    #     "matte_rough": "マット（ザラザラ/梨地）",
+    #     "glowing": "発光/自己発光",
 
-        # --- B. Manufacturing Texture (加工痕・テクスチャ) ---
-        "brushed_hairline": "ヘアライン加工",
-        "hammered": "槌目（ハンマートーン）",
-        "cast_texture": "鋳肌（キャスト）",
-        "hand_carved": "手彫り跡/ノミ跡",
-        "3d_printed_layer": "積層痕（3Dプリント）",
+    #     # --- B. Manufacturing Texture (加工痕・テクスチャ) ---
+    #     "brushed_hairline": "ヘアライン加工",
+    #     "hammered": "槌目（ハンマートーン）",
+    #     "cast_texture": "鋳肌（キャスト）",
+    #     "hand_carved": "手彫り跡/ノミ跡",
+    #     "3d_printed_layer": "積層痕（3Dプリント）",
 
-        # --- C. Glaze & Vitreous Layers (釉薬・ガラス質・厚み) 【新規追加】 ---
-        # 陶器や琺瑯、厚みのあるコーティング表現用
-        "glazed": "施釉（釉薬仕上げ）",
-        "vitreous": "ガラス質/ビトレアス",  # 硬質で深い透明感
-        "thick_coating": "厚塗り（ぽってり感）",
-        "pooling": "液溜まり/釉溜まり",      # 凹部に液体が溜まった表現
-        "crackle": "貫入（細かいヒビ割れ）", 
+    #     # --- C. Glaze & Vitreous Layers (釉薬・ガラス質・厚み) 【新規追加】 ---
+    #     # 陶器や琺瑯、厚みのあるコーティング表現用
+    #     "glazed": "施釉（釉薬仕上げ）",
+    #     "vitreous": "ガラス質/ビトレアス",  # 硬質で深い透明感
+    #     "thick_coating": "厚塗り（ぽってり感）",
+    #     "pooling": "液溜まり/釉溜まり",      # 凹部に液体が溜まった表現
+    #     "crackle": "貫入（細かいヒビ割れ）", 
 
-        # --- D. Paint & Chemical Treatment (塗装・化学処理) ---
-        "painted_solid": "塗装（単色塗りつぶし）",
-        "painted_chipped": "塗装剥げ（チッピング）",
-        "anodized": "アルマイト処理",
-        "smoked": "燻し加工",
+    #     # --- D. Paint & Chemical Treatment (塗装・化学処理) ---
+    #     "painted_solid": "塗装（単色塗りつぶし）",
+    #     "painted_chipped": "塗装剥げ（チッピング）",
+    #     "anodized": "アルマイト処理",
+    #     "smoked": "燻し加工",
 
-        # --- E. Aging & Damage (経年変化・ダメージ) ---
-        "weathered": "風化/ウェザリング",
-        "rusted": "錆び（Rust）",
-        "patina": "緑青/経年変色",
-        "scratched": "ひっかき傷/スクラッチ",
-    },
+    #     # --- E. Aging & Damage (経年変化・ダメージ) ---
+    #     "weathered": "風化/ウェザリング",
+    #     "rusted": "錆び（Rust）",
+    #     "patina": "緑青/経年変色",
+    #     "scratched": "ひっかき傷/スクラッチ",
+    # },
 
     # ---------------------------------------------------------
     # 3. SHAPE & GEOMETRY (形状)
     # プリミティブと変形特徴
     # ---------------------------------------------------------
-    "shape": {
-        # Primitives
-        "cube_box": "箱型/立方体",
-        "cylinder": "円柱",
-        "sphere_orb": "球体",
-        "cone": "円錐",
-        "plate_flat": "板状/フラット",
-        "organic_blob": "有機的な塊",
+    # "shape": {
+    #     # Primitives
+    #     "cube_box": "箱型/立方体",
+    #     "cylinder": "円柱",
+    #     "sphere_orb": "球体",
+    #     "cone": "円錐",
+    #     "plate_flat": "板状/フラット",
+    #     "organic_blob": "有機的な塊",
         
-        # Modifiers
-        "rounded_edges": "角丸（フィレット）",
-        "chamfered_edges": "面取り（C面）",
-        "sharp_edges": "ピン角/エッジ重視",
-        "tapered": "先細り（テーパー）",
-        "slender": "細長い/スリム",
-        "chunky": "ずんぐり/塊感",
-        "hollow": "中空/空洞",
-        "perforated": "多孔/パンチング",
+    #     # Modifiers
+    #     "rounded_edges": "角丸（フィレット）",
+    #     "chamfered_edges": "面取り（C面）",
+    #     "sharp_edges": "ピン角/エッジ重視",
+    #     "tapered": "先細り（テーパー）",
+    #     "slender": "細長い/スリム",
+    #     "chunky": "ずんぐり/塊感",
+    #     "hollow": "中空/空洞",
+    #     "perforated": "多孔/パンチング",
         
-        # Complexity
-        "minimal_simple": "単純形状",
-        "complex_detailed": "複雑/ディテール過多",
-        "symmetrical": "対称（シンメトリー）",
-        "asymmetrical": "非対称（アシンメトリー）",
-        "streamlined": "流線型",
-    },
+    #     # Complexity
+    #     "minimal_simple": "単純形状",
+    #     "complex_detailed": "複雑/ディテール過多",
+    #     "symmetrical": "対称（シンメトリー）",
+    #     "asymmetrical": "非対称（アシンメトリー）",
+    #     "streamlined": "流線型",
+    # },
 
     # ---------------------------------------------------------
     # 4. COLOR & TONE (色と調子)
     # 具体的な色相と配色のルール
     # ---------------------------------------------------------
-    "color": {
-        # Temperature / Tone
-        "monochrome": "モノトーン（白黒灰）",
-        "earth_tone": "アースカラー（茶・緑・ベージュ）",
-        "pastel_tone": "パステルカラー（淡い）",
-        "vivid_neon": "ビビッド/ネオンカラー",
-        "muted_desaturated": "低彩度/くすみ色",
-        "dark_moody": "暗色/重厚",
+    # "color": {
+    #     # Temperature / Tone
+    #     "monochrome": "モノトーン（白黒灰）",
+    #     "earth_tone": "アースカラー（茶・緑・ベージュ）",
+    #     "pastel_tone": "パステルカラー（淡い）",
+    #     "vivid_neon": "ビビッド/ネオンカラー",
+    #     "muted_desaturated": "低彩度/くすみ色",
+    #     "dark_moody": "暗色/重厚",
         
-        # Specific Schemes
-        "warm_colors": "暖色系（赤・橙）",
-        "cool_colors": "寒色系（青・シアン）",
-        "metallic_silver": "シルバー系",
-        "metallic_gold": "ゴールド/真鍮系",
-        "gradient": "グラデーション",
-        "accent_color": "アクセントカラーあり",
-    },
+    #     # Specific Schemes
+    #     "warm_colors": "暖色系（赤・橙）",
+    #     "cool_colors": "寒色系（青・シアン）",
+    #     "metallic_silver": "シルバー系",
+    #     "metallic_gold": "ゴールド/真鍮系",
+    #     "gradient": "グラデーション",
+    #     "accent_color": "アクセントカラーあり",
+    # },
 
     # ---------------------------------------------------------
     # 5. FUNCTIONAL PARTS (機能部品・アフォーダンス)
     # 視覚的に機能を示唆するパーツ
     # ---------------------------------------------------------
-    "function_visual": {
-        "handle_grip": "取っ手/グリップ",
-        "knob_dial": "つまみ/ダイヤル",
-        "switch_button": "スイッチ/物理ボタン",
-        "screen_display": "画面/ディスプレイ",
-        "vent_slits": "通気口/スリット",
-        "screws_bolts": "ネジ/ボルト露出",
-        "modular_joint": "接合部/ジョイント",
-        "wheels_casters": "車輪/キャスター",
-        "hinge": "ヒンジ/蝶番",
-    },
+    # "function_visual": {
+    #     "handle_grip": "取っ手/グリップ",
+    #     "knob_dial": "つまみ/ダイヤル",
+    #     "switch_button": "スイッチ/物理ボタン",
+    #     "screen_display": "画面/ディスプレイ",
+    #     "vent_slits": "通気口/スリット",
+    #     "screws_bolts": "ネジ/ボルト露出",
+    #     "modular_joint": "接合部/ジョイント",
+    #     "wheels_casters": "車輪/キャスター",
+    #     "hinge": "ヒンジ/蝶番",
+    # },
 
     # ---------------------------------------------------------
     # 6. PATTERN & TEXTURE (柄・模様・テクスチャ)
     # ---------------------------------------------------------
-    "pattern": {
-        # --- A. Geometric & Regular (幾何学・規則的) ---
-        "stripe_vertical": "ストライプ（縦縞）",
-        "stripe_horizontal": "ボーダー（横縞）",
-        "grid_mesh": "グリッド/方眼/メッシュ",
-        "checkered": "市松模様/チェッカーフラッグ",
-        "dot_polka": "水玉（ポルカドット）",
-        "dot_halftone": "ハーフトーン（網点）",
-        "geometric_hex": "ハニカム（六角形）",
-        "geometric_triangle": "三角形パターン/ポリゴン",
-        "herringbone": "ヘリンボーン（杉綾）",
-        "chevron": "シェブロン（山型）",
-        "houndstooth": "千鳥格子",
-        "argyle": "アーガイル（ダイヤ柄）",
+    # "pattern": {
+    #     # --- A. Geometric & Regular (幾何学・規則的) ---
+    #     "stripe_vertical": "ストライプ（縦縞）",
+    #     "stripe_horizontal": "ボーダー（横縞）",
+    #     "grid_mesh": "グリッド/方眼/メッシュ",
+    #     "checkered": "市松模様/チェッカーフラッグ",
+    #     "dot_polka": "水玉（ポルカドット）",
+    #     "dot_halftone": "ハーフトーン（網点）",
+    #     "geometric_hex": "ハニカム（六角形）",
+    #     "geometric_triangle": "三角形パターン/ポリゴン",
+    #     "herringbone": "ヘリンボーン（杉綾）",
+    #     "chevron": "シェブロン（山型）",
+    #     "houndstooth": "千鳥格子",
+    #     "argyle": "アーガイル（ダイヤ柄）",
 
         # --- B. Industrial & Functional (工業的・機能的) ---
-        # 表面加工によって生まれる機能的なパターン
-        "knurling_diamond": "ローレット（綾目/ダイヤカット）",
-        "knurling_straight": "ローレット（平目/ストレート）",
-        "carbon_fiber_twill": "カーボン目（綾織）",
-        "carbon_fiber_plain": "カーボン目（平織）",
-        "perforated_hole": "パンチングメタル（丸穴）",
-        "checker_plate": "縞鋼板（チェッカープレート）",
-        "camo_military": "迷彩/カモフラージュ",
-        "camo_digital": "デジタル迷彩",
-        "circuit_board": "回路図パターン/配線",
-        "caution_stripe": "トラ柄（警戒色）",
+#         # 表面加工によって生まれる機能的なパターン
+#         "knurling_diamond": "ローレット（綾目/ダイヤカット）",
+#         "knurling_straight": "ローレット（平目/ストレート）",
+#         "carbon_fiber_twill": "カーボン目（綾織）",
+#         "carbon_fiber_plain": "カーボン目（平織）",
+#         "perforated_hole": "パンチングメタル（丸穴）",
+#         "checker_plate": "縞鋼板（チェッカープレート）",
+#         "camo_military": "迷彩/カモフラージュ",
+#         "camo_digital": "デジタル迷彩",
+#         "circuit_board": "回路図パターン/配線",
+#         "caution_stripe": "トラ柄（警戒色）",
 
-        # --- C. Organic & Natural (有機的・自然物) ---
-        "organic_wood_grain": "木目調（プリント/フェイク）",
-        "organic_marble": "マーブル/大理石模様",
-        "organic_flow": "流体/流線模様",
-        "botanical_floral": "花柄/ボタニカル",
-        "animal_leopard": "ヒョウ柄",
-        "animal_zebra": "ゼブラ柄",
-        "terrazzo_speckled": "テラゾー/人造大理石（斑点）",
-        "noise_grain": "ノイズ/砂目",
+#         # --- C. Organic & Natural (有機的・自然物) ---
+#         "organic_wood_grain": "木目調（プリント/フェイク）",
+#         "organic_marble": "マーブル/大理石模様",
+#         "organic_flow": "流体/流線模様",
+#         "botanical_floral": "花柄/ボタニカル",
+#         "animal_leopard": "ヒョウ柄",
+#         "animal_zebra": "ゼブラ柄",
+#         "terrazzo_speckled": "テラゾー/人造大理石（斑点）",
+#         "noise_grain": "ノイズ/砂目",
 
-        # --- D. Japanese Traditional (和柄) ---
-        # デザインのアクセントとして具体的な名称で定義
-        "wagara_seigaiha": "青海波（せいがいは）",
-        "wagara_asanoha": "麻の葉（あさのは）",
-        "wagara_shippo": "七宝（しっぽう）",
-        "wagara_yagasuri": "矢絣（やがすり）",
-        "wagara_ichimatsu": "市松（和風コンテキスト）",
-        "wagara_karakusa": "唐草（からくさ）",
-        "wagara_kikko": "亀甲（きっこう）",
+#         # --- D. Japanese Traditional (和柄) ---
+#         # デザインのアクセントとして具体的な名称で定義
+#         "wagara_seigaiha": "青海波（せいがいは）",
+#         "wagara_asanoha": "麻の葉（あさのは）",
+#         "wagara_shippo": "七宝（しっぽう）",
+#         "wagara_yagasuri": "矢絣（やがすり）",
+#         "wagara_ichimatsu": "市松（和風コンテキスト）",
+#         "wagara_karakusa": "唐草（からくさ）",
+#         "wagara_kikko": "亀甲（きっこう）",
 
-        # --- E. Decorative Techniques (装飾技法的な表現) ---
-        "inlay_work": "象嵌（インレイ）風",
-        "damascus_steel": "ダマスカス鋼模様",
-        "mosaic_tile": "モザイクタイル",
-        "paisley": "ペイズリー",
-        "arabesque": "アラベスク/唐草模様",
-        "gradient_fade": "グラデーション/フェード",
-        "typography_logo": "タイポグラフィ/ロゴ配置",
-    }
+#         # --- E. Decorative Techniques (装飾技法的な表現) ---
+#         "inlay_work": "象嵌（インレイ）風",
+#         "damascus_steel": "ダマスカス鋼模様",
+#         "mosaic_tile": "モザイクタイル",
+#         "paisley": "ペイズリー",
+#         "arabesque": "アラベスク/唐草模様",
+#         "gradient_fade": "グラデーション/フェード",
+#         "typography_logo": "タイポグラフィ/ロゴ配置",
+#     }
+# }
+
+# 属性グループの定義 (Univocal Geometry Version)
+# 感情語・抽象語を排除し、物理的な形状記述語のみに厳選
+ATTRIBUTE_GROUPS = {
+    # ---------------------------------------------------------
+    # 1. FORM FACTOR (基本形態)
+    # 物体の最も基礎的な構造分類
+    # ---------------------------------------------------------
+    "form": {
+        # Geometry
+        "cubic": "立方体・箱型",
+        "cylindrical": "円柱状",
+        "spherical": "球状",
+        "conical": "円錐状",
+        "planar": "板状・平面的",
+        
+        # Structure
+        "hollow": "中空（内部が空洞）",
+        "solid": "中実（内部が詰まっている）",
+        "mesh": "網状・格子状",
+        "frame": "骨組み構造",
+        "shell": "殻構造（薄い曲面）",
+        
+        # Complexity
+        "single_mass": "単一塊（継ぎ目なし）",
+        "assembly": "複合体（複数の部品の結合）",
+    },
+
+    # ---------------------------------------------------------
+    # 2. SILHOUETTE & LINE (輪郭と線)
+    # 形の印象を決定づける線の性質
+    # ---------------------------------------------------------
+    "line": {
+        # Curvature
+        "straight": "直線的",
+        "curved": "曲線的",
+        "s_curve": "S字カーブ",
+        "geometric_curve": "幾何学曲線（正確な円弧など）",
+        "organic_curve": "有機的曲線（不規則なうねり）",
+        
+        # Direction / Flow
+        "vertical": "垂直志向",
+        "horizontal": "水平志向",
+        "radial": "放射状",
+        "parallel": "平行的",
+        "tapered": "先細り（テーパー）",
+        "constricted": "くびれ",
+    },
+
+    # ---------------------------------------------------------
+    # 3. EDGE & CORNER (エッジと角)
+    # 「鋭さ」「柔らかさ」を物理的に定義する
+    # ---------------------------------------------------------
+    "edge": {
+        # Sharpness
+        "sharp_angle": "鋭角（ピン角）",
+        "right_angle": "直角",
+        "obtuse_angle": "鈍角",
+        
+        # Treatment
+        "chamfered": "面取り（平らな削ぎ）",
+        "filleted": "角丸（R加工）",
+        "rounded_fully": "全体的に丸い",
+        "knife_edge": "ナイフエッジ（先端が薄い）",
+    },
+
+    # ---------------------------------------------------------
+    # 4. SURFACE TOPOLOGY (表面の起伏)
+    # 表面がどう変形しているか
+    # ---------------------------------------------------------
+    "surface": {
+        # Protrusion (凸)
+        "convex": "凸面（膨らみ）",
+        "spiked": "棘状の突起",
+        "ribbed": "リブ（畝状の隆起）",
+        "embossed": "エンボス（浮き出し）",
+        
+        # Depression (凹)
+        "concave": "凹面（くぼみ）",
+        "dimpled": "ディンプル（えくぼ状の穴）",
+        "grooved": "溝（スリット）",
+        "perforated": "貫通穴",
+        
+        # Distortion
+        "twisted": "ねじれ",
+        "bent": "折り曲げ",
+        "warped": "歪曲",
+        "crumpled": "くしゃくしゃ（不規則な折れ）",
+    },
+
+    # ---------------------------------------------------------
+    # 5. BALANCE & PROPORTION (均衡と比率)
+    # 「安定感」「動き」を数値的に捉えられる概念に分解
+    # ---------------------------------------------------------
+    "balance": {
+        # Symmetry
+        "symmetrical": "対称（シンメトリー）",
+        "asymmetrical": "非対称（アシンメトリー）",
+        
+        # Center of Gravity
+        "top_heavy": "トップヘビー（上部が大きい）",
+        "bottom_heavy": "ボトムヘビー（下部が大きい/安定）",
+        
+        # Aspect Ratio
+        "slender": "細長比が高い（スレンダー）",
+        "wide": "幅広",
+        "flat": "扁平",
+        "thick": "肉厚",
+    },
+
+    # ---------------------------------------------------------
+    # 6. TEXTURE (触覚的テクスチャ)
+    # 視覚的な柄ではなく、触った時の物理形状
+    # ---------------------------------------------------------
+    "texture": {
+        "smooth": "平滑（凹凸なし）",
+        "rough": "粗面（不規則なザラつき）",
+        "granular": "粒状",
+        #"fibrous": "繊維状",
+        #"layered": "層状",
+        #"cracked": "ひび割れ",
+    }, 
+
+    # ---------------------------------------------------------
+    # 7. FUNCTIONAL PARTS (機能部品・アフォーダンス)
+    # 視覚的に機能を示唆するパーツ
+    # ---------------------------------------------------------
+    # "function_visual": {
+    #     "handle_grip": "取っ手/グリップ",
+    #     "knob_dial": "つまみ/ダイヤル",
+    #     "switch_button": "スイッチ/物理ボタン",
+    #     "screen_display": "画面/ディスプレイ",
+    #     "vent_slits": "通気口/スリット",
+    #     "screws_bolts": "ネジ/ボルト露出",
+    #     "modular_joint": "接合部/ジョイント",
+    #     "wheels_casters": "車輪/キャスター",
+    #     "hinge": "ヒンジ/蝶番",
+    # }
 }
 
 @dataclass

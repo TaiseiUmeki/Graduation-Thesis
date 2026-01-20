@@ -1,0 +1,165 @@
+{
+  "session_id": "f2d928d1-193b-4c40-9389-1c4de7065791",
+  "created_at": "2026-01-19T15:32:22.368613",
+  "updated_at": "2026-01-19T15:37:49.047245",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_153222_c2ad7319.jpg",
+  "initial_query": "かっこよくして",
+  "query_history": [
+    "かっこよくして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体をねじって有機的な曲線を強調する形状に変更",
+      "reasoning": "『かっこよくして』という言葉から、動きや流れを感じさせる有機的な形状がクールさを演出するため。",
+      "timestamp": "2026-01-19T15:32:37.851225"
+    },
+    {
+      "id": 2,
+      "text": "エッジを鋭角にして幾何学的な形状を強調する",
+      "reasoning": "『かっこよくして』というリクエストから、モダンでシャープな印象を与えるために鋭利なエッジを取り入れる。",
+      "timestamp": "2026-01-19T15:32:37.851239"
+    },
+    {
+      "id": 3,
+      "text": "上部を膨らませてボリューム感を持たせ、トップヘビーなバランスにする",
+      "reasoning": "『かっこよくして』という言葉から、インパクトのある存在感を演出するために、上部にボリュームを持たせた強調された形状を提案。",
+      "timestamp": "2026-01-19T15:32:37.851243"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "上部を膨らませてボリューム感を持たせ、トップヘビーなバランスにする",
+    "reasoning": "『かっこよくして』という言葉から、インパクトのある存在感を演出するために、上部にボリュームを持たせた強調された形状を提案。",
+    "timestamp": "2026-01-19T15:32:37.851243"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "balance:top_heavy": 1.0,
+      "form:cylindrical": 0.3,
+      "surface:convex": 0.5,
+      "form:conical": 0.3,
+      "form:cubic": 0.85
+    }
+  },
+  "recommended_attributes": [
+    "balance:top_heavy",
+    "form:spherical",
+    "surface:convex",
+    "form:solid",
+    "line:curved",
+    "edge:rounded_fully",
+    "form:conical",
+    "line:vertical",
+    "texture:smooth",
+    "balance:wide"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_153502_923e1dd6.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.70), 円錐状(0.50)、surface: 凸面（膨らみ）(0.70)、balance: トップヘビー（上部が大きい）(1.00)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "form:conical": 0.5,
+          "surface:convex": 0.7,
+          "balance:top_heavy": 1.0
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T15:35:02.162457"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_153748_420e2b93.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 立方体・箱型(0.85), 円柱状(0.30), 円錐状(0.30)、surface: 凸面（膨らみ）(0.50)、balance: トップヘビー（上部が大きい）(1.00)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:top_heavy": 1.0,
+          "form:cylindrical": 0.3,
+          "surface:convex": 0.5,
+          "form:conical": 0.3,
+          "form:cubic": 0.85
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:cubic",
+          "constraint_type": "greater_than",
+          "value": 0.85,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T15:36:46.302155"
+        }
+      ],
+      "timestamp": "2026-01-19T15:37:49.047226"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "form:cubic",
+      "constraint_type": "greater_than",
+      "value": 0.85,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T15:36:46.302155"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "form:conical": 0.5,
+          "surface:convex": 0.7,
+          "balance:top_heavy": 1.0
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_153502_923e1dd6.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.70), 円錐状(0.50)、surface: 凸面（膨らみ）(0.70)、balance: トップヘビー（上部が大きい）(1.00)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T15:33:56.396022",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "balance:top_heavy": 1.0,
+          "form:cylindrical": 0.3,
+          "surface:convex": 0.5,
+          "form:conical": 0.3,
+          "form:cubic": 0.85
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:cubic",
+          "constraint_type": "greater_than",
+          "value": 0.85,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T15:36:46.302155"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_153748_420e2b93.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 立方体・箱型(0.85), 円柱状(0.30), 円錐状(0.30)、surface: 凸面（膨らみ）(0.50)、balance: トップヘビー（上部が大きい）(1.00)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T15:36:52.450261",
+      "note": "add_constraint:form:cubic"
+    }
+  ],
+  "current_node_id": 1,
+  "next_node_id": 2
+}

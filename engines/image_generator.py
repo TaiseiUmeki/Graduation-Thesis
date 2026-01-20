@@ -199,7 +199,12 @@ class ImageGenerator:
     ) -> str:
         """画像生成用のプロンプトを構築"""
         prompt_parts = []
-        prompt_parts.append("参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。")
+        # --- 修正点 1: 材質保持の強力な指示を冒頭に追加 ---
+        prompt_parts.append("【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。")
+        prompt_parts.append("金属、プラスチック、木材など、他の素材への変更は禁止です。")
+        #prompt_parts.append("参照画像をベースに、材質はそのままで『形状（フォルム、凹凸、エッジ）』のみを以下の特徴に従って変形させてください。")
+        # ---------------------------------------------------
+        prompt_parts.append("参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。")
         prompt_parts.append("（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）")
         
         # 特徴ベクトルから主要な属性を抽出（負値も含める）
@@ -217,74 +222,24 @@ class ImageGenerator:
                         grouped_attrs[group_name] = []
                     grouped_attrs[group_name].append((attr_name, weight))
             
-            # グループごとに記述
+            # グループごとに記述（ATTR_SPACE.groupsの順序を保持）
             attr_descriptions = []
             
-            # 材質
-            if "material" in grouped_attrs:
-                materials = []
-                for name, weight in grouped_attrs["material"][:3]:
+            # グループの順序に従って処理
+            for group_name in self.attr_space.groups.keys():
+                if group_name not in grouped_attrs:
+                    continue
+                
+                # 属性を整形
+                attrs_formatted = []
+                for name, weight in grouped_attrs[group_name][:Config.MAX_ATTRS_PER_GROUP]:
                     if weight >= 0:
-                        materials.append(f"{name}({weight:.2f})")
+                        attrs_formatted.append(f"{name}({weight:.2f})")
                     else:
-                        materials.append(f"（{name}を避ける{weight:.2f}）")
-                if materials:
-                    attr_descriptions.append(f"材質: {', '.join(materials)}")
-            
-            # 仕上げ
-            if "finish" in grouped_attrs:
-                finishes = []
-                for name, weight in grouped_attrs["finish"][:3]:
-                    if weight >= 0:
-                        finishes.append(f"{name}({weight:.2f})")
-                    else:
-                        finishes.append(f"（{name}を避ける{weight:.2f}）")
-                if finishes:
-                    attr_descriptions.append(f"仕上げ: {', '.join(finishes)}")
-            
-            # 形状
-            if "shape" in grouped_attrs:
-                shapes = []
-                for name, weight in grouped_attrs["shape"][:3]:
-                    if weight >= 0:
-                        shapes.append(f"{name}({weight:.2f})")
-                    else:
-                        shapes.append(f"（{name}を避ける{weight:.2f}）")
-                if shapes:
-                    attr_descriptions.append(f"形状: {', '.join(shapes)}")
-            
-            # 色
-            if "color" in grouped_attrs:
-                colors = []
-                for name, weight in grouped_attrs["color"][:3]:
-                    if weight >= 0:
-                        colors.append(f"{name}({weight:.2f})")
-                    else:
-                        colors.append(f"（{name}を避ける{weight:.2f}）")
-                if colors:
-                    attr_descriptions.append(f"色: {', '.join(colors)}")
-            
-            # 機能的な見た目
-            if "function_visual" in grouped_attrs:
-                functions = []
-                for name, weight in grouped_attrs["function_visual"][:2]:
-                    if weight >= 0:
-                        functions.append(f"{name}({weight:.2f})")
-                    else:
-                        functions.append(f"（{name}を避ける{weight:.2f}）")
-                if functions:
-                    attr_descriptions.append(f"機能的要素: {', '.join(functions)}")
-            
-            # パターン・模様
-            if "pattern" in grouped_attrs:
-                patterns = []
-                for name, weight in grouped_attrs["pattern"][:2]:
-                    if weight >= 0:
-                        patterns.append(f"{name}({weight:.2f})")
-                    else:
-                        patterns.append(f"（{name}を避ける{weight:.2f}）")
-                if patterns:
-                    attr_descriptions.append(f"パターン: {', '.join(patterns)}")
+                        attrs_formatted.append(f"（{name}を避ける{weight:.2f}）")
+                
+                if attrs_formatted:
+                    attr_descriptions.append(f"{group_name}: {', '.join(attrs_formatted)}")
             
             if attr_descriptions:
                 prompt_parts.append("、".join(attr_descriptions))
@@ -294,7 +249,7 @@ class ImageGenerator:
             active_constraints = [c for c in constraints if c.is_active]
             if active_constraints:
                 constraint_texts = []
-                for c in active_constraints[-3:]:  # 直近3つまで
+                for c in active_constraints:
                     if c.description:
                         constraint_texts.append(c.description)
                 
@@ -302,7 +257,7 @@ class ImageGenerator:
                     prompt_parts.append(f"制約: {', '.join(constraint_texts)}")
         
         # プロンプトを結合
-        full_prompt = "。".join(prompt_parts) + "。高品質で詳細な3Dレンダリング。"
+        full_prompt = "。".join(prompt_parts) + "。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。"
         
         return full_prompt
     

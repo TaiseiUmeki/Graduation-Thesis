@@ -1,0 +1,446 @@
+{
+  "session_id": "db4bfe40-97a1-477e-966d-687a11899223",
+  "created_at": "2026-01-19T17:36:34.898299",
+  "updated_at": "2026-01-19T17:45:23.900248",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_173634_95fad11a.jpg",
+  "initial_query": "強そうな日本刀にして",
+  "query_history": [
+    "強そうな日本刀にして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を直線的にして刀の形状を強調する。",
+      "reasoning": "日本刀は直線的な形状が特徴であり、強さを表現するために直線を用いることが効果的だと考えました。",
+      "timestamp": "2026-01-19T17:36:46.751891"
+    },
+    {
+      "id": 2,
+      "text": "エッジを鋭角にして切れ味を表現する。",
+      "reasoning": "『強そう』という要望から、鋭いエッジが刀の切れ味や強さを視覚的に伝えると判断しました。",
+      "timestamp": "2026-01-19T17:36:46.751902"
+    },
+    {
+      "id": 3,
+      "text": "全体を薄くして、細長比を高くすることで日本刀のスタイルを強調する。",
+      "reasoning": "日本刀は細長い形状が美しさと強さを兼ね備えており、細長比を高くすることでその特徴を強調できると考えました。",
+      "timestamp": "2026-01-19T17:36:46.751906"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "全体を薄くして、細長比を高くすることで日本刀のスタイルを強調する。",
+    "reasoning": "日本刀は細長い形状が美しさと強さを兼ね備えており、細長比を高くすることでその特徴を強調できると考えました。",
+    "timestamp": "2026-01-19T17:36:46.751906"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "balance:slender": 1.0,
+      "line:straight": 0.8,
+      "edge:knife_edge": 0.8,
+      "texture:smooth": 0.7,
+      "form:assembly": 0.55,
+      "form:planar": 0.5,
+      "form:shell": 0.5,
+      "line:tapered": 0.0
+    }
+  },
+  "recommended_attributes": [
+    "form:planar",
+    "form:solid",
+    "line:straight",
+    "line:tapered",
+    "edge:sharp_angle",
+    "edge:knife_edge",
+    "surface:convex",
+    "balance:slender",
+    "texture:smooth",
+    "balance:symmetrical"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_173813_70903602.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.70), 殻構造（薄い曲面）(0.70)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:planar": 0.7,
+          "form:shell": 0.7,
+          "line:straight": 0.7,
+          "line:tapered": 0.5,
+          "edge:knife_edge": 0.7,
+          "balance:slender": 1.0,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T17:38:13.481731"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174017_4c8ebc4b.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.50), 殻構造（薄い曲面）(0.50), 立方体・箱型(0.50)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(0.80)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:slender": 0.8,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "form:cubic": 0.5,
+          "line:straight": 0.7,
+          "edge:knife_edge": 0.7,
+          "texture:smooth": 0.7,
+          "line:tapered": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:cubic",
+          "constraint_type": "greater_than",
+          "value": 0.5,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:39:09.552073"
+        }
+      ],
+      "timestamp": "2026-01-19T17:40:17.647457"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174208_e4a3e375.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.60), 板状・平面的(0.50), 殻構造（薄い曲面）(0.50)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(0.90)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:slender": 0.9,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "form:assembly": 0.6,
+          "line:straight": 0.7,
+          "edge:knife_edge": 0.7,
+          "texture:smooth": 0.7,
+          "line:tapered": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        }
+      ],
+      "timestamp": "2026-01-19T17:42:08.278467"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174338_8c6cde04.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.55), 板状・平面的(0.45), 殻構造（薄い曲面）(0.45)、line: 直線的(0.75), 先細り（テーパー）(0.20)、edge: ナイフエッジ（先端が薄い）(0.75)、balance: 細長比が高い（スレンダー）(0.95)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:slender": 0.95,
+          "line:straight": 0.75,
+          "edge:knife_edge": 0.75,
+          "texture:smooth": 0.7,
+          "form:assembly": 0.55,
+          "form:planar": 0.45,
+          "form:shell": 0.45,
+          "line:tapered": 0.2
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:42:32.797483"
+        }
+      ],
+      "timestamp": "2026-01-19T17:43:38.531902"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174523_0a7ab870.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.55), 板状・平面的(0.50), 殻構造（薄い曲面）(0.50)、line: 直線的(0.80), 先細り（テーパー）(0.00)、edge: ナイフエッジ（先端が薄い）(0.80)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:slender": 1.0,
+          "line:straight": 0.8,
+          "edge:knife_edge": 0.8,
+          "texture:smooth": 0.7,
+          "form:assembly": 0.55,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "line:tapered": 0.0
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:42:32.797483"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:44:10.862667"
+        }
+      ],
+      "timestamp": "2026-01-19T17:45:23.900236"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "form:assembly",
+      "constraint_type": "greater_than",
+      "value": 0.6,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T17:40:59.257416"
+    },
+    {
+      "attribute": "line:tapered",
+      "constraint_type": "less_than",
+      "value": 0.2,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T17:42:32.797483"
+    },
+    {
+      "attribute": "line:tapered",
+      "constraint_type": "less_than",
+      "value": 0.0,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T17:44:10.862667"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:planar": 0.7,
+          "form:shell": 0.7,
+          "line:straight": 0.7,
+          "line:tapered": 0.5,
+          "edge:knife_edge": 0.7,
+          "balance:slender": 1.0,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_173813_70903602.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.70), 殻構造（薄い曲面）(0.70)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T17:37:06.544935",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "balance:slender": 0.8,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "form:cubic": 0.5,
+          "line:straight": 0.7,
+          "edge:knife_edge": 0.7,
+          "texture:smooth": 0.7,
+          "line:tapered": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:cubic",
+          "constraint_type": "greater_than",
+          "value": 0.5,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:39:09.552073"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174017_4c8ebc4b.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.50), 殻構造（薄い曲面）(0.50), 立方体・箱型(0.50)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(0.80)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": true,
+      "timestamp": "2026-01-19T17:39:13.941009",
+      "note": "add_constraint:form:cubic"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "balance:slender": 0.9,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "form:assembly": 0.6,
+          "line:straight": 0.7,
+          "edge:knife_edge": 0.7,
+          "texture:smooth": 0.7,
+          "line:tapered": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174208_e4a3e375.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.60), 板状・平面的(0.50), 殻構造（薄い曲面）(0.50)、line: 直線的(0.70), 先細り（テーパー）(0.50)、edge: ナイフエッジ（先端が薄い）(0.70)、balance: 細長比が高い（スレンダー）(0.90)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T17:41:03.653979",
+      "note": "add_constraint:form:assembly"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "balance:slender": 0.95,
+          "line:straight": 0.75,
+          "edge:knife_edge": 0.75,
+          "texture:smooth": 0.7,
+          "form:assembly": 0.55,
+          "form:planar": 0.45,
+          "form:shell": 0.45,
+          "line:tapered": 0.2
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:42:32.797483"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174338_8c6cde04.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.55), 板状・平面的(0.45), 殻構造（薄い曲面）(0.45)、line: 直線的(0.75), 先細り（テーパー）(0.20)、edge: ナイフエッジ（先端が薄い）(0.75)、balance: 細長比が高い（スレンダー）(0.95)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T17:42:38.467478",
+      "note": "add_constraint:line:tapered"
+    },
+    {
+      "node_id": 4,
+      "parent_id": 3,
+      "vector": {
+        "weights": {
+          "balance:slender": 1.0,
+          "line:straight": 0.8,
+          "edge:knife_edge": 0.8,
+          "texture:smooth": 0.7,
+          "form:assembly": 0.55,
+          "form:planar": 0.5,
+          "form:shell": 0.5,
+          "line:tapered": 0.0
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:assembly",
+          "constraint_type": "greater_than",
+          "value": 0.6,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:40:59.257416"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:42:32.797483"
+        },
+        {
+          "attribute": "line:tapered",
+          "constraint_type": "less_than",
+          "value": 0.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T17:44:10.862667"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_174523_0a7ab870.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 複合体（複数の部品の結合）(0.55), 板状・平面的(0.50), 殻構造（薄い曲面）(0.50)、line: 直線的(0.80), 先細り（テーパー）(0.00)、edge: ナイフエッジ（先端が薄い）(0.80)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T17:44:18.251318",
+      "note": "add_constraint:line:tapered"
+    }
+  ],
+  "current_node_id": 4,
+  "next_node_id": 5
+}

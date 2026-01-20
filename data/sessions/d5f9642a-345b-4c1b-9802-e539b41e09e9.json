@@ -1,0 +1,268 @@
+{
+  "session_id": "d5f9642a-345b-4c1b-9802-e539b41e09e9",
+  "created_at": "2026-01-19T16:09:51.145571",
+  "updated_at": "2026-01-19T16:15:00.574324",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_160951_a980dd71.jpg",
+  "initial_query": "かっこよくして",
+  "query_history": [
+    "かっこよくして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を低くし、ボトムヘビーにして安定感を出す",
+      "reasoning": "『かっこよく』という言葉から、重厚で安定した形状を連想しました。低く構えて安定感を出すことで、力強い印象を与えることができます。",
+      "timestamp": "2026-01-19T16:10:07.345822"
+    },
+    {
+      "id": 2,
+      "text": "エッジを鋭角に整え、シャープな印象を持たせる",
+      "reasoning": "『かっこよく』という指示から、鋭利で洗練された形を目指しました。鋭角なエッジは、モダンで先進的な印象を与えます。",
+      "timestamp": "2026-01-19T16:10:07.345833"
+    },
+    {
+      "id": 3,
+      "text": "上部を細長く伸ばし、細長比を高くしてスレンダーにする",
+      "reasoning": "『かっこよく』という言葉から、スタイリッシュで洗練された形状を連想しました。細長くすることで、エレガントで洗練された印象を生むことができます。",
+      "timestamp": "2026-01-19T16:10:07.345836"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "上部を細長く伸ばし、細長比を高くしてスレンダーにする",
+    "reasoning": "『かっこよく』という言葉から、スタイリッシュで洗練された形状を連想しました。細長くすることで、エレガントで洗練された印象を生むことができます。",
+    "timestamp": "2026-01-19T16:10:07.345836"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "balance:bottom_heavy": 0.4,
+      "line:vertical": 0.7,
+      "line:tapered": 0.5,
+      "form:cylindrical": 0.3,
+      "texture:smooth": 0.5,
+      "balance:slender": 0.7,
+      "line:straight": 0.3,
+      "form:frame": 0.5
+    }
+  },
+  "recommended_attributes": [
+    "balance:slender",
+    "line:vertical",
+    "line:straight",
+    "form:cylindrical",
+    "form:frame",
+    "edge:sharp_angle",
+    "form:conical",
+    "line:tapered",
+    "form:shell",
+    "texture:smooth"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161150_e613c7ac.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.70)、line: 垂直志向(0.70), 先細り（テーパー）(0.50), 直線的(0.30)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "line:straight": 0.3,
+          "line:vertical": 0.7,
+          "line:tapered": 0.5,
+          "balance:slender": 1.0,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T16:11:51.002943"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161317_253386e1.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.50)、line: 垂直志向(0.70), 先細り（テーパー）(0.60), 直線的(0.30)、balance: ボトムヘビー（下部が大きい/安定）(0.70), 細長比が高い（スレンダー）(0.30)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:slender": 0.3,
+          "balance:bottom_heavy": 0.7,
+          "form:cylindrical": 0.5,
+          "line:vertical": 0.7,
+          "line:tapered": 0.6,
+          "texture:smooth": 0.5,
+          "line:straight": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:12:35.316393"
+        }
+      ],
+      "timestamp": "2026-01-19T16:13:17.817192"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161500_92226078.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 骨組み構造(0.50), 円柱状(0.30)、line: 垂直志向(0.70), 先細り（テーパー）(0.50), 直線的(0.30)、balance: 細長比が高い（スレンダー）(0.70), ボトムヘビー（下部が大きい/安定）(0.40)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "balance:bottom_heavy": 0.4,
+          "line:vertical": 0.7,
+          "line:tapered": 0.5,
+          "form:cylindrical": 0.3,
+          "texture:smooth": 0.5,
+          "balance:slender": 0.7,
+          "line:straight": 0.3,
+          "form:frame": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:12:35.316393"
+        },
+        {
+          "attribute": "form:frame",
+          "constraint_type": "greater_than",
+          "value": 0.5,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:13:56.104845"
+        }
+      ],
+      "timestamp": "2026-01-19T16:15:00.574315"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "balance:bottom_heavy",
+      "constraint_type": "greater_than",
+      "value": 0.7,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T16:12:35.316393"
+    },
+    {
+      "attribute": "form:frame",
+      "constraint_type": "greater_than",
+      "value": 0.5,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-19T16:13:56.104845"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "line:straight": 0.3,
+          "line:vertical": 0.7,
+          "line:tapered": 0.5,
+          "balance:slender": 1.0,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161150_e613c7ac.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.70)、line: 垂直志向(0.70), 先細り（テーパー）(0.50), 直線的(0.30)、balance: 細長比が高い（スレンダー）(1.00)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T16:10:38.134187",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "balance:slender": 0.3,
+          "balance:bottom_heavy": 0.7,
+          "form:cylindrical": 0.5,
+          "line:vertical": 0.7,
+          "line:tapered": 0.6,
+          "texture:smooth": 0.5,
+          "line:straight": 0.3
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:12:35.316393"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161317_253386e1.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 円柱状(0.50)、line: 垂直志向(0.70), 先細り（テーパー）(0.60), 直線的(0.30)、balance: ボトムヘビー（下部が大きい/安定）(0.70), 細長比が高い（スレンダー）(0.30)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T16:12:39.392760",
+      "note": "add_constraint:balance:bottom_heavy"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "balance:bottom_heavy": 0.4,
+          "line:vertical": 0.7,
+          "line:tapered": 0.5,
+          "form:cylindrical": 0.3,
+          "texture:smooth": 0.5,
+          "balance:slender": 0.7,
+          "line:straight": 0.3,
+          "form:frame": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:bottom_heavy",
+          "constraint_type": "greater_than",
+          "value": 0.7,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:12:35.316393"
+        },
+        {
+          "attribute": "form:frame",
+          "constraint_type": "greater_than",
+          "value": 0.5,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-19T16:13:56.104845"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161500_92226078.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 骨組み構造(0.50), 円柱状(0.30)、line: 垂直志向(0.70), 先細り（テーパー）(0.50), 直線的(0.30)、balance: 細長比が高い（スレンダー）(0.70), ボトムヘビー（下部が大きい/安定）(0.40)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T16:14:00.598697",
+      "note": "add_constraint:form:frame"
+    }
+  ],
+  "current_node_id": 2,
+  "next_node_id": 3
+}

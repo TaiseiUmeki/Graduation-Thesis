@@ -158,8 +158,8 @@ class VectorGenerator:
 
 {
   "attributes": {
-    "material:wood_oak": 0.8,
-    "shape:rounded_large": 0.6,
+        "form:cubic": 0.8,
+        "edge:filleted": 0.6,
     ...
   },
   "reasoning": "各属性を選んだ理由の簡単な説明"
@@ -189,8 +189,8 @@ class VectorGenerator:
 {{
   "related_attributes": [
     {{
-      "attribute_key": "material:wood_oak",
-      "attribute_name": "木（オーク）",
+      "attribute_key": "form:cubic",
+      "attribute_name": "立方体・箱型",
       "relevance_score": 0.9,
       "reason": "選んだ理由"
     }},

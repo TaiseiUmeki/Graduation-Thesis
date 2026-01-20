@@ -1,0 +1,109 @@
+{
+  "session_id": "3dd3fa8c-cc92-4250-bc84-f7a01299fbf6",
+  "created_at": "2026-01-19T16:16:33.382723",
+  "updated_at": "2026-01-19T16:18:21.250691",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260119_161633_2ae809db.jpg",
+  "initial_query": "かっこいい椅子にして",
+  "query_history": [
+    "かっこいい椅子にして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を曲線的にし、流線形のシルエットを持たせる。",
+      "reasoning": "『かっこいい』という言葉から、未来的で流れるようなデザインを連想し、曲線を多用した形状にすることで洗練された印象を与える。",
+      "timestamp": "2026-01-19T16:16:49.562052"
+    },
+    {
+      "id": 2,
+      "text": "背もたれを高くし、エッジを鋭角に整えてシャープな印象にする。",
+      "reasoning": "『かっこいい』という言葉から、力強さを感じさせるデザインを連想し、鋭角的なエッジと高い背もたれによって威厳と存在感を強調する。",
+      "timestamp": "2026-01-19T16:16:49.562063"
+    },
+    {
+      "id": 3,
+      "text": "脚部を細長くし、座面をボトムヘビーにして安定感を持たせる。",
+      "reasoning": "『かっこいい』という言葉から、バランスの取れたプロポーションを連想し、細長い脚部と重心の低い座面によってスタイリッシュで安定した印象を与える。",
+      "timestamp": "2026-01-19T16:16:49.562066"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "全体を曲線的にし、流線形のシルエットを持たせる。",
+    "reasoning": "『かっこいい』という言葉から、未来的で流れるようなデザインを連想し、曲線を多用した形状にすることで洗練された印象を与える。",
+    "timestamp": "2026-01-19T16:16:49.562052"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:shell": 0.7,
+      "form:single_mass": 0.5,
+      "line:curved": 1.0,
+      "line:geometric_curve": 0.7,
+      "edge:rounded_fully": 0.7,
+      "surface:convex": 0.5,
+      "balance:symmetrical": 0.5,
+      "texture:smooth": 0.7
+    }
+  },
+  "recommended_attributes": [
+    "line:curved",
+    "form:shell",
+    "form:single_mass",
+    "edge:rounded_fully",
+    "surface:convex",
+    "balance:asymmetrical",
+    "texture:smooth",
+    "line:organic_curve",
+    "form:solid",
+    "edge:filleted"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161821_51a6b2ed.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.70), 単一塊（継ぎ目なし）(0.50)、line: 曲線的(1.00), 幾何学曲線（正確な円弧など）(0.70)、edge: 全体的に丸い(0.70)、surface: 凸面（膨らみ）(0.50)、balance: 対称（シンメトリー）(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 1.0,
+          "line:geometric_curve": 0.7,
+          "edge:rounded_fully": 0.7,
+          "surface:convex": 0.5,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-19T16:18:21.250681"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 1.0,
+          "line:geometric_curve": 0.7,
+          "edge:rounded_fully": 0.7,
+          "surface:convex": 0.5,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260119_161821_51a6b2ed.png",
+      "prompt": "【最重要】参照画像の『粘土（Clay）』の材質、質感、色を厳密に維持してください。。金属、プラスチック、木材など、他の素材への変更は禁止です。。参照画像をベースに、材質はそのままで以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 殻構造（薄い曲面）(0.70), 単一塊（継ぎ目なし）(0.50)、line: 曲線的(1.00), 幾何学曲線（正確な円弧など）(0.70)、edge: 全体的に丸い(0.70)、surface: 凸面（膨らみ）(0.50)、balance: 対称（シンメトリー）(0.50)、texture: 平滑（凹凸なし）(0.70)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-19T16:17:26.427052",
+      "note": "root"
+    }
+  ],
+  "current_node_id": 0,
+  "next_node_id": 1
+}

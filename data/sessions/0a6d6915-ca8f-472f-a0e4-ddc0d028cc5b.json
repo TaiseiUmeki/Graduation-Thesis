@@ -1,7 +1,7 @@
 {
   "session_id": "0a6d6915-ca8f-472f-a0e4-ddc0d028cc5b",
   "created_at": "2026-01-12T23:18:51.045399",
-  "updated_at": "2026-01-13T01:36:30.150347",
+  "updated_at": "2026-01-13T01:54:18.994445",
   "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260112_231851_73bf3d2b.jpg",
   "initial_query": "「ガキーン!」という感じのかっこいいデザインにしたい",
   "query_history": [
@@ -95,12 +95,15 @@
     "weights": {
       "finish:polished_mirror": 0.7,
       "material:metal_aluminum": 0.5,
-      "finish:glowing": 0.5,
+      "finish:glowing": 0.9,
       "shape:sharp_edges": 0.5,
       "color:metallic_silver": 0.5,
-      "color:vivid_neon": 0.3,
-      "color:cool_colors": 0.3,
-      "pattern:camo_military": 1.0
+      "color:vivid_neon": 0.7,
+      "color:cool_colors": 0.6,
+      "pattern:camo_military": 1.0,
+      "pattern:grid_mesh": 0.6,
+      "material:metal_steel": 0.2,
+      "function_visual:screen_display": 0.5
     }
   },
   "recommended_attributes": [
@@ -132,6 +135,67 @@
       },
       "constraints": [],
       "timestamp": "2026-01-12T23:23:16.100794"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260113_013729_2ddaca29.png",
+      "prompt": "参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。材質: 金属（アルミ）(0.50)、仕上げ: 鏡面仕上げ（ポリッシュ）(0.70), 発光/自己発光(0.50)、形状: ピン角/エッジ重視(0.50)、色: シルバー系(0.50), ビビッド/ネオンカラー(0.30), 寒色系（青・シアン）(0.30)、パターン: 迷彩/カモフラージュ(1.00)。高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "finish:polished_mirror": 0.7,
+          "material:metal_aluminum": 0.5,
+          "finish:glowing": 0.5,
+          "shape:sharp_edges": 0.5,
+          "color:metallic_silver": 0.5,
+          "color:vivid_neon": 0.3,
+          "color:cool_colors": 0.3,
+          "pattern:camo_military": 1.0
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "pattern:camo_military",
+          "constraint_type": "greater_than",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-13T01:36:24.157132"
+        }
+      ],
+      "timestamp": "2026-01-13T01:37:29.317516"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260113_015418_f4a64419.png",
+      "prompt": "参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。材質: 金属（アルミ）(0.50), 金属（鋼/スチール）(0.20)、仕上げ: 発光/自己発光(0.90), 鏡面仕上げ（ポリッシュ）(0.70)、形状: ピン角/エッジ重視(0.50)、色: ビビッド/ネオンカラー(0.70), 寒色系（青・シアン）(0.60), シルバー系(0.50)、機能的要素: 画面/ディスプレイ(0.50)、パターン: 迷彩/カモフラージュ(1.00), グリッド/方眼/メッシュ(0.60)。高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "finish:polished_mirror": 0.7,
+          "material:metal_aluminum": 0.5,
+          "finish:glowing": 0.9,
+          "shape:sharp_edges": 0.5,
+          "color:metallic_silver": 0.5,
+          "color:vivid_neon": 0.7,
+          "color:cool_colors": 0.6,
+          "pattern:camo_military": 1.0,
+          "pattern:grid_mesh": 0.6,
+          "material:metal_steel": 0.2,
+          "function_visual:screen_display": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "pattern:camo_military",
+          "constraint_type": "greater_than",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-13T01:36:24.157132"
+        }
+      ],
+      "timestamp": "2026-01-13T01:54:18.994399"
     }
   ],
   "constraints": [
@@ -196,13 +260,49 @@
           "timestamp": "2026-01-13T01:36:24.157132"
         }
       ],
-      "generated_image_path": null,
-      "prompt": null,
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260113_013729_2ddaca29.png",
+      "prompt": "参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。材質: 金属（アルミ）(0.50)、仕上げ: 鏡面仕上げ（ポリッシュ）(0.70), 発光/自己発光(0.50)、形状: ピン角/エッジ重視(0.50)、色: シルバー系(0.50), ビビッド/ネオンカラー(0.30), 寒色系（青・シアン）(0.30)、パターン: 迷彩/カモフラージュ(1.00)。高品質で詳細な3Dレンダリング。",
       "is_closed": false,
       "timestamp": "2026-01-13T01:36:30.150334",
       "note": "add_constraint:pattern:camo_military"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "finish:polished_mirror": 0.7,
+          "material:metal_aluminum": 0.5,
+          "finish:glowing": 0.9,
+          "shape:sharp_edges": 0.5,
+          "color:metallic_silver": 0.5,
+          "color:vivid_neon": 0.7,
+          "color:cool_colors": 0.6,
+          "pattern:camo_military": 1.0,
+          "pattern:grid_mesh": 0.6,
+          "material:metal_steel": 0.2,
+          "function_visual:screen_display": 0.5
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "pattern:camo_military",
+          "constraint_type": "greater_than",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-13T01:36:24.157132"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260113_015418_f4a64419.png",
+      "prompt": "参照画像をベースに、以下の特徴を反映して新しい画像を生成してください。。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。材質: 金属（アルミ）(0.50), 金属（鋼/スチール）(0.20)、仕上げ: 発光/自己発光(0.90), 鏡面仕上げ（ポリッシュ）(0.70)、形状: ピン角/エッジ重視(0.50)、色: ビビッド/ネオンカラー(0.70), 寒色系（青・シアン）(0.60), シルバー系(0.50)、機能的要素: 画面/ディスプレイ(0.50)、パターン: 迷彩/カモフラージュ(1.00), グリッド/方眼/メッシュ(0.60)。高品質で詳細な3Dレンダリング。",
+      "is_closed": false,
+      "timestamp": "2026-01-13T01:53:12.494148",
+      "note": "fuzzy:もっとサイバーに"
     }
   ],
-  "current_node_id": 1,
-  "next_node_id": 2
+  "current_node_id": 2,
+  "next_node_id": 3
 }
