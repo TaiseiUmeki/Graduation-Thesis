@@ -48,6 +48,79 @@ class VectorGenerator:
         vector = self._parse_vector_response(response)
         
         return vector
+
+    def generate_from_text(
+        self,
+        text: str,
+        concept: Optional[str] = None,
+        max_attrs: int = 8
+    ) -> AttributeVector:
+        """
+        解釈を介さず自由テキストから部分編集向けのベクトルを生成（ゼロベクトル起点）
+        - 既存の属性カタログに限定し、関連する少数属性のみを選ぶ
+        Args:
+            text: ユーザー入力テキスト（部位名や意図を含めても良い）
+            concept: モチーフ（文脈付与用）
+            max_attrs: 最大属性数
+        Returns:
+            部分編集用のAttributeVector
+        """
+        # まずテキストから関連属性キーを抽出
+        related_keys = self.map_text_to_attributes(text, max_results=max_attrs, return_expanded=False) or []
+
+        # 抽出された属性のみに対して重みを付与するJSON出力を促す
+        catalog_lines = []
+        for key in related_keys:
+            name = self.attr_space.get_attribute_name(key) or key
+            catalog_lines.append(f"  {key} = {name}")
+        catalog_text = "\n".join(catalog_lines) or "  (none)"
+
+        system_prompt = (
+            "あなたは部分編集用の属性重みを決めるアシスタントです。"
+            "与えられた候補属性のみを使い、-1.0～1.0の範囲で少数の重みを設定してください。"
+            "重みはテキスト意図に基づき、必要最小限のみ非ゼロにしてください。"
+        )
+
+        user_prompt = f"""
+対象コンセプト: {concept or '(未指定)'}
+ユーザー意図テキスト: "{text}"
+
+候補属性（既存カタログから抽出済み）:
+{catalog_text}
+
+JSON形式で返してください:
+{{
+  "attributes": {{
+    "group:key": 0.6,
+    ... (候補属性のみに限定)
+  }},
+  "reasoning": "なぜその属性を選んだかの短い説明"
+}}
+"""
+
+        response = self.client.generate_with_json_response(
+            user_prompt,
+            system_prompt=system_prompt
+        )
+
+        vector = self._parse_vector_response(response)
+        return vector
+
+    def generate_global_from_image(
+        self,
+        image_path: str,
+        concept: Optional[str] = None
+    ) -> AttributeVector:
+        """
+        画像分析からグローバルベクトルを生成（Phase AのRoot向け）
+        - 画像をVisionで分析し、その説明テキストから属性重みを作成
+        """
+        analysis_prompt = """この画像の粘土物体について、形状・エッジ・輪郭・材質に関する要点を簡潔に記述してください。
+（例: 角張り/丸み、直線/曲線、対称性、粗い/滑らか など）"""
+        description = self.client.analyze_image_with_text(image_path, analysis_prompt)
+
+        # 説明テキストから属性ベクトル（重要属性のみ）
+        return self.generate_from_text(text=description, concept=concept, max_attrs=10)
     
     def find_related_attributes(
         self,

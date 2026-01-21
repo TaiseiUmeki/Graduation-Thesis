@@ -22,7 +22,8 @@ class QueryInterpreter:
         query: str,
         num_interpretations: int = None,
         context_image_path: Optional[str] = None,
-        previous_interpretations: Optional[List[Interpretation]] = None
+        previous_interpretations: Optional[List[Interpretation]] = None,
+        concept: Optional[str] = None
     ) -> List[Interpretation]:
         """
         クエリから複数の解釈案を生成
@@ -39,13 +40,14 @@ class QueryInterpreter:
         num_interpretations = num_interpretations or Config.NUM_INTERPRETATIONS
         
         # システムプロンプトの構築
-        system_prompt = self._build_system_prompt()
+        system_prompt = self._build_system_prompt(concept)
         
         # ユーザープロンプトの構築
         user_prompt = self._build_user_prompt(
             query,
             num_interpretations,
-            previous_interpretations
+            previous_interpretations,
+            concept
         )
         
         # 画像がある場合は画像付きで解釈
@@ -65,7 +67,7 @@ class QueryInterpreter:
         
         return interpretations
     
-    def _build_system_prompt(self) -> str:
+    def _build_system_prompt(self, concept: Optional[str] = None) -> str:
         """システムプロンプトを構築"""
         # 属性グループの情報を追加
         attr_groups_info = []
@@ -74,6 +76,8 @@ class QueryInterpreter:
             attr_groups_info.append(f"- {group_name}: {', '.join(attr_list)}など")
         
         attr_groups_text = "\n".join(attr_groups_info)
+
+        concept_line = "" if not concept else f"対象物: {concept}（ユーザー入力のモチーフ。形状のみを幾何学的に変更）\n"
         
 #         return f"""あなたは創作活動を支援するアシスタントです。
 # ユーザーは粘土で作った中間生成物の画像を提供し、それをどのように変化させたいかをクエリで伝えます。
@@ -90,7 +94,8 @@ class QueryInterpreter:
 # 異なる視点や解釈の幅を持たせて、ユーザーが選びやすい選択肢を提供してください。
 # """
         return f"""あなたはデザインの専門家であり、創作活動を支援するアシスタントです。
-ユーザーは粘土で作った中間生成物の画像を提供し、それを「形状として」どう変化させたいかをクエリで伝えます。
+    ユーザーは粘土で作った中間生成物の画像を提供し、それを「形状として」どう変化させたいかをクエリで伝えます。
+    {concept_line}
 
 あなたの役割は、ユーザーのクエリを解釈し、形状操作に関する複数の異なる解釈案を提示することです。
 
@@ -117,10 +122,14 @@ class QueryInterpreter:
         self,
         query: str,
         num_interpretations: int,
-        previous_interpretations: Optional[List[Interpretation]] = None
+        previous_interpretations: Optional[List[Interpretation]] = None,
+        concept: Optional[str] = None
     ) -> str:
         """ユーザープロンプトを構築"""
-        prompt_parts = [f"ユーザーのクエリ: {query}"]
+        prompt_parts = []
+        if concept:
+            prompt_parts.append(f"対象物（ユーザー入力）: {concept}")
+        prompt_parts.append(f"ユーザーのクエリ: {query}")
         
         if previous_interpretations:
             prompt_parts.append("\n過去の解釈案:")
@@ -198,6 +207,69 @@ class QueryInterpreter:
                         break
             
             return interpretations
+    
+    def analyze_concept(
+        self,
+        image_path: str,
+        user_hint: Optional[str] = None
+    ) -> dict:
+        """
+        画像から物体のコンセプトを特定
+        
+        Args:
+            image_path: 分析する画像のパス
+            user_hint: ユーザーからのヒント（任意）
+        
+        Returns:
+            {
+                "concept_en": "Tank",
+                "concept_ja": "戦車",
+                "reasoning": "分析の根拠"
+            }
+        """
+        prompt = """この画像に写っている物体が何であるかを特定してください。
+
+以下のJSON形式で回答してください：
+{
+  "concept_en": "英語の物体名（単数形、画像生成プロンプト用）",
+  "concept_ja": "日本語の物体名",
+  "reasoning": "この判断に至った根拠"
+}
+
+例：
+- 戦車のような形をしている → {"concept_en": "Tank", "concept_ja": "戦車", "reasoning": "砲塔と履帯のような構造から"}
+- 椅子のような形 → {"concept_en": "Chair", "concept_ja": "椅子", "reasoning": "座面と背もたれが確認できるため"}
+"""
+        
+        if user_hint:
+            prompt += f"\n\nユーザーからのヒント: {user_hint}"
+        
+        response = self.client.analyze_image_with_text(image_path, prompt)
+        
+        # JSONをパース
+        try:
+            if "```json" in response:
+                json_start = response.find("```json") + 7
+                json_end = response.find("```", json_start)
+                json_text = response[json_start:json_end].strip()
+            elif "```" in response:
+                json_start = response.find("```") + 3
+                json_end = response.find("```", json_start)
+                json_text = response[json_start:json_end].strip()
+            else:
+                json_text = response
+            
+            result = json.loads(json_text)
+            return result
+        except Exception as e:
+            print(f"警告: JSON解析に失敗しました: {e}")
+            print(f"レスポンス: {response}")
+            # フォールバック
+            return {
+                "concept_en": "Object",
+                "concept_ja": "物体",
+                "reasoning": "自動判定に失敗しました"
+            }
     
     def refine_query(
         self,

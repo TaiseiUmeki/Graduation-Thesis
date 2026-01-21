@@ -22,7 +22,8 @@ def example_basic_flow():
     print("\n### フェーズA: 入力 ###")
     session = system.start_session(
         image_path="data/images/original_tank.jpg",  # 粘土の画像パス
-        query="和風なデザインにしたい"
+        query="和風なデザインにしたい",
+        concept="tank"
     )
     
     # フェーズB: クエリ解釈
@@ -72,7 +73,16 @@ def example_with_constraints():
     # ここでは新しくシステムを作成
     system = TrueCodingSystem()
     
-    # ... フェーズA〜Dを実行済みと仮定 ...
+    # フェーズA〜Dを簡易的に実行
+    system.start_session(
+        image_path="data/images/original_car.jpg",
+        query="未来的で流線型のデザインにしたい",
+        concept="car"
+    )
+    system.interpret_query(use_image_context=True)
+    system.select_interpretation(interpretation_id=1)
+    system.generate_vector()
+    system.generate_image()
     
     print("\n### 1回目の制約追加 ###")
     # オーク材の特徴をもっと強く
@@ -118,7 +128,8 @@ def example_query_refinement():
     # フェーズA
     session = system.start_session(
         image_path="path/to/clay_object.jpg",
-        query="もっとかっこよくしたい"  # 曖昧なクエリ
+        query="もっとかっこよくしたい",  # 曖昧なクエリ
+        concept="object"
     )
     
     # フェーズB: 最初の解釈
@@ -150,14 +161,21 @@ def example_query_refinement():
 
 
 def example_attribute_exploration():
-    """推薦された属性を探索する例"""
     print("\n" + "=" * 70)
     print("例4: 属性の探索")
     print("=" * 70)
     
     system = TrueCodingSystem()
     
-    # ... フェーズA〜Cを実行済みと仮定 ...
+    # フェーズA〜Cを実行
+    system.start_session(
+        image_path="path/to/clay_object.jpg",
+        query="属性を探索したい",
+        concept="object"
+    )
+    system.interpret_query()
+    system.select_interpretation(interpretation_id=1)
+    system.generate_vector()
     
     # 推薦属性を確認
     if system.session and system.session.recommended_attributes:
@@ -194,7 +212,8 @@ def example_session_management():
     # セッション開始
     session = system.start_session(
         image_path="path/to/clay_object.jpg",
-        query="テスト"
+        query="テスト",
+        concept="object"
     )
     
     # セッション情報の確認
@@ -236,7 +255,8 @@ def example_complete_workflow():
     # 1. セッション開始
     session = system.start_session(
         image_path="path/to/your/clay_image.jpg",
-        query="木製で柔らかい印象の花瓶にしたい"
+        query="木製で柔らかい印象の花瓶にしたい",
+        concept="vase"
     )
     
     # 2. クエリ解釈

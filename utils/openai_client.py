@@ -184,6 +184,45 @@ class OpenAIClient:
             "revised_prompt": response.data[0].revised_prompt or prompt
         }
     
+    def inpaint_image(
+        self,
+        image_path: str,
+        mask_path: str,
+        prompt: str,
+        size: Optional[str] = None,
+        model: str = "gpt-image-1"
+    ) -> Dict[str, Optional[str]]:
+        """
+        画像のインペインティング（マスク領域の編集）
+        
+        Args:
+            image_path: 元画像のパス
+            mask_path: マスク画像のパス（白い部分が編集対象）
+            prompt: 編集指示
+            size: 画像サイズ
+            model: モデル名（デフォルト: gpt-image-1）
+        
+        Returns:
+            {"url": 画像URL, "b64_json": Base64画像, "revised_prompt": 改訂されたプロンプト}
+        """
+        size = size or Config.IMAGE_SIZE
+        
+        with open(image_path, "rb") as image_file, open(mask_path, "rb") as mask_file:
+            response = self.client.images.edit(
+                model=model,
+                image=image_file,
+                mask=mask_file,
+                prompt=prompt,
+                size=size,
+                n=1
+            )
+        
+        return {
+            "url": getattr(response.data[0], "url", None),
+            "b64_json": getattr(response.data[0], "b64_json", None),
+            "revised_prompt": response.data[0].revised_prompt or prompt
+        }
+    
     def edit_image(
         self,
         image_path: str,

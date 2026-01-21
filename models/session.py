@@ -18,10 +18,13 @@ class ExplorationNode:
     """探索木のノードを表すクラス"""
     node_id: int
     parent_id: Optional[int]
-    vector: AttributeVector
+    vector: AttributeVector  # Globalベクトル
+    partial_vector: Optional[AttributeVector] = None  # 部分編集用ベクトル
     constraints: List['Constraint']
     generated_image_path: Optional[str] = None
     prompt: Optional[str] = None
+    mask_image_path: Optional[str] = None  # 部分編集に使用したマスク
+    target_part_name: Optional[str] = None  # 編集対象の部位名
     is_closed: bool = False
     timestamp: datetime = field(default_factory=datetime.now)
     note: str = ""
@@ -31,9 +34,12 @@ class ExplorationNode:
             "node_id": self.node_id,
             "parent_id": self.parent_id,
             "vector": self.vector.to_dict(),
+            "partial_vector": self.partial_vector.to_dict() if self.partial_vector else None,
             "constraints": [c.to_dict() for c in self.constraints],
             "generated_image_path": self.generated_image_path,
             "prompt": self.prompt,
+            "mask_image_path": self.mask_image_path,
+            "target_part_name": self.target_part_name,
             "is_closed": self.is_closed,
             "timestamp": self.timestamp.isoformat(),
             "note": self.note,
@@ -45,9 +51,12 @@ class ExplorationNode:
             node_id=data["node_id"],
             parent_id=data.get("parent_id"),
             vector=AttributeVector.from_dict(data["vector"]),
+            partial_vector=AttributeVector.from_dict(data["partial_vector"]) if data.get("partial_vector") else None,
             constraints=[Constraint.from_dict(c) for c in data.get("constraints", [])],
             generated_image_path=data.get("generated_image_path"),
             prompt=data.get("prompt"),
+            mask_image_path=data.get("mask_image_path"),
+            target_part_name=data.get("target_part_name"),
             is_closed=data.get("is_closed", False),
             timestamp=datetime.fromisoformat(data["timestamp"]),
             note=data.get("note", ""),
@@ -101,6 +110,7 @@ class Session:
         # フェーズA: 入力
         self.initial_image_path: Optional[str] = None
         self.initial_query: Optional[str] = None
+        self.concept: Optional[str] = None  # 物体のコンセプト（例: "Tank", "Chair"）
         
         # フェーズB: クエリ解釈
         self.query_history: List[str] = []  # クエリの履歴
@@ -159,13 +169,16 @@ class Session:
         self.generated_images.append(image)
         self.updated_at = datetime.now()
 
-    def add_root_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "") -> int:
+    def add_root_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None) -> int:
         """探索木のルートノードを追加"""
         node = ExplorationNode(
             node_id=self._next_node_id,
             parent_id=None,
             vector=self._clone_vector(vector),
+            partial_vector=self._clone_vector(partial_vector) if partial_vector else None,
             constraints=self._clone_constraints(constraints),
+            mask_image_path=mask_image_path,
+            target_part_name=target_part_name,
             note=note,
         )
         self.exploration_nodes.append(node)
@@ -174,13 +187,16 @@ class Session:
         self.updated_at = datetime.now()
         return node.node_id
 
-    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "") -> int:
+    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None) -> int:
         """現在のノードの子ノードを追加"""
         node = ExplorationNode(
             node_id=self._next_node_id,
             parent_id=self.current_node_id,
             vector=self._clone_vector(vector),
+            partial_vector=self._clone_vector(partial_vector) if partial_vector else None,
             constraints=self._clone_constraints(constraints),
+            mask_image_path=mask_image_path,
+            target_part_name=target_part_name,
             note=note,
         )
         self.exploration_nodes.append(node)
@@ -267,6 +283,7 @@ class Session:
             "updated_at": self.updated_at.isoformat(),
             "initial_image_path": self.initial_image_path,
             "initial_query": self.initial_query,
+            "concept": self.concept,
             "query_history": self.query_history,
             "interpretations": [i.to_dict() for i in self.interpretations],
             "selected_interpretation": self.selected_interpretation.to_dict() if self.selected_interpretation else None,
@@ -296,6 +313,7 @@ class Session:
         session = cls(session_id=data["session_id"])
         session.created_at = datetime.fromisoformat(data["created_at"])
         session.updated_at = datetime.fromisoformat(data["updated_at"])
+        session.concept = data.get("concept")
         session.initial_image_path = data.get("initial_image_path")
         session.initial_query = data.get("initial_query")
         session.query_history = data.get("query_history", [])

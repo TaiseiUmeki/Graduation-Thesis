@@ -8,6 +8,8 @@ from typing import List, Tuple
 
 import streamlit as st
 import pandas as pd
+import numpy as np
+from PIL import Image, ImageOps
 
 # APIキー設定（最初にチェック）
 if not os.getenv("OPENAI_API_KEY"):
@@ -97,6 +99,9 @@ if "system" not in st.session_state:
     st.session_state.selected_interpretation_id = None
     st.session_state.analysis_text = ""
     st.session_state.search_results = []
+    # Phase A用の追加状態
+    st.session_state.uploaded_image_path = None
+    st.session_state.synthesis_result_path = None
 
 system: TrueCodingSystem = st.session_state.system
 phase: str = st.session_state.phase
@@ -108,24 +113,279 @@ st.title(" 梅木卒論 実験用GUI")
 # ========== Phase A: 初期入力 ==========
 if phase == "A":
     st.sidebar.subheader("Phase A: 初期入力")
-    up = st.sidebar.file_uploader("粘土画像をアップロード", type=["png", "jpg", "jpeg"]) 
-    query = st.sidebar.text_input("初期の意図（クエリ）", value="")
-    start_clicked = st.sidebar.button("セッション開始", type="primary")
-
-    if start_clicked:
-        if not up or not query.strip():
-            st.sidebar.error("画像とクエリを入力してください")
-        else:
+    
+    # タブ構成: 通常 / 部分編集 / 合成
+    input_tab1, input_tab2, input_tab3 = st.tabs(["📤 通常モード", "✂️ 部分編集モード", "🔨 合成モード"])
+    
+    # --- タブ1: 通常アップロード ---
+    with input_tab1:
+        st.subheader("画像をアップロード")
+        up = st.file_uploader("粘土画像をアップロード", type=["png", "jpg", "jpeg"], key="normal_uploader")
+        
+        if up:
             img_path = _save_uploaded_image(up, prefix="initial")
-            try:
-                system.start_session(image_path=img_path, query=query.strip())
-                st.session_state.phase = "B"
-                st.session_state.interpretations = []
-                st.rerun()
-            except Exception as e:
-                st.sidebar.error(f"開始に失敗: {e}")
+            st.session_state.uploaded_image_path = img_path
+            st.image(img_path, caption="アップロードされた画像", use_column_width=True)
 
-    st.info("サイドバーから画像とクエリを入力し、セッションを開始してください。")
+    # --- タブ2: 部分編集モード ---
+    with input_tab2:
+        st.subheader("部分編集（インペインティング）")
+        try:
+            from streamlit_drawable_canvas import st_canvas
+            part_up = st.file_uploader("編集対象の画像をアップロード", type=["png", "jpg", "jpeg"], key="partial_uploader")
+            if part_up:
+                base_path = _save_uploaded_image(part_up, prefix="partial_base")
+                st.image(base_path, caption="編集対象の画像", use_column_width=True)
+
+                st.markdown("#### 編集領域をマスクで指定")
+                st.caption("赤色で編集したい領域を塗りつぶしてください（透明が編集対象）")
+                base_img = Image.open(base_path)
+                canvas_width = min(base_img.width, 800)
+                canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                canvas_result = st_canvas(
+                    fill_color="rgba(255, 0, 0, 0.3)",
+                    stroke_width=20,
+                    stroke_color="#FF0000",
+                    background_image=base_img,
+                    height=canvas_height,
+                    width=canvas_width,
+                    drawing_mode="freedraw",
+                    key="partial_canvas",
+                )
+
+                colp1, colp2, colp3 = st.columns([1,1,1])
+                concept_partial = colp1.text_input("モチーフ (例: tank)", value="")
+                target_name = colp2.text_input("部位名 (例: turret)", value="")
+                partial_query = colp3.text_input("編集意図（クエリ）", value="")
+
+                if st.button("部分編集を実行", type="primary", key="partial_run"):
+                    if not (concept_partial.strip() and target_name.strip() and partial_query.strip()):
+                        st.warning("モチーフ・部位名・編集意図を入力してください")
+                    elif canvas_result.image_data is None:
+                        st.warning("マスクを描画してください")
+                    else:
+                        with st.spinner("Root作成と部分編集を実行中..."):
+                            # 透過マスク生成（描画部分=透明）
+                            mask_data = canvas_result.image_data
+                            alpha_channel = mask_data[:, :, 3]
+                            mask_bool = alpha_channel > 0
+                            mask_uint8 = mask_bool.astype(np.uint8) * 255
+                            temp_mask = Image.fromarray(mask_uint8, mode="L").resize(base_img.size, Image.Resampling.NEAREST)
+                            final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
+                            mask_alpha = ImageOps.invert(temp_mask)
+                            final_mask.putalpha(mask_alpha)
+                            mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                            final_mask.save(mask_path)
+
+                            # セッション開始（初期画像はそのまま）
+                            try:
+                                system.start_session(
+                                    image_path=base_path,
+                                    query=partial_query.strip(),
+                                    concept=concept_partial.strip()
+                                )
+                            except Exception as e:
+                                st.error(f"セッション開始に失敗: {e}")
+                                st.stop()
+
+                            # Rootノード（グローバルベクトル）を画像分析から生成
+                            try:
+                                global_vec = system.vector_generator.generate_global_from_image(base_path, concept=concept_partial.strip())
+                                system.session.set_vector(global_vec)
+                                system.session.add_root_node(global_vec, system.session.constraints, note="root")
+                            except Exception as e:
+                                st.error(f"グローバルベクトル生成に失敗: {e}")
+                                st.stop()
+
+                            # 部分ベクトルをテキストから生成
+                            try:
+                                part_text = f"{target_name}: {partial_query}"
+                                partial_vec = system.vector_generator.generate_from_text(part_text, concept=concept_partial.strip(), max_attrs=8)
+                            except Exception as e:
+                                st.error(f"部分ベクトル生成に失敗: {e}")
+                                st.stop()
+
+                            # インペインティングで部分編集
+                            try:
+                                result_path = system.image_generator.generate_part_from_vector(
+                                    base_image_path=base_path,
+                                    mask_path=str(mask_path),
+                                    partial_vector=partial_vec,
+                                    concept=concept_partial.strip(),
+                                    target_part_name=target_name.strip()
+                                )
+                            except Exception as e:
+                                st.error(f"部分編集に失敗: {e}")
+                                st.stop()
+
+                            # 子ノード作成（partial情報付き）
+                            try:
+                                from models.session import GeneratedImage
+                                system.session.add_child_node(
+                                    vector=global_vec,
+                                    constraints=system.session.constraints,
+                                    note=f"partial_edit:{target_name}",
+                                    partial_vector=partial_vec,
+                                    mask_image_path=str(mask_path),
+                                    target_part_name=target_name.strip()
+                                )
+                                system.session.update_current_node_image(result_path)
+                                system.session.add_generated_image(
+                                    GeneratedImage(image_path=result_path, prompt="partial_edit", vector=partial_vec, constraints=system.session.constraints)
+                                )
+                                st.success("部分編集を完了しました！")
+                                st.image(result_path, caption="部分編集結果", use_column_width=True)
+                                st.session_state.phase = "D"
+                                st.rerun()
+                            except Exception as e:
+                                st.error(f"ノード作成に失敗: {e}")
+        except ImportError:
+            st.error("streamlit-drawable-canvas がインストールされていません。")
+            st.code("pip install streamlit-drawable-canvas")
+    
+    # --- タブ3: 合成モード ---
+    with input_tab3:
+        st.subheader("粘土パーツを合成")
+        
+        try:
+            from streamlit_drawable_canvas import st_canvas
+            
+            synthesis_up = st.file_uploader(
+                "合成元画像をアップロード",
+                type=["png", "jpg", "jpeg"],
+                key="synthesis_uploader"
+            )
+            
+            if synthesis_up:
+                synthesis_base_path = _save_uploaded_image(synthesis_up, prefix="synthesis_base")
+                st.image(synthesis_base_path, caption="合成元画像", use_column_width=True)
+                
+                st.markdown("#### 結合位置をマスクで指定")
+                st.caption("赤色で結合したい領域を塗りつぶしてください")
+                
+                # Canvas for drawing mask
+                from PIL import Image
+                base_img = Image.open(synthesis_base_path)
+                canvas_width = min(base_img.width, 800)
+                canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                
+                canvas_result = st_canvas(
+                    fill_color="rgba(255, 0, 0, 0.3)",
+                    stroke_width=20,
+                    stroke_color="#FF0000",
+                    background_image=base_img,
+                    height=canvas_height,
+                    width=canvas_width,
+                    drawing_mode="freedraw",
+                    key="canvas",
+                )
+                
+                synthesis_instruction = st.text_input(
+                    "結合指示",
+                    value="右のパーツを砲台として結合して",
+                    key="synthesis_instruction"
+                )
+                
+                if st.button("合成実行", type="primary", key="synthesis_btn"):
+                    if canvas_result.image_data is not None:
+                        with st.spinner("粘土パーツを合成中..."):
+                            # マスク画像を透過形式で作成（mask_editor_sample.py の処理を参照）
+                            # 1. キャンバスの描画データ（RGBA）を取得
+                            mask_data = canvas_result.image_data
+                            
+                            # 2. アルファチャンネル(A)だけを取り出す
+                            alpha_channel = mask_data[:, :, 3]
+                            
+                            # 3. ブール配列（True=描画した場所、False=描画してない場所）を作成
+                            mask_bool = alpha_channel > 0
+                            
+                            # 4. 白黒マスク（Lモード）を一時的に作成
+                            mask_uint8 = mask_bool.astype(np.uint8) * 255
+                            temp_mask = Image.fromarray(mask_uint8, mode="L")
+                            
+                            # 5. 元の画像サイズにリサイズ（キャンバスの縮小表示対策）
+                            temp_mask = temp_mask.resize(base_img.size, Image.Resampling.NEAREST)
+                            
+                            # 6. 【重要】API送信用に「透過マスク」を作成する
+                            # ゴール: 描画した場所 = 透明 (Alpha 0), 背景 = 黒 (Alpha 255)
+                            
+                            # まず、全体が「不透明な黒」の画像を作る
+                            final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
+                            
+                            # さきほど作った白黒マスクを反転させる (白->黒(0), 黒->白(255))
+                            # これで「描画した場所が0(透明)」「背景が255(不透明)」のアルファ用データができる
+                            mask_alpha = ImageOps.invert(temp_mask)
+                            
+                            # 作成したアルファ用データを、黒画像に適用する
+                            final_mask.putalpha(mask_alpha)
+                            
+                            # 透過マスクを保存
+                            mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                            final_mask.save(mask_path)
+                            
+                            try:
+                                # 合成実行
+                                result_path = system.image_generator.generate_synthesis(
+                                    synthesis_base_path,
+                                    str(mask_path),
+                                    synthesis_instruction
+                                )
+                                st.session_state.synthesis_result_path = result_path
+                                st.success("合成が完了しました！")
+                                st.image(result_path, caption="合成結果", use_column_width=True)
+                                
+                                if st.button("この画像を使用", key="use_synthesis"):
+                                    st.session_state.uploaded_image_path = result_path
+                                    st.success("合成画像を入力画像として設定しました")
+                            except Exception as e:
+                                st.error(f"合成に失敗: {e}")
+                    else:
+                        st.warning("マスクを描画してください")
+        
+        except ImportError:
+            st.error("streamlit-drawable-canvas がインストールされていません。")
+            st.code("pip install streamlit-drawable-canvas")
+    
+    # --- モチーフ（Concept）とクエリ入力 ---
+    st.markdown("---")
+    st.subheader("モチーフと意図を入力")
+    
+    final_image_path = st.session_state.uploaded_image_path
+    
+    if final_image_path:
+        st.image(final_image_path, caption="使用する画像", width=300)
+        
+        col_concept, col_query = st.columns(2)
+        concept = col_concept.text_input(
+            "これ（モチーフ）は何ですか？（必須）",
+            value="",
+            placeholder="Tank, Vase, Chair ...",
+            help="英語の単数形を推奨します (例: Tank, Vase, Chair)"
+        )
+        query = col_query.text_input(
+            "デザインの意図（クエリ）",
+            value="",
+            placeholder="角張った未来的なフォルムにして"
+        )
+        
+        if st.button("セッション開始", type="primary", key="start_session_btn"):
+            if concept.strip() and query.strip():
+                try:
+                    system.start_session(
+                        image_path=final_image_path,
+                        query=query.strip(),
+                        concept=concept.strip()
+                    )
+                    st.session_state.phase = "B"
+                    st.session_state.interpretations = []
+                    st.success("セッションを開始しました")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"開始に失敗: {e}")
+            else:
+                st.warning("モチーフとクエリを入力してください")
+    else:
+        st.info("画像をアップロードしてください")
 
 # ========== Phase B: 解釈選択 ==========
 elif phase == "B":
@@ -273,29 +533,13 @@ elif phase == "D":
         st.success("セッションを終了しました。新しいセッションを開始できます。")
         st.rerun()
 
-    # サイドバー: タブ構成
+    # サイドバー: タブ構成（Global/Partial）
     st.sidebar.subheader("調整タブ")
-    tab = st.sidebar.tabs(["属性検索", "こだわり条件（制約）"]) 
+    tab = st.sidebar.tabs(["全体調整（Global）", "部分編集（Partial）"]) 
 
-    # --- タブ1: 属性検索 ---
+    # --- タブA: 全体調整（制約） ---
     with tab[0]:
-        q = st.text_input("属性検索キーワード", key="attr_search_q")
-        max_k = st.number_input("最大件数", min_value=1, max_value=20, value=5)
-        if st.button("検索", key="attr_search_btn"):
-            try:
-                res = system.search_attributes(q, max_results=int(max_k), return_expanded=True)
-                st.session_state.search_results = res or []
-            except Exception as e:
-                st.error(f"検索に失敗: {e}")
-        if st.session_state.search_results:
-            st.markdown("#### 検索結果")
-            df = pd.DataFrame(st.session_state.search_results)
-            if not df.empty:
-                st.dataframe(df, use_container_width=True)
-
-    # --- タブ2: 制約で調整 ---
-    with tab[1]:
-        st.markdown("#### 制約を追加")
+        st.markdown("#### 制約を追加（グローバルベクトル）")
         # セレクトボックス用オプション（グループ順を保持）
         all_attrs: List[Tuple[str, str]] = []  # (display, key)
         for gname, items in ATTR_SPACE.groups.items():
@@ -303,7 +547,6 @@ elif phase == "D":
                 key = f"{gname}:{k}"
                 display = f"{v} ({key})"
                 all_attrs.append((display, key))
-        # ソートを削除（グループ順を保持）
         display_labels = [d for d, k in all_attrs]
         selected_display = st.selectbox("属性キー", options=display_labels)
         selected_key = dict(all_attrs)[selected_display]
@@ -336,12 +579,150 @@ elif phase == "D":
                     max_value=float(max_val) if max_val is not None else None,
                     description=desc,
                 )
-                # 再生成
+                # 再生成（グローバル変換）
                 system.generate_image()
                 st.success("画像を再生成しました")
                 st.rerun()
             except Exception as e:
                 st.error(f"制約の適用に失敗: {e}")
+
+    # --- タブB: 部分編集（Partial） ---
+    with tab[1]:
+        st.markdown("#### 新規部分編集")
+        try:
+            from streamlit_drawable_canvas import st_canvas
+            # ベースは最新画像があればそれを使い、なければ初期画像
+            base_path = None
+            latest = system.session.get_latest_image() if system.session else None
+            if latest and latest.image_path:
+                base_path = latest.image_path
+            elif system.session and system.session.initial_image_path:
+                base_path = system.session.initial_image_path
+            if base_path:
+                base_img = Image.open(base_path)
+                st.image(base_path, caption="編集対象のベース画像", use_column_width=True)
+                canvas_width = min(base_img.width, 500)
+                canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                canvas_result = st_canvas(
+                    fill_color="rgba(255, 0, 0, 0.3)",
+                    stroke_width=15,
+                    stroke_color="#FF0000",
+                    background_image=base_img,
+                    height=canvas_height,
+                    width=canvas_width,
+                    drawing_mode="freedraw",
+                    key="partial_canvas_d",
+                )
+                colp1, colp2 = st.columns(2)
+                target_name = colp1.text_input("部位名", value="")
+                partial_query = colp2.text_input("編集意図", value="")
+                if st.button("部分編集を実行（現在画像に適用）", type="primary"):
+                    if not (target_name.strip() and partial_query.strip()):
+                        st.warning("部位名と編集意図を入力してください")
+                    elif canvas_result.image_data is None:
+                        st.warning("マスクを描画してください")
+                    else:
+                        with st.spinner("部分編集を適用中..."):
+                            # マスク生成
+                            mask_data = canvas_result.image_data
+                            alpha_channel = mask_data[:, :, 3]
+                            mask_bool = alpha_channel > 0
+                            mask_uint8 = mask_bool.astype(np.uint8) * 255
+                            temp_mask = Image.fromarray(mask_uint8, mode="L").resize(base_img.size, Image.Resampling.NEAREST)
+                            final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
+                            mask_alpha = ImageOps.invert(temp_mask)
+                            final_mask.putalpha(mask_alpha)
+                            mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                            final_mask.save(mask_path)
+
+                            # 部分ベクトル生成
+                            part_text = f"{target_name}: {partial_query}"
+                            partial_vec = system.vector_generator.generate_from_text(part_text, concept=system.session.concept, max_attrs=8)
+
+                            # 実行
+                            result_path = system.image_generator.generate_part_from_vector(
+                                base_image_path=base_path,
+                                mask_path=str(mask_path),
+                                partial_vector=partial_vec,
+                                concept=system.session.concept,
+                                target_part_name=target_name.strip()
+                            )
+
+                            # 子ノード作成
+                            from models.session import GeneratedImage
+                            system.session.add_child_node(
+                                vector=system.session.current_vector or partial_vec,
+                                constraints=system.session.constraints,
+                                note=f"partial_edit:{target_name}",
+                                partial_vector=partial_vec,
+                                mask_image_path=str(mask_path),
+                                target_part_name=target_name.strip()
+                            )
+                            system.session.update_current_node_image(result_path)
+                            system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="partial_edit", vector=partial_vec, constraints=system.session.constraints))
+                            st.success("部分編集を適用しました")
+                            st.rerun()
+            else:
+                st.info("まずPhase A/Bで画像を用意してください")
+        except ImportError:
+            st.error("streamlit-drawable-canvas がインストールされていません。")
+            st.code("pip install streamlit-drawable-canvas")
+
+        st.markdown("---")
+        st.markdown("#### 微調整（現在選択ノードが部分編集の場合）")
+        try:
+            # 現在ノードを取得
+            selected_node_detail = None
+            if system.session and system.session.current_node_id is not None:
+                selected_node_detail = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
+            if selected_node_detail and getattr(selected_node_detail, "partial_vector", None):
+                pv = selected_node_detail.partial_vector
+                # 上位属性をスライダーで調整
+                from models.attribute_space import AttributeVector
+                top_items = sorted(pv.weights.items(), key=lambda x: abs(x[1]), reverse=True)[:8]
+                new_weights = dict(pv.weights)
+                for attr_key, weight in top_items:
+                    name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
+                    new_weights[attr_key] = st.slider(f"{name} ({attr_key})", min_value=-1.0, max_value=1.0, value=float(weight), step=0.05, key=f"pv_{selected_node_detail.node_id}_{attr_key}")
+
+                if st.button("この部分ベクトルで再編集", key=f"pv_apply_{selected_node_detail.node_id}"):
+                    if not selected_node_detail.mask_image_path or not selected_node_detail.target_part_name:
+                        st.warning("このノードにはマスクまたは部位名情報がありません")
+                    else:
+                        base_path = None
+                        latest = system.session.get_latest_image() if system.session else None
+                        if latest and latest.image_path:
+                            base_path = latest.image_path
+                        elif system.session and system.session.initial_image_path:
+                            base_path = system.session.initial_image_path
+                        if not base_path:
+                            st.warning("ベース画像が見つかりません")
+                        else:
+                            new_pv = AttributeVector(weights=new_weights)
+                            result_path = system.image_generator.generate_part_from_vector(
+                                base_image_path=base_path,
+                                mask_path=str(selected_node_detail.mask_image_path),
+                                partial_vector=new_pv,
+                                concept=system.session.concept,
+                                target_part_name=selected_node_detail.target_part_name
+                            )
+                            from models.session import GeneratedImage
+                            system.session.add_child_node(
+                                vector=selected_node_detail.vector,
+                                constraints=system.session.constraints,
+                                note=f"partial_tune:{selected_node_detail.target_part_name}",
+                                partial_vector=new_pv,
+                                mask_image_path=selected_node_detail.mask_image_path,
+                                target_part_name=selected_node_detail.target_part_name
+                            )
+                            system.session.update_current_node_image(result_path)
+                            system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="partial_tune", vector=new_pv, constraints=system.session.constraints))
+                            st.success("部分ベクトルを反映して再編集しました")
+                            st.rerun()
+            else:
+                st.info("部分編集ノードを選択すると微調整UIが表示されます")
+        except Exception as e:
+            st.error(f"微調整に失敗: {e}")
 
     # # --- タブ3: 自由入力（ファジー調整） ---
     # with tab[2]:

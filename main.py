@@ -46,13 +46,14 @@ class TrueCodingSystem:
     
     # ========== フェーズA: 入力 ==========
     
-    def start_session(self, image_path: str, query: str) -> Session:
+    def start_session(self, image_path: str, query: str, concept: str) -> Session:
         """
         新しいセッションを開始（フェーズA）
         
         Args:
             image_path: 粘土の中間生成物の画像パス
             query: ユーザーのクエリ
+            concept: 物体のモチーフ（英語推奨）
         
         Returns:
             セッション
@@ -78,6 +79,10 @@ class TrueCodingSystem:
         self.session.initial_query = query
         self.session.add_query(query)
         print(f"クエリ: {query}")
+
+        # コンセプトを保存
+        self.session.concept = concept
+        print(f"コンセプト: {concept}")
         
         # セッションを保存
         self.session.save(Config.SESSIONS_DIR)
@@ -106,11 +111,6 @@ class TrueCodingSystem:
         
         print("\n" + "=" * 60)
         print("フェーズB: クエリ解釈")
-        print("=" * 60)
-        
-        self.session.current_phase = "B"
-        
-        # 使用する画像を決定
         context_image = None
         if use_image_context:
             context_image = self.session.initial_image_path
@@ -129,7 +129,8 @@ class TrueCodingSystem:
         interpretations = self.query_interpreter.generate_interpretations(
             query=current_query,
             context_image_path=context_image,
-            previous_interpretations=self.session.interpretations
+            previous_interpretations=self.session.interpretations,
+            concept=self.session.concept
         )
         
         # セッションに追加
@@ -278,7 +279,8 @@ class TrueCodingSystem:
         generated = self.image_generator.generate_from_vector(
             self.session.initial_image_path,
             self.session.current_vector,
-            self.session.get_active_constraints()
+            self.session.get_active_constraints(),
+            concept=self.session.concept
         )
         
         self.session.add_generated_image(generated)
@@ -661,7 +663,7 @@ def main():
     
     # フェーズA: セッション開始
     print("\n### フェーズA: 入力 ###")
-    session = system.start_session(image_path=image_path, query=query)
+    session = system.start_session(image_path=image_path, query=query, concept="sample_object")
     
     # フェーズB: クエリ解釈と詳細化のループ
     print("\n### フェーズB: クエリ解釈 ###")
@@ -715,7 +717,7 @@ def main():
     image_path = system.generate_image()
     
     print("\n使用方法:")
-    print("1. system.start_session(image_path, query) でセッション開始")
+    print("1. system.start_session(image_path, query, concept) でセッション開始")
     print("2. system.interpret_query() でクエリを解釈")
     print("3. system.select_interpretation(id) で解釈を選択")
     print("4. system.generate_vector() で特徴ベクトル生成")
