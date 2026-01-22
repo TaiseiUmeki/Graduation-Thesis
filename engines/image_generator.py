@@ -27,7 +27,8 @@ class ImageGenerator:
         vector: AttributeVector,
         constraints: Optional[List[Constraint]] = None,
         output_dir: Optional[Path] = None,
-        concept: Optional[str] = None
+        concept: Optional[str] = None,
+        motif: Optional[str] = None
     ) -> GeneratedImage:
         """
         特徴ベクトルから画像を生成
@@ -38,6 +39,7 @@ class ImageGenerator:
             constraints: 制約リスト
             output_dir: 出力ディレクトリ
             concept: 物体のコンセプト（例: "Tank"）
+            motif: モチーフ（固有名詞、例: "Tulip"）
         
         Returns:
             生成画像情報
@@ -45,7 +47,7 @@ class ImageGenerator:
         output_dir = output_dir or Config.IMAGES_DIR
         
         # ベクトルからプロンプトを生成
-        prompt = self._build_image_prompt(vector, constraints, concept)
+        prompt = self._build_image_prompt(vector, constraints, concept, motif)
         
         print(f"\n画像生成プロンプト:\n{prompt}\n")
         
@@ -131,6 +133,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
         partial_vector: AttributeVector,
         concept: Optional[str] = None,
         target_part_name: Optional[str] = None,
+        edit_intent: Optional[str] = None,
         output_dir: Optional[Path] = None
     ) -> str:
         """
@@ -141,6 +144,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
             partial_vector: 部分編集に用いる属性ベクトル（関連属性のみ）
             concept: 全体のモチーフ（例: "tank"）
             target_part_name: 編集対象の部位名（例: "turret"）
+            edit_intent: テキストで与えた編集意図（例: "add a turret"）
             output_dir: 出力ディレクトリ
         Returns:
             生成された画像のパス
@@ -165,13 +169,18 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
 
         attr_text = ", ".join(attr_lines) if attr_lines else "(no attributes specified)"
 
-        prompt = (
-            f"Edit only the masked region to adjust the {part_label} of {subject}. "
-            f"Keep the entire object fully inside the frame; do not crop. "
-            f"Keep MATERIAL as RAW CLAY; do not change other parts. "
-            f"Modify only GEOMETRY and form in the masked area using: {attr_text}. "
-            f"Output: coherent clay sculpture with the edited {part_label} seamlessly integrated."
-        )
+        prompt_parts = [
+            f"Edit only the masked region to adjust the {part_label} of {subject}.",
+            "Keep the entire object fully inside the frame; do not crop.",
+            "Keep MATERIAL as RAW CLAY; do not change other parts.",
+            f"Modify only GEOMETRY and form in the masked area using: {attr_text}.",
+            "Output: coherent clay sculpture with the edited part seamlessly integrated."
+        ]
+
+        if edit_intent:
+            prompt_parts.append(f"Edit intent: {edit_intent}.")
+
+        prompt = " ".join(prompt_parts)
 
         print(f"\n部分編集プロンプト:\n{prompt}\n")
 
@@ -315,7 +324,8 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
         self,
         vector: AttributeVector,
         constraints: Optional[List[Constraint]] = None,
-        concept: Optional[str] = None
+        concept: Optional[str] = None,
+        motif: Optional[str] = None
     ) -> str:
         """画像生成用のプロンプトを構築"""
         prompt_parts = []
@@ -325,6 +335,12 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
             prompt_parts.append(f"A 3D render of a {concept} made of CLAY.")
         else:
             prompt_parts.append("A 3D render of an object made of CLAY.")
+        
+        # Motif Injection: モチーフが指定されている場合、形状の比喩として組み込む
+        if motif:
+            prompt_parts.append(f"It is designed with the distinct motif of a {motif}.")
+            prompt_parts.append(f"Incorporate the characteristic shape and silhouette of a {motif} into the design.")
+        
         # フレーミング: 画角内に収める
         prompt_parts.append("Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.")
         

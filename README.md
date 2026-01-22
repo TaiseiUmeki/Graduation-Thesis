@@ -77,12 +77,12 @@ truecoding/
 pip install -r requirements.txt
 ```
 
-主な依存パッケージ：
+主な依存パッケージ（抜粋）：
 
-- openai: ChatGPT, GPT-4 Vision, DALL-E 3
-- pillow: 画像処理
-- numpy: 数値計算
-- requests: HTTP 通信
+- openai: ChatGPT, GPT-4o / Vision, gpt-image-1
+- streamlit==1.38.0: フロントエンド（互換性のため固定）
+- streamlit-drawable-canvas: マスク描画UI
+- pillow, numpy, requests
 
 ### 2. OpenAI API キー設定
 

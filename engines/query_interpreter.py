@@ -145,7 +145,8 @@ class QueryInterpreter:
     {
       "id": 1,
       "text": "解釈案の内容",
-      "reasoning": "この解釈に至った理由"
+      "reasoning": "この解釈に至った理由",
+      "motif": "Tulip" または null （クエリから抽出された固有名詞・モチーフ。英語で。例: Tulip, Cat, Rose。なければnull）
     },
     ...
   ]
@@ -177,7 +178,8 @@ class QueryInterpreter:
                 interp = Interpretation(
                     id=item["id"],
                     text=item["text"],
-                    reasoning=item.get("reasoning", "")
+                    reasoning=item.get("reasoning", ""),
+                    motif=item.get("motif")
                 )
                 interpretations.append(interp)
             

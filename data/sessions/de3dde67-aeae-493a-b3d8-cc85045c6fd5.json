@@ -1,0 +1,108 @@
+{
+  "session_id": "de3dde67-aeae-493a-b3d8-cc85045c6fd5",
+  "created_at": "2026-01-23T00:27:15.103175",
+  "updated_at": "2026-01-23T00:29:39.120738",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260123_002715_77b43428.png",
+  "initial_query": "サイバーっぽい感じ",
+  "concept": "chair",
+  "query_history": [
+    "サイバーっぽい感じ"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を直線的なラインで構成し、鋭角的なエッジを持たせる。背もたれや座面の部分を板状にし、脚部を細長くしてスレンダーな印象にする。",
+      "reasoning": "『サイバー』という言葉から、未来的で機械的な直線と鋭いエッジを連想したため。",
+      "motif": null,
+      "timestamp": "2026-01-23T00:27:42.783784"
+    },
+    {
+      "id": 2,
+      "text": "座面や背もたれに幾何学曲線を取り入れ、エッジを面取りして滑らかにする。全体を対称にしつつ、トップヘビーなデザインにする。",
+      "reasoning": "サイバーなデザインはしばしば幾何学的な要素と滑らかなラインを持つため、この形状を選んだ。",
+      "motif": null,
+      "timestamp": "2026-01-23T00:27:42.783789"
+    },
+    {
+      "id": 3,
+      "text": "全体に有機的曲線を取り入れ、エッジを角丸にする。表面は凸面を多用し、ボトムヘビーにして安定感を与える。",
+      "reasoning": "サイバーなデザインにおいては、流線型の有機的な形状も未来的な印象を与えるため、このアプローチを選んだ。",
+      "motif": null,
+      "timestamp": "2026-01-23T00:27:42.783791"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "全体を直線的なラインで構成し、鋭角的なエッジを持たせる。背もたれや座面の部分を板状にし、脚部を細長くしてスレンダーな印象にする。",
+    "reasoning": "『サイバー』という言葉から、未来的で機械的な直線と鋭いエッジを連想したため。",
+    "motif": null,
+    "timestamp": "2026-01-23T00:27:42.783784"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:planar": 0.7,
+      "line:straight": 1.0,
+      "edge:sharp_angle": 1.0,
+      "balance:slender": 0.7,
+      "texture:smooth": 0.5
+    }
+  },
+  "recommended_attributes": [
+    "form:planar",
+    "line:straight",
+    "edge:sharp_angle",
+    "balance:slender",
+    "form:frame",
+    "form:assembly",
+    "line:vertical",
+    "line:parallel",
+    "surface:ribbed"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260123_002938_e8946db8.png",
+      "prompt": "A 3D render of a chair made of CLAY.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.70)、line: 直線的(1.00)、edge: 鋭角（ピン角）(1.00)、balance: 細長比が高い（スレンダー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:planar": 0.7,
+          "line:straight": 1.0,
+          "edge:sharp_angle": 1.0,
+          "balance:slender": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-23T00:29:39.120725"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:planar": 0.7,
+          "line:straight": 1.0,
+          "edge:sharp_angle": 1.0,
+          "balance:slender": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260123_002938_e8946db8.png",
+      "prompt": "A 3D render of a chair made of CLAY.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）。form: 板状・平面的(0.70)、line: 直線的(1.00)、edge: 鋭角（ピン角）(1.00)、balance: 細長比が高い（スレンダー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-23T00:28:14.763429",
+      "note": "root"
+    }
+  ],
+  "current_node_id": 0,
+  "next_node_id": 1
+}

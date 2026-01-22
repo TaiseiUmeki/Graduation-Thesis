@@ -3,6 +3,10 @@
 # OpenAI API
 openai>=1.0.0
 
+# UI
+streamlit==1.38.0
+streamlit-drawable-canvas>=0.9.3
+
 # Image Processing
 Pillow>=10.0.0
 numpy>=1.26.0

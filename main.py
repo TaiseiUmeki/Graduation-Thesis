@@ -93,13 +93,15 @@ class TrueCodingSystem:
     
     def interpret_query(
         self,
+        query_override: Optional[str] = None,
         additional_image: Optional[str] = None,
         use_image_context: bool = True
-    ) -> list:
+    ) -> List:
         """
         クエリを解釈し、複数の解釈案を生成（フェーズB）
         
         Args:
+            query_override: クエリを上書き（部分編集などで使用）
             additional_image: 追加の補足画像（オプション）
             use_image_context: 元画像をコンテキストとして使用するか
         
@@ -111,6 +113,7 @@ class TrueCodingSystem:
         
         print("\n" + "=" * 60)
         print("フェーズB: クエリ解釈")
+        print("=" * 60)
         context_image = None
         if use_image_context:
             context_image = self.session.initial_image_path
@@ -119,7 +122,12 @@ class TrueCodingSystem:
             context_image = additional_image
         
         # 最新のクエリを取得
-        current_query = self.session.query_history[-1]
+        if query_override:
+            # 部分編集時：query_overrideを直接使用
+            current_query = query_override
+        else:
+            # 通常時：セッション履歴から取得
+            current_query = self.session.query_history[-1]
         
         # 解釈案を生成
         print(f"\nクエリを解釈中: {current_query}")
@@ -216,12 +224,14 @@ class TrueCodingSystem:
         
         self.session.set_vector(vector)
 
-        # 探索木のルートノードを作成
+        # 探索木のルートノードを作成（motifを含む）
+        motif = self.session.selected_interpretation.motif if self.session.selected_interpretation else None
         if self.session.current_node_id is None:
             self.session.add_root_node(
                 vector,
                 self.session.constraints,
-                note="root"
+                note="root",
+                motif=motif
             )
         
         # 主要な属性を表示
@@ -274,13 +284,16 @@ class TrueCodingSystem:
         
         self.session.current_phase = "D"
         
-        # 画像を生成
+        # 画像を生成（現在のノードのmotifを使用）
         print("\n画像を生成中...")
+        current_node = self.session._get_current_node()
+        motif = current_node.motif if current_node else None
         generated = self.image_generator.generate_from_vector(
             self.session.initial_image_path,
             self.session.current_vector,
             self.session.get_active_constraints(),
-            concept=self.session.concept
+            concept=self.session.concept,
+            motif=motif
         )
         
         self.session.add_generated_image(generated)

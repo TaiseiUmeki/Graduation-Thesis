@@ -19,12 +19,13 @@ class ExplorationNode:
     node_id: int
     parent_id: Optional[int]
     vector: AttributeVector  # Globalベクトル
+    constraints: List['Constraint'] = field(default_factory=list)
     partial_vector: Optional[AttributeVector] = None  # 部分編集用ベクトル
-    constraints: List['Constraint']
     generated_image_path: Optional[str] = None
     prompt: Optional[str] = None
     mask_image_path: Optional[str] = None  # 部分編集に使用したマスク
     target_part_name: Optional[str] = None  # 編集対象の部位名
+    motif: Optional[str] = None  # モチーフ（固有名詞）
     is_closed: bool = False
     timestamp: datetime = field(default_factory=datetime.now)
     note: str = ""
@@ -40,6 +41,7 @@ class ExplorationNode:
             "prompt": self.prompt,
             "mask_image_path": self.mask_image_path,
             "target_part_name": self.target_part_name,
+            "motif": self.motif,
             "is_closed": self.is_closed,
             "timestamp": self.timestamp.isoformat(),
             "note": self.note,
@@ -57,6 +59,7 @@ class ExplorationNode:
             prompt=data.get("prompt"),
             mask_image_path=data.get("mask_image_path"),
             target_part_name=data.get("target_part_name"),
+            motif=data.get("motif"),
             is_closed=data.get("is_closed", False),
             timestamp=datetime.fromisoformat(data["timestamp"]),
             note=data.get("note", ""),
@@ -69,6 +72,7 @@ class Interpretation:
     id: int
     text: str  # 解釈の内容
     reasoning: str  # 解釈の根拠
+    motif: Optional[str] = None  # モチーフ（固有名詞）
     timestamp: datetime = field(default_factory=datetime.now)
     
     def to_dict(self) -> Dict:
@@ -76,6 +80,7 @@ class Interpretation:
             "id": self.id,
             "text": self.text,
             "reasoning": self.reasoning,
+            "motif": self.motif,
             "timestamp": self.timestamp.isoformat()
         }
 
@@ -169,7 +174,7 @@ class Session:
         self.generated_images.append(image)
         self.updated_at = datetime.now()
 
-    def add_root_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None) -> int:
+    def add_root_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None, motif: Optional[str] = None) -> int:
         """探索木のルートノードを追加"""
         node = ExplorationNode(
             node_id=self._next_node_id,
@@ -179,6 +184,7 @@ class Session:
             constraints=self._clone_constraints(constraints),
             mask_image_path=mask_image_path,
             target_part_name=target_part_name,
+            motif=motif,
             note=note,
         )
         self.exploration_nodes.append(node)
@@ -187,8 +193,14 @@ class Session:
         self.updated_at = datetime.now()
         return node.node_id
 
-    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None) -> int:
+    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None, motif: Optional[str] = None) -> int:
         """現在のノードの子ノードを追加"""
+        # motifが指定されていない場合、親のmotifを継承
+        if motif is None:
+            parent_node = self._get_current_node()
+            if parent_node:
+                motif = parent_node.motif
+        
         node = ExplorationNode(
             node_id=self._next_node_id,
             parent_id=self.current_node_id,
@@ -197,6 +209,7 @@ class Session:
             constraints=self._clone_constraints(constraints),
             mask_image_path=mask_image_path,
             target_part_name=target_part_name,
+            motif=motif,
             note=note,
         )
         self.exploration_nodes.append(node)
