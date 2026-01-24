@@ -197,7 +197,33 @@ class ImageGenerator:
 
         print(f"\n部分編集プロンプト:\n{prompt}\n")
 
-        result = self.client.inpaint_image(base_image_path, mask_path, prompt)
+        # マスクとベース画像のサイズを確認・調整
+        from PIL import Image
+        base_image = Image.open(base_image_path)
+        mask_image = Image.open(mask_path)
+        
+        # サイズが異なる場合はマスクをベース画像のサイズにリサイズ
+        if base_image.size != mask_image.size:
+            print(f"サイズ不一致を検出: ベース画像 {base_image.size} vs マスク {mask_image.size}")
+            print("マスクをベース画像のサイズにリサイズしています...")
+            
+            # マスクをベース画像のサイズにリサイズ
+            resized_mask = mask_image.resize(base_image.size, Image.Resampling.NEAREST)
+            
+            # 一時的なマスクファイルとして保存
+            import tempfile
+            import os
+            temp_mask_fd, temp_mask_path = tempfile.mkstemp(suffix='.png')
+            os.close(temp_mask_fd)
+            resized_mask.save(temp_mask_path)
+            
+            try:
+                result = self.client.inpaint_image(base_image_path, temp_mask_path, prompt)
+            finally:
+                # 一時ファイルを削除
+                os.unlink(temp_mask_path)
+        else:
+            result = self.client.inpaint_image(base_image_path, mask_path, prompt)
 
         if result.get("b64_json"):
             image_path = self.image_utils.save_base64_image(

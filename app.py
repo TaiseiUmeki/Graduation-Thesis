@@ -919,7 +919,7 @@ elif phase == "D":
 
     # サイドバー: 微調整セクション
     st.sidebar.markdown("---")
-    st.sidebar.markdown("#### 微調整（現在選択ノードが部分編集の場合）")
+    st.sidebar.markdown("#### 制約ベース微調整（部分編集ノード）")
     try:
         # 現在ノードを取得
         selected_node_detail_for_tuning = None
@@ -927,15 +927,59 @@ elif phase == "D":
             selected_node_detail_for_tuning = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
         if selected_node_detail_for_tuning and getattr(selected_node_detail_for_tuning, "partial_vector", None):
             pv = selected_node_detail_for_tuning.partial_vector
-            # 上位属性をスライダーで調整
             from models.attribute_space import AttributeVector
+            from models.constraints import Constraint, ConstraintType
+            
+            # 現在の属性値を表示（読み取り専用）
+            st.sidebar.markdown("**現在の部分ベクトル:**")
             top_items = sorted(pv.weights.items(), key=lambda x: abs(x[1]), reverse=True)[:8]
-            new_weights = dict(pv.weights)
             for attr_key, weight in top_items:
                 name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
-                new_weights[attr_key] = st.sidebar.slider(f"{name} ({attr_key})", min_value=0.0, max_value=1.0, value=float(max(0.0, min(1.0, weight))), step=0.05, key=f"pv_{selected_node_detail_for_tuning.node_id}_{attr_key}")
+                st.sidebar.text(f"{name}: {weight:.3f}")
+            
+            st.sidebar.markdown("---")
+            st.sidebar.markdown("**制約を設定:**")
+            
+            # 属性選択（上位属性+全属性から選択可能）
+            all_attrs = ATTR_SPACE.all_attributes  # これはList[str]
+            top_attr_keys = [item[0] for item in top_items]
+            # 上位属性を最初に、残りをアルファベット順で
+            attr_options = top_attr_keys + [k for k in sorted(all_attrs) if k not in top_attr_keys]
+            attr_names = [f"{ATTR_SPACE.get_attribute_name(k) or k} ({k})" for k in attr_options]
+            
+            selected_attr_idx = st.sidebar.selectbox(
+                "調整したい属性",
+                range(len(attr_options)),
+                format_func=lambda i: attr_names[i],
+                key=f"constraint_attr_{selected_node_detail_for_tuning.node_id}"
+            )
+            selected_attr_key = attr_options[selected_attr_idx]
+            
+            # 不等号選択
+            operator = st.sidebar.radio(
+                "制約タイプ",
+                [">=", "<=", "=="],
+                index=0,
+                key=f"constraint_op_{selected_node_detail_for_tuning.node_id}",
+                horizontal=True
+            )
+            
+            # 値設定
+            current_value = pv.weights.get(selected_attr_key, 0.0)
+            target_value = st.sidebar.slider(
+                "目標値",
+                min_value=0.0,
+                max_value=1.0,
+                value=float(max(0.0, min(1.0, current_value))),
+                step=0.05,
+                key=f"constraint_val_{selected_node_detail_for_tuning.node_id}"
+            )
+            
+            # 制約説明
+            attr_name = ATTR_SPACE.get_attribute_name(selected_attr_key) or selected_attr_key
+            st.sidebar.caption(f"制約: {attr_name} {operator} {target_value}")
 
-            if st.sidebar.button("この部分ベクトルで再編集", key=f"pv_apply_{selected_node_detail_for_tuning.node_id}"):
+            if st.sidebar.button("制約を適用して再編集", key=f"constraint_apply_{selected_node_detail_for_tuning.node_id}"):
                 if not selected_node_detail_for_tuning.mask_image_path or not selected_node_detail_for_tuning.target_part_name:
                     st.sidebar.warning("このノードにはマスクまたは部位名情報がありません")
                 else:
@@ -948,31 +992,55 @@ elif phase == "D":
                     if not base_path:
                         st.sidebar.warning("ベース画像が見つかりません")
                     else:
-                        new_pv = AttributeVector(weights=new_weights)
+                        # 制約を作成
+                        constraint_type = {
+                            ">=": ConstraintType.GREATER_THAN,
+                            "<=": ConstraintType.LESS_THAN, 
+                            "==": ConstraintType.EQUAL
+                        }[operator]
+                        
+                        constraint = Constraint(
+                            attribute=selected_attr_key,
+                            constraint_type=constraint_type,
+                            value=target_value,
+                            description=f"{attr_name} {operator} {target_value}"
+                        )
+                        
+                        # 制約を適用して部分ベクトルを更新
+                        updated_pv = system.vector_generator.update_vector_with_constraint(
+                            current_vector=pv,
+                            constraint=constraint,
+                            interpretation=None
+                        )
+                        
+                        # 画像生成
                         result_path = system.image_generator.generate_part_from_vector(
                             base_image_path=base_path,
                             mask_path=str(selected_node_detail_for_tuning.mask_image_path),
-                            partial_vector=new_pv,
+                            partial_vector=updated_pv,
                             concept=system.session.concept,
                             target_part_name=selected_node_detail_for_tuning.target_part_name,
                             partial_motif=selected_node_detail_for_tuning.partial_motif
                         )
+                        
+                        # 子ノード作成
                         from models.session import GeneratedImage
                         system.session.add_child_node(
                             vector=selected_node_detail_for_tuning.vector,
-                            constraints=system.session.constraints,
-                            note=f"partial_tune:{selected_node_detail_for_tuning.target_part_name}",
-                            partial_vector=new_pv,
+                            constraints=system.session.constraints + [constraint],
+                            note=f"constraint_tune:{selected_node_detail_for_tuning.target_part_name}",
+                            partial_vector=updated_pv,
                             mask_image_path=selected_node_detail_for_tuning.mask_image_path,
                             target_part_name=selected_node_detail_for_tuning.target_part_name,
                             partial_motif=selected_node_detail_for_tuning.partial_motif
                         )
                         system.session.update_current_node_image(result_path)
-                        system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="partial_tune", vector=new_pv, constraints=system.session.constraints))
-                        st.success("部分ベクトルを反映して再編集しました")
+                        system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="constraint_tune", vector=updated_pv, constraints=system.session.constraints + [constraint]))
+                        
+                        st.sidebar.success(f"制約「{attr_name} {operator} {target_value}」を適用して再編集しました")
                         st.rerun()
         else:
-            st.sidebar.info("部分編集ノードを選択すると微調整UIが表示されます")
+            st.sidebar.info("部分編集ノードを選択すると制約ベース微調整UIが表示されます")
     except Exception as e:
         st.sidebar.error(f"微調整に失敗: {e}")
 
