@@ -35,7 +35,7 @@ from models.attribute_space import ATTR_SPACE
 def _save_uploaded_image(uploaded_file, prefix: str = "uploaded") -> str:
     if uploaded_file is None:
         return ""
-    images_dir = Path("data/images")
+    images_dir = Config.INPUT_IMAGES_DIR
     images_dir.mkdir(parents=True, exist_ok=True)
     ext = Path(uploaded_file.name).suffix.lower() or ".jpg"
     fname = f"{prefix}_{uuid.uuid4().hex}{ext}"
@@ -43,6 +43,12 @@ def _save_uploaded_image(uploaded_file, prefix: str = "uploaded") -> str:
     with open(fpath, "wb") as f:
         f.write(uploaded_file.getbuffer())
     return str(fpath)
+
+# ヘルパ: 画像を開く（キャッシュ付き）
+@st.cache_resource
+def _load_image(image_path: str):
+    """画像をキャッシュして読み込む（PIL Imageオブジェクトとして）"""
+    return Image.open(image_path)
 
 # ヘルパ: 現在の特徴ベクトルの上位をDataFrame化
 def _vector_top_df(weights: dict, top_k: int = 10) -> pd.DataFrame:
@@ -110,6 +116,16 @@ if "system" not in st.session_state:
     st.session_state.partial_edit_target_name = None
     st.session_state.partial_edit_base_path = None
     st.session_state.partial_edit_query = None
+    # 合成モード用の状態
+    st.session_state.synthesis_base_path = None
+    st.session_state.synthesis_mask_path = None
+    st.session_state.synthesis_part_name = None
+    st.session_state.synthesis_body_name = None
+    st.session_state.synthesis_intent = None
+    st.session_state.synthesis_methods = []
+    st.session_state.selected_synthesis_method = None
+    st.session_state.synthesis_description = None
+    st.session_state.synthesis_phase_d_ready = False
 
 system: TrueCodingSystem = st.session_state.system
 phase: str = st.session_state.phase
@@ -147,14 +163,17 @@ if phase == "A":
 
                 st.markdown("#### 編集領域をマスクで指定")
                 st.caption("赤色で編集したい領域を塗りつぶしてください（透明が編集対象）")
-                base_img = Image.open(base_path)
+                base_img = _load_image(base_path)
                 canvas_width = min(base_img.width, 800)
                 canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                # Image オブジェクトをキャッシュ付きで読み込む（GC対策）
+                canvas_image = _load_image(base_path)
+                
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 0, 0, 0.3)",
                     stroke_width=20,
                     stroke_color="#FF0000",
-                    background_image=Image.open(base_path),
+                    background_image=canvas_image,
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
@@ -192,7 +211,7 @@ if phase == "A":
                             final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
                             mask_alpha = ImageOps.invert(temp_mask)
                             final_mask.putalpha(mask_alpha)
-                            mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                            mask_path = Config.MASKS_PARTIAL_A_DIR / f"mask_{uuid.uuid4().hex}.png"
                             final_mask.save(mask_path)
                             
                             # セッション開始
@@ -242,6 +261,11 @@ if phase == "A":
                                     # 選択された解釈を適用
                                     system.select_interpretation(chosen_id)
                                     
+                                    # 選択された解釈からモチーフを取得
+                                    partial_motif = None
+                                    if system.session.selected_interpretation:
+                                        partial_motif = system.session.selected_interpretation.motif
+                                    
                                     # Rootノード（グローバルベクトル）を画像分析から生成
                                     global_vec = system.vector_generator.generate_global_from_image(
                                         st.session_state.phase_a_partial_base_path,
@@ -254,8 +278,7 @@ if phase == "A":
                                     if system.session.selected_interpretation:
                                         partial_vec = system.vector_generator.generate_vector_from_interpretation(
                                             system.session.selected_interpretation,
-                                            constraints=[],
-                                            max_attrs=8
+                                            constraints=[]
                                         )
                                     else:
                                         chosen_interpretation = next((i for i in st.session_state.phase_a_partial_interpretations if i[0] == chosen_id), None)
@@ -273,7 +296,7 @@ if phase == "A":
                                         partial_vector=partial_vec,
                                         concept=st.session_state.phase_a_partial_concept,
                                         target_part_name=st.session_state.phase_a_partial_target_name,
-                                        edit_intent=st.session_state.phase_a_partial_query
+                                        partial_motif=partial_motif
                                     )
                                     
                                     # 子ノード作成
@@ -284,7 +307,8 @@ if phase == "A":
                                         note=f"partial_edit:{st.session_state.phase_a_partial_target_name}",
                                         partial_vector=partial_vec,
                                         mask_image_path=st.session_state.phase_a_partial_mask_path,
-                                        target_part_name=st.session_state.phase_a_partial_target_name
+                                        target_part_name=st.session_state.phase_a_partial_target_name,
+                                        partial_motif=partial_motif
                                     )
                                     system.session.update_current_node_image(result_path)
                                     system.session.add_generated_image(
@@ -322,100 +346,180 @@ if phase == "A":
     with input_tab3:
         st.subheader("粘土パーツを合成")
         
+        # 合成モード用の状態初期化
+        if "synthesis_base_path" not in st.session_state:
+            st.session_state.synthesis_base_path = None
+            st.session_state.synthesis_mask_path = None
+            st.session_state.synthesis_part_name = None
+            st.session_state.synthesis_body_name = None
+            st.session_state.synthesis_intent = None
+            st.session_state.synthesis_methods = []
+            st.session_state.selected_synthesis_method = None
+            st.session_state.synthesis_result_path = None
+            st.session_state.synthesis_description = None  # 追加: 画像説明をキャッシュ
+            st.session_state.synthesis_phase_d_ready = False  # 追加: フェーズD準備完了フラグ
+        
         try:
             from streamlit_drawable_canvas import st_canvas
             
+            # ユーザーへの配置指示
+            st.info("💡 撮影のルール: 合成したい「パーツ」を左側に、「本体」を右側に並べて撮影してください。")
+
+            # ステップ1: 画像とマスク、指示を入力
             synthesis_up = st.file_uploader(
-                "合成元画像をアップロード",
+                "合成元画像をアップロード（パーツと本体を写した画像）",
                 type=["png", "jpg", "jpeg"],
                 key="synthesis_uploader"
             )
             
             if synthesis_up:
                 synthesis_base_path = _save_uploaded_image(synthesis_up, prefix="synthesis_base")
+                st.session_state.synthesis_base_path = synthesis_base_path
                 st.image(synthesis_base_path, caption="合成元画像", use_column_width=True)
+            
+            # セッション状態から画像パスを取得（一度アップロードされていれば再利用）
+            if hasattr(st.session_state, 'synthesis_base_path') and st.session_state.synthesis_base_path:
+                synthesis_base_path = st.session_state.synthesis_base_path
                 
-                st.markdown("#### 結合位置をマスクで指定")
-                st.caption("赤色で結合したい領域を塗りつぶしてください")
+                # 入力フォームの構造化
+                col_names1, col_names2 = st.columns(2)
+                part_name = col_names1.text_input("左側のパーツ名 (例: cannon)", key="syn_part_name")
+                body_name = col_names2.text_input("右側の本体名 (例: tank body)", key="syn_body_name")
+
+                st.markdown("#### 合成場所をマスクで指定")
+                st.caption("赤色で合成したい領域（接合部）を塗りつぶしてください")
                 
                 # Canvas for drawing mask
-                from PIL import Image as PILImage
-                base_img = PILImage.open(synthesis_base_path)
+                base_img = _load_image(synthesis_base_path)
                 canvas_width = min(base_img.width, 800)
                 canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                # Image オブジェクトをキャッシュ付きで読み込む（GC対策）
+                canvas_image = _load_image(synthesis_base_path)
                 
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 0, 0, 0.3)",
                     stroke_width=20,
                     stroke_color="#FF0000",
-                    background_image=PILImage.open(synthesis_base_path),
+                    background_image=canvas_image,
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
-                    key="canvas",
+                    key="canvas_synthesis",
                 )
                 
-                synthesis_instruction = st.text_input(
-                    "結合指示",
-                    value="右のパーツを砲台として結合して",
-                    key="synthesis_instruction"
+                # ユーザー意図（任意）
+                synthesis_intent = st.text_input(
+                    "具体的な指示・意図（任意）",
+                    placeholder="例: 滑らかに繋げて、本体の上に乗せて",
+                    key="synthesis_intent_input"
                 )
+
+                # synthesis_instruction = st.text_input(
+                #     "合成指示（例: 左のパーツを右の本体にくっつけて）",
+                #     value="",
+                #     key="synthesis_instruction_input"
+                # )
                 
-                if st.button("合成実行", type="primary", key="synthesis_btn"):
-                    if canvas_result.image_data is not None:
-                        with st.spinner("粘土パーツを合成中..."):
-                            # マスク画像を透過形式で作成（mask_editor_sample.py の処理を参照）
-                            # 1. キャンバスの描画データ（RGBA）を取得
+                # ステップ2: 解釈フェーズ
+                if st.button("接合方法を解釈（Interpret）", type="primary", key="synthesis_interpret_btn"):
+                    if canvas_result.image_data is not None and part_name and body_name:
+                        with st.spinner("接合方法を解釈中..."):
+                            # マスク画像を透過形式で作成
                             mask_data = canvas_result.image_data
-                            
-                            # 2. アルファチャンネル(A)だけを取り出す
                             alpha_channel = mask_data[:, :, 3]
-                            
-                            # 3. ブール配列（True=描画した場所、False=描画してない場所）を作成
                             mask_bool = alpha_channel > 0
-                            
-                            # 4. 白黒マスク（Lモード）を一時的に作成
                             mask_uint8 = mask_bool.astype(np.uint8) * 255
                             temp_mask = Image.fromarray(mask_uint8, mode="L")
-                            
-                            # 5. 元の画像サイズにリサイズ（キャンバスの縮小表示対策）
                             temp_mask = temp_mask.resize(base_img.size, Image.Resampling.NEAREST)
                             
-                            # 6. 【重要】API送信用に「透過マスク」を作成する
-                            # ゴール: 描画した場所 = 透明 (Alpha 0), 背景 = 黒 (Alpha 255)
-                            
-                            # まず、全体が「不透明な黒」の画像を作る
+                            # 透過マスクを作成
                             final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
-                            
-                            # さきほど作った白黒マスクを反転させる (白->黒(0), 黒->白(255))
-                            # これで「描画した場所が0(透明)」「背景が255(不透明)」のアルファ用データができる
                             mask_alpha = ImageOps.invert(temp_mask)
-                            
-                            # 作成したアルファ用データを、黒画像に適用する
                             final_mask.putalpha(mask_alpha)
                             
-                            # 透過マスクを保存
-                            mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                            # マスクを保存
+                            mask_path = Config.MASKS_SYNTHESIS_DIR / f"mask_{uuid.uuid4().hex}.png"
                             final_mask.save(mask_path)
+
+                            # 状態保存
+                            st.session_state.synthesis_mask_path = str(mask_path)
+                            st.session_state.synthesis_part_name = part_name
+                            st.session_state.synthesis_body_name = body_name
+                            st.session_state.synthesis_intent = synthesis_intent
                             
+                            # 接合方法を解釈（引数を更新）
                             try:
-                                # 合成実行
+                                synthesis_methods = system.query_interpreter.interpret_synthesis_method(
+                                    part_name=part_name,
+                                    body_name=body_name,
+                                    user_intent=synthesis_intent,
+                                    image_path=synthesis_base_path
+                                )
+                                st.session_state.synthesis_methods = synthesis_methods
+                                st.success("接合方法を解釈しました！")
+                            except Exception as e:
+                                st.error(f"解釈に失敗: {e}")
+                    else:
+                        st.warning("パーツ名、本体名、およびマスクを入力してください")
+                
+                # ステップ3: 接合方法を表示・選択
+                if st.session_state.synthesis_methods:
+                    st.markdown("#### 接合方法の提案")
+                    
+                    for idx, method in enumerate(st.session_state.synthesis_methods):
+                        col1, col2 = st.columns([1, 20])
+                        with col1:
+                            st.write("")
+                        with col2:
+                            st.markdown(f"**案{idx+1}:** {method.text}")
+                            if method.reasoning:
+                                st.caption(f"理由: {method.reasoning}")
+                        
+                        # 選択ボタン
+                        if st.button(f"この方法を選択", key=f"select_synthesis_{idx}"):
+                            st.session_state.selected_synthesis_method = method
+                            st.session_state.synthesis_result_path = None  # リセット
+                            st.success(f"案{idx+1}を選択しました")
+                
+                # ステップ4: 生成フェーズ
+                if st.session_state.selected_synthesis_method:
+                    st.markdown("#### 選択された接合方法")
+                    st.info(st.session_state.selected_synthesis_method.text)
+                    
+                    if st.button("合成を実行", type="primary", key="synthesis_generate_btn"):
+                        with st.spinner("粘土パーツを合成中..."):
+                            try:
+                                # 選択された接合方法でプロンプトを生成
+                                method_text = st.session_state.selected_synthesis_method.text
+                                
+                                # result_path = system.image_generator.generate_synthesis(
+                                #     st.session_state.synthesis_base_path,
+                                #     st.session_state.synthesis_mask_path,
+                                #     st.session_state.synthesis_instruction,
+                                #     synthesis_method=method_text
+                                # )
+                                # 新しい引数で呼び出し
                                 result_path = system.image_generator.generate_synthesis(
-                                    synthesis_base_path,
-                                    str(mask_path),
-                                    synthesis_instruction
+                                    base_image_path=st.session_state.synthesis_base_path,
+                                    mask_path=st.session_state.synthesis_mask_path,
+                                    part_name=st.session_state.synthesis_part_name, # 追加
+                                    body_name=st.session_state.synthesis_body_name, # 追加
+                                    synthesis_method=method_text,
+                                    user_intent=st.session_state.synthesis_intent     # 追加
                                 )
                                 st.session_state.synthesis_result_path = result_path
                                 st.success("合成が完了しました！")
                                 st.image(result_path, caption="合成結果", use_column_width=True)
                                 
-                                if st.button("この画像を使用", key="use_synthesis"):
-                                    st.session_state.uploaded_image_path = result_path
-                                    st.success("合成画像を入力画像として設定しました")
+                                # 生成画像を解析して説明を取得（キャッシュ）
+                                try:
+                                    desc = system.image_generator.extract_description_from_image(result_path)
+                                    st.session_state.synthesis_description = desc
+                                    st.session_state.synthesis_phase_d_ready = True
+                                except Exception as e:
+                                    st.error(f"画像説明生成に失敗: {e}")
                             except Exception as e:
                                 st.error(f"合成に失敗: {e}")
-                    else:
-                        st.warning("マスクを描画してください")
         
         except ImportError:
             st.error("streamlit-drawable-canvas がインストールされていません。")
@@ -424,6 +528,66 @@ if phase == "A":
     # --- モチーフ（Concept）とクエリ入力 ---
     st.markdown("---")
     st.subheader("モチーフと意図を入力")
+    
+    # 合成モードで準備完了している場合
+    if st.session_state.synthesis_phase_d_ready:
+        st.markdown("#### 合成結果からフェーズDへ")
+        st.info(f"画像の説明: {st.session_state.synthesis_description}")
+        
+        concept_for_synthesis = st.session_state.synthesis_body_name
+        
+        col_syn_start1, col_syn_start2 = st.columns([2, 1])
+        with col_syn_start1:
+            st.write(f"**コンセプト:** {concept_for_synthesis}")  # 入力欄の代わりに表示
+        with col_syn_start2:
+            if st.button("フェーズDを開始", type="primary", key="start_phase_d_synthesis"):
+                with st.spinner("セッションを初期化中..."):
+                    try:
+                        # セッションを初期化（必須）
+                        system.start_session(
+                            image_path=st.session_state.synthesis_result_path,
+                            query=st.session_state.synthesis_intent.strip() if st.session_state.synthesis_intent else "合成モード",
+                            concept=concept_for_synthesis.strip()
+                        )
+                        
+                        # 全体ベクトルを生成
+                        global_vector = system.vector_generator.generate_from_text(
+                            concept_for_synthesis,
+                            concept=concept_for_synthesis,
+                            max_attrs=15
+                        )
+                        
+                        # セッションの根ノードを作成
+                        system.session.add_root_node(
+                            vector=global_vector,
+                            constraints=[],
+                            note="synthesis_root",
+                            motif=concept_for_synthesis.strip()
+                        )
+                        
+                        # 根ノードに生成画像を関連付け
+                        system.session.update_current_node_image(st.session_state.synthesis_result_path)
+                        from models.session import GeneratedImage
+                        system.session.add_generated_image(
+                            GeneratedImage(
+                                image_path=st.session_state.synthesis_result_path,
+                                prompt="synthesis_root",
+                                vector=global_vector,
+                                constraints=[]
+                            )
+                        )
+                        
+                        # フェーズD初期化
+                        st.session_state.phase = "D"
+                        st.session_state.uploaded_image_path = st.session_state.synthesis_result_path
+                        st.session_state.concept = concept_for_synthesis.strip()
+                        
+                        st.success(f"フェーズDを開始しました（コンセプト: {concept_for_synthesis}）")
+                        st.session_state.synthesis_phase_d_ready = False  # リセット
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"フェーズD開始に失敗: {e}")
+        st.markdown("---")
     
     final_image_path = st.session_state.uploaded_image_path
     
@@ -460,7 +624,8 @@ if phase == "A":
             else:
                 st.warning("モチーフとクエリを入力してください")
     else:
-        st.info("画像をアップロードしてください")
+        if not st.session_state.synthesis_phase_d_ready:
+            st.info("画像をアップロードしてください")
 
 # ========== Phase B: 解釈選択 ==========
 elif phase == "B":
@@ -637,9 +802,9 @@ elif phase == "D":
     min_val = None
     max_val = None
     if ctype == "range":
-        min_val, max_val = st.sidebar.slider("値の範囲", min_value=-1.0, max_value=1.0, value=(-0.1, 0.1), step=0.05)
+        min_val, max_val = st.sidebar.slider("値の範囲", min_value=0.0, max_value=1.0, value=(0.4, 0.6), step=0.05)
     else:
-        val = st.sidebar.slider("値", min_value=-1.0, max_value=1.0, value=0.3, step=0.05)
+        val = st.sidebar.slider("値", min_value=0.0, max_value=1.0, value=0.5, step=0.05)
 
     desc = st.sidebar.text_input("説明（任意）", value="")
     if st.sidebar.button("制約を追加して再生成", type="primary"):
@@ -652,12 +817,105 @@ elif phase == "D":
                 max_value=float(max_val) if max_val is not None else None,
                 description=desc,
             )
-            # 再生成（グローバル変換）
-            system.generate_image()
-            st.success("画像を再生成しました")
+            
+            # 現在のノードが部分編集ノードかどうかをチェック
+            current_node = None
+            if system.session and system.session.current_node_id is not None:
+                current_node = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
+            
+            if current_node and current_node.partial_vector and current_node.mask_image_path:
+                # 部分編集ノードの場合：部分ベクトルに制約を適用して再編集
+                from models.attribute_space import AttributeVector
+                import os
+                
+                # 親ノードの画像をベースとして取得
+                base_path = None
+                if current_node.parent_id is not None:
+                    parent_node = next((n for n in system.session.exploration_nodes if n.node_id == current_node.parent_id), None)
+                    if parent_node and parent_node.generated_image_path and os.path.exists(parent_node.generated_image_path):
+                        base_path = parent_node.generated_image_path
+                
+                # フォールバック1: 最新の生成画像
+                if not base_path:
+                    latest = system.session.get_latest_image()
+                    if latest and latest.image_path and os.path.exists(latest.image_path):
+                        base_path = latest.image_path
+                
+                # フォールバック2: 初期画像
+                if not base_path and system.session.initial_image_path and os.path.exists(system.session.initial_image_path):
+                    base_path = system.session.initial_image_path
+                
+                if not base_path or not os.path.exists(base_path):
+                    st.sidebar.error(f"ベース画像が見つかりません（親: {current_node.parent_id}, パス: {base_path}）")
+                else:
+                    # 部分ベクトルのコピーを作成し、制約に従って調整
+                    partial_weights = dict(current_node.partial_vector.weights)
+                    
+                    # 最新の制約を適用（シンプルな実装）
+                    for constraint in system.session.constraints:
+                        attr_key = constraint.attribute_key
+                        if constraint.constraint_type == "greater_than" and constraint.value is not None:
+                            if attr_key in partial_weights:
+                                partial_weights[attr_key] = max(partial_weights[attr_key], constraint.value)
+                            else:
+                                partial_weights[attr_key] = constraint.value
+                        elif constraint.constraint_type == "less_than" and constraint.value is not None:
+                            if attr_key in partial_weights:
+                                partial_weights[attr_key] = min(partial_weights[attr_key], constraint.value)
+                            else:
+                                partial_weights[attr_key] = constraint.value
+                        elif constraint.constraint_type == "equal" and constraint.value is not None:
+                            partial_weights[attr_key] = constraint.value
+                        elif constraint.constraint_type == "range" and constraint.min_value is not None and constraint.max_value is not None:
+                            if attr_key in partial_weights:
+                                partial_weights[attr_key] = max(constraint.min_value, min(constraint.max_value, partial_weights[attr_key]))
+                            else:
+                                partial_weights[attr_key] = (constraint.min_value + constraint.max_value) / 2
+                    
+                    updated_partial_vec = AttributeVector(weights=partial_weights)
+                    
+                    with st.spinner("制約を適用して部分編集を再生成中..."):
+                        result_path = system.image_generator.generate_part_from_vector(
+                            base_image_path=base_path,
+                            mask_path=str(current_node.mask_image_path),
+                            partial_vector=updated_partial_vec,
+                            concept=system.session.concept,
+                            target_part_name=current_node.target_part_name,
+                            partial_motif=current_node.partial_motif
+                        )
+                        
+                        # 子ノードを作成
+                        from models.session import GeneratedImage
+                        system.session.add_child_node(
+                            vector=current_node.vector,
+                            constraints=system.session.constraints,
+                            note=f"constraint_partial:{current_node.target_part_name}",
+                            partial_vector=updated_partial_vec,
+                            mask_image_path=current_node.mask_image_path,
+                            target_part_name=current_node.target_part_name,
+                            partial_motif=current_node.partial_motif
+                        )
+                        system.session.update_current_node_image(result_path)
+                        system.session.add_generated_image(
+                            GeneratedImage(
+                                image_path=result_path,
+                                prompt="constraint_partial",
+                                vector=updated_partial_vec,
+                                constraints=system.session.constraints
+                            )
+                        )
+                        st.success("制約を適用して部分編集を再生成しました")
+            else:
+                # 通常の全体画像として再生成
+                with st.spinner("制約を適用して全体画像を再生成中..."):
+                    system.generate_image()
+                    st.success("画像を再生成しました")
+            
             st.rerun()
         except Exception as e:
             st.error(f"制約の適用に失敗: {e}")
+            import traceback
+            st.error(traceback.format_exc())
 
     # サイドバー: 微調整セクション
     st.sidebar.markdown("---")
@@ -675,7 +933,7 @@ elif phase == "D":
             new_weights = dict(pv.weights)
             for attr_key, weight in top_items:
                 name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
-                new_weights[attr_key] = st.sidebar.slider(f"{name} ({attr_key})", min_value=-1.0, max_value=1.0, value=float(weight), step=0.05, key=f"pv_{selected_node_detail_for_tuning.node_id}_{attr_key}")
+                new_weights[attr_key] = st.sidebar.slider(f"{name} ({attr_key})", min_value=0.0, max_value=1.0, value=float(max(0.0, min(1.0, weight))), step=0.05, key=f"pv_{selected_node_detail_for_tuning.node_id}_{attr_key}")
 
             if st.sidebar.button("この部分ベクトルで再編集", key=f"pv_apply_{selected_node_detail_for_tuning.node_id}"):
                 if not selected_node_detail_for_tuning.mask_image_path or not selected_node_detail_for_tuning.target_part_name:
@@ -696,7 +954,8 @@ elif phase == "D":
                             mask_path=str(selected_node_detail_for_tuning.mask_image_path),
                             partial_vector=new_pv,
                             concept=system.session.concept,
-                            target_part_name=selected_node_detail_for_tuning.target_part_name
+                            target_part_name=selected_node_detail_for_tuning.target_part_name,
+                            partial_motif=selected_node_detail_for_tuning.partial_motif
                         )
                         from models.session import GeneratedImage
                         system.session.add_child_node(
@@ -705,7 +964,8 @@ elif phase == "D":
                             note=f"partial_tune:{selected_node_detail_for_tuning.target_part_name}",
                             partial_vector=new_pv,
                             mask_image_path=selected_node_detail_for_tuning.mask_image_path,
-                            target_part_name=selected_node_detail_for_tuning.target_part_name
+                            target_part_name=selected_node_detail_for_tuning.target_part_name,
+                            partial_motif=selected_node_detail_for_tuning.partial_motif
                         )
                         system.session.update_current_node_image(result_path)
                         system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="partial_tune", vector=new_pv, constraints=system.session.constraints))
@@ -756,14 +1016,17 @@ elif phase == "D":
             
             with col_form:
                 st.caption("マスク描画（赤色で編集領域を指定）")
-                base_img = Image.open(base_path)
+                base_img = _load_image(base_path)
                 canvas_width = 300
                 canvas_height = int(base_img.height * (canvas_width / base_img.width))
+                # Image オブジェクトをキャッシュ付きで読み込む（GC対策）
+                canvas_image = _load_image(base_path)
+                
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 0, 0, 0.3)",
                     stroke_width=15,
                     stroke_color="#FF0000",
-                    background_image=Image.open(base_path),
+                    background_image=canvas_image,
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
@@ -791,7 +1054,7 @@ elif phase == "D":
                         final_mask = Image.new("RGBA", base_img.size, (0, 0, 0, 255))
                         mask_alpha = ImageOps.invert(temp_mask)
                         final_mask.putalpha(mask_alpha)
-                        mask_path = Path("data/images") / f"mask_{uuid.uuid4().hex}.png"
+                        mask_path = Config.MASKS_PARTIAL_D_DIR / f"mask_{uuid.uuid4().hex}.png"
                         final_mask.save(mask_path)
                         
                         # セッション状態に保存
@@ -831,12 +1094,16 @@ elif phase == "D":
                                 # 選択された解釈を適用
                                 system.select_interpretation(chosen_id)
                                 
+                                # 選択された解釈からモチーフを取得
+                                partial_motif = None
+                                if system.session.selected_interpretation:
+                                    partial_motif = system.session.selected_interpretation.motif
+                                
                                 # 部分ベクトル生成（選択された解釈から）
                                 if system.session.selected_interpretation:
                                     partial_vec = system.vector_generator.generate_vector_from_interpretation(
                                         system.session.selected_interpretation,
-                                        constraints=[],
-                                        max_attrs=8
+                                        constraints=[]
                                     )
                                 else:
                                     # フォールバック
@@ -855,7 +1122,7 @@ elif phase == "D":
                                     partial_vector=partial_vec,
                                     concept=system.session.concept,
                                     target_part_name=st.session_state.partial_edit_target_name,
-                                    edit_intent=st.session_state.partial_edit_query
+                                    partial_motif=partial_motif
                                 )
                                 
                                 # 親ノードのグローバルベクトルを取得
@@ -873,7 +1140,8 @@ elif phase == "D":
                                     note=f"partial_edit:{st.session_state.partial_edit_target_name}",
                                     partial_vector=partial_vec,
                                     mask_image_path=st.session_state.partial_edit_mask_path,
-                                    target_part_name=st.session_state.partial_edit_target_name
+                                    target_part_name=st.session_state.partial_edit_target_name,
+                                    partial_motif=partial_motif
                                 )
                                 system.session.update_current_node_image(result_path)
                                 system.session.add_generated_image(

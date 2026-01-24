@@ -77,7 +77,7 @@ class VectorGenerator:
 
         system_prompt = (
             "あなたは部分編集用の属性重みを決めるアシスタントです。"
-            "与えられた候補属性のみを使い、-1.0～1.0の範囲で少数の重みを設定してください。"
+            "与えられた候補属性のみを使い、0.0～1.0の範囲で重みを設定してください。値が大きいほど強調されます。"
             "重みはテキスト意図に基づき、必要最小限のみ非ゼロにしてください。"
         )
 
@@ -155,7 +155,7 @@ JSON形式で返してください:
         self,
         current_vector: AttributeVector,
         constraint: Constraint,
-        interpretation: Interpretation
+        interpretation: Optional[Interpretation]
     ) -> AttributeVector:
         """
         制約を考慮して特徴ベクトルを更新
@@ -163,7 +163,7 @@ JSON形式で返してください:
         Args:
             current_vector: 現在の特徴ベクトル
             constraint: 新しい制約
-            interpretation: 解釈案
+            interpretation: 解釈案（None可）
         
         Returns:
             更新された特徴ベクトル
@@ -186,13 +186,14 @@ JSON形式で返してください:
     def _get_vector_system_prompt(self) -> str:
         """ベクトル生成用のシステムプロンプト"""
         return """あなたは創作物の特徴を属性ベクトルで表現する専門家です。
-与えられた解釈や説明から、適切な属性とその重み（-1.0～1.0：正値は強調、負値は回避）を決定してください。
-重みは以下の基準で設定してください：
-- 0.0: その属性は全く該当しない
-- 0.3: 弱く該当する
-- 0.5: 中程度に該当する
-- 0.7: 強く該当する
+与えられた解釈や説明から、適切な属性とその重み（0.0～1.0：値が大きいほど強調）を決定してください。
+
+スコアリングの基準:
 - 1.0: 非常に強く該当する
+- 0.7: 強く該当する
+- 0.5: 中程度に該当する
+- 0.3: 弱く該当する
+- 0.0: その属性は全く該当しない
 
 制約がある場合は、それを必ず満たすように重みを設定してください。"""
     
@@ -200,7 +201,7 @@ JSON形式で返してください:
         """属性検索用のシステムプロンプト"""
         return """あなたは創作物の特徴を分析する専門家です。
 与えられた解釈やクエリに関連性の高い属性を、属性リストから選んでください。
-関連度スコアは-1.0～1.0の範囲で、正値は関連度が高く、負値は回避すべき属性を示します。"""
+関連度スコアは0.0～1.0の範囲で、値が大きいほど関連度が高いことを示します。"""
     
     def _build_vector_generation_prompt(
         self,
@@ -226,7 +227,7 @@ JSON形式で返してください:
         prompt_parts.append(f"\n利用可能な属性:\n{attr_info}")
         
         prompt_parts.append("""
-以下のJSON形式で、関連する属性とその重み（-1.0～1.0）を返してください。
+以下のJSON形式で、関連する属性とその重み（0.0～1.0）を返してください。
 重要な属性のみを含め、重み0.3未満の属性は省略してください。
 
 {
@@ -277,7 +278,7 @@ JSON形式で返してください:
         self,
         current_vector: AttributeVector,
         constraint: Constraint,
-        interpretation: Interpretation
+        interpretation: Optional[Interpretation]
     ) -> str:
         """制約を考慮したベクトル更新用のプロンプト"""
         # 現在の主要な属性を取得
@@ -286,9 +287,12 @@ JSON形式で返してください:
             f"- {attr}: {weight:.2f}" for attr, weight in top_attrs
         ])
         
+        # 解釈テキストを取得（None の場合は空文字列）
+        interpretation_text = interpretation.text if interpretation else "（解釈なし）"
+        
         prompt = f"""現在の特徴ベクトルに新しい制約を適用して更新してください。
 
-解釈: {interpretation.text}
+解釈: {interpretation_text}
 
 現在の主要属性:
 {current_attrs_text}
@@ -302,7 +306,8 @@ JSON形式で返してください:
 以下のJSON形式で返してください：
 {{
   "attributes": {{
-    "material:wood_oak": 0.8,
+    "form:cubic": 0.8,
+    "edge:sharp_angle": 0.6,
     ...
   }},
   "reasoning": "どのように調整したかの説明"
@@ -313,13 +318,12 @@ JSON形式で返してください:
     def _format_attribute_groups(self) -> str:
         """属性グループを読みやすく整形"""
         lines = []
+        lines.append("※重要: 以下の属性リストにない属性を作成しないでください")
         for group_name, attrs in self.attr_space.groups.items():
             lines.append(f"\n【{group_name}】")
-            for key, name in list(attrs.items())[:15]:  # 各グループ15個まで表示
+            for key, name in attrs.items():  # 全件表示に変更
                 full_key = f"{group_name}:{key}"
                 lines.append(f"  {full_key} = {name}")
-            if len(attrs) > 15:
-                lines.append(f"  ... 他{len(attrs) - 15}個")
         
         return "\n".join(lines)
     
@@ -328,14 +332,26 @@ JSON形式で返してください:
         attributes = response.get("attributes", {})
         
         # 属性キーの検証と正規化
-        validated_weights = {}
-        for attr_key, weight in attributes.items():
-            if attr_key in self.attr_space.all_attributes:
-                validated_weights[attr_key] = max(-1.0, min(1.0, float(weight)))
-            else:
-                print(f"警告: 不明な属性 '{attr_key}' を無視します")
+        validated_weights = self._sanitize_weights(attributes)
         
         return AttributeVector(weights=validated_weights)
+    
+    def _sanitize_weights(self, weights: Dict[str, float]) -> Dict[str, float]:
+        """属性重みを正規化し、不明な属性を除去"""
+        validated_weights = {}
+        invalid_attrs = []
+        
+        for attr_key, weight in weights.items():
+            if self.attr_space.has_attribute(attr_key):
+                validated_weights[attr_key] = max(0.0, min(1.0, float(weight)))
+            else:
+                invalid_attrs.append(attr_key)
+        
+        if invalid_attrs:
+            print(f"警告: 不明な属性を無視しました: {', '.join(invalid_attrs)}")
+            print("  → LLMが属性カタログにない属性を生成しています")
+        
+        return validated_weights
     
     def _parse_related_attributes(
         self,
@@ -486,7 +502,7 @@ JSON形式で返してください:
 
         system_prompt = (
             "あなたはプロダクトデザイン用のパラメータ調整アシスタントです。"\
-            "属性は -1.0～1.0 の実数で、正の値は強調、負の値は避ける/削ぎ落とすことを表します。"\
+            "属性は 0.0～1.0 の実数で、値が大きいほどその特徴を強調します。"\
             "指定された属性リスト以外は使わないでください。"
         )
 
@@ -499,7 +515,7 @@ JSON形式で返してください:
 {catalog_text}
 
 指示:
-- ユーザー意図に合う属性を最大 {max_suggestions} 件選び、deltaを -1.0～1.0 で提案してください。
+- ユーザー意図に合う属性を最大 {max_suggestions} 件選び、deltaを -0.5～0.5 で提案してください（現在値からの変化量）。
 - 典型的な調整幅の初期値は ±{default_delta:.2f} とし、必要に応じて増減してください。
 - delta>0 なら強調、delta<0 なら抑制/回避。
 - 属性キーは上記リストのものだけを使用。
@@ -527,7 +543,7 @@ JSON形式で返してください:
 
             if attr_key in self.attr_space.all_attributes:
                 # クリップして登録
-                delta = float(np.clip(delta, -1.0, 1.0))
+                delta = float(np.clip(delta, -0.5, 0.5))
                 adjustments.append((attr_key, delta, reason))
             else:
                 print(f"警告: 不明な属性 '{attr_key}' を無視します")
@@ -578,8 +594,8 @@ JSON形式で返してください:
                     diff = current_w - closed_w
                     adjustment = repulsion_strength * diff
                     
-                    # 新しい重みを計算（-1.0～1.0の範囲にクリップ）
-                    new_w = np.clip(current_w + adjustment, -1.0, 1.0)
+                    # 新しい重みを計算（0.0～1.0の範囲にクリップ）
+                    new_w = np.clip(current_w + adjustment, 0.0, 1.0)
                     adjusted_weights[key] = new_w
         
         return AttributeVector(weights=adjusted_weights)

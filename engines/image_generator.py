@@ -81,34 +81,48 @@ class ImageGenerator:
         self,
         base_image_path: str,
         mask_path: str,
-        instruction: str,
+        part_name: str,          # 変更: 左側のパーツ名
+        body_name: str,          # 変更: 右側の本体名
+        synthesis_method: Optional[str] = None,
+        user_intent: Optional[str] = None, # 追加: ユーザーの意図（任意）
         output_dir: Optional[Path] = None
     ) -> str:
         """
         粘土素材の物理的結合（Inpainting）
-        
-        Args:
-            base_image_path: ベース画像のパス
-            mask_path: マスク画像のパス
-            instruction: 結合指示（例: "右のパーツを砲台として結合して"）
-            output_dir: 出力ディレクトリ
-        
-        Returns:
-            生成された画像のパス
+        構造化されたプロンプトを使用
         """
         output_dir = output_dir or Config.IMAGES_DIR
         
-        # Inpainting用プロンプト：デザイン変更はせず、粘土として物理的に結合することだけを指示
-        prompt = f"""Combine these clay objects physically as instructed below. 
-Keep the material as RAW CLAY throughout. Do not change the design or geometry - only join them together.
-
-Instruction: {instruction}
-
-Output: A seamless clay sculpture where the parts are naturally merged."""
+        # 構造化されたプロンプト構築
+        prompt_parts = [
+            # 1. 役割定義と素材制約
+            "You are a professional sculptor combining two clay objects.",
+            "Keep the material as RAW CLAY throughout. Do not turn them into real objects.",
+            "Do not change the overall geometry outside the masked region.",
+            
+            # 2. 空間・対象の構造化定義
+            f"The object on the LEFT side of the image is the '{part_name}' (part).",
+            f"The object on the RIGHT side of the image is the '{body_name}' (main body).",
+            
+            # 3. タスク指示
+            f"Task: Physically join the '{part_name}' onto the '{body_name}' within the masked region.",
+        ]
+        
+        # 4. 接合方法（解釈）の反映
+        if synthesis_method:
+            prompt_parts.append(f"Joint Style: {synthesis_method}")
+            
+        # 5. ユーザーの追加意図（あれば）
+        if user_intent:
+            prompt_parts.append(f"User instruction: {user_intent}")
+        
+        prompt_parts.append("Output: A seamless clay sculpture where the parts are joined naturally.")
+        
+        prompt = " ".join(prompt_parts)
         
         print(f"\n合成プロンプト:\n{prompt}\n")
         
-        # OpenAI Images APIのinpainting（edit）を使用
+        # OpenAI Images APIのinpaintingを実行
         result = self.client.inpaint_image(base_image_path, mask_path, prompt)
         
         if result.get("b64_json"):
@@ -133,7 +147,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
         partial_vector: AttributeVector,
         concept: Optional[str] = None,
         target_part_name: Optional[str] = None,
-        edit_intent: Optional[str] = None,
+        partial_motif: Optional[str] = None,
         output_dir: Optional[Path] = None
     ) -> str:
         """
@@ -144,7 +158,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
             partial_vector: 部分編集に用いる属性ベクトル（関連属性のみ）
             concept: 全体のモチーフ（例: "tank"）
             target_part_name: 編集対象の部位名（例: "turret"）
-            edit_intent: テキストで与えた編集意図（例: "add a turret"）
+            partial_motif: 部分編集のモチーフ（解釈フェーズで抽出された固有名詞）
             output_dir: 出力ディレクトリ
         Returns:
             生成された画像のパス
@@ -155,17 +169,14 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
         part_label = target_part_name or "part"
         subject = f"A clay {concept}" if concept else "A clay object"
 
-        # 部分属性の列挙（正負を区別）
+        # 部分属性の列挙
         attr_lines = []
         top_attrs = self.attr_space.get_top_attributes(partial_vector, top_k=20, threshold=0.0)
         for attr_key, weight in top_attrs:
             name = self.attr_space.get_attribute_name(attr_key)
             if not name:
                 continue
-            if weight >= 0:
-                attr_lines.append(f"{name}({weight:.2f})")
-            else:
-                attr_lines.append(f"avoid {name}({weight:.2f})")
+            attr_lines.append(f"{name}({weight:.2f})")
 
         attr_text = ", ".join(attr_lines) if attr_lines else "(no attributes specified)"
 
@@ -174,11 +185,13 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
             "Keep the entire object fully inside the frame; do not crop.",
             "Keep MATERIAL as RAW CLAY; do not change other parts.",
             f"Modify only GEOMETRY and form in the masked area using: {attr_text}.",
-            "Output: coherent clay sculpture with the edited part seamlessly integrated."
         ]
 
-        if edit_intent:
-            prompt_parts.append(f"Edit intent: {edit_intent}.")
+        # 解釈フェーズで抽出されたモチーフを使用
+        if partial_motif:
+            prompt_parts.append(f"Incorporate the characteristic shape and style of a {partial_motif} into the edited part.")
+
+        prompt_parts.append("Output: coherent clay sculpture with the edited part seamlessly integrated.")
 
         prompt = " ".join(prompt_parts)
 
@@ -346,7 +359,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
         
         # 制約: 材質は粘土のまま、形状だけを変更
         prompt_parts.append("【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.")
-        prompt_parts.append("（注：各属性の値は-1.0～1.0の範囲です。正の値は特徴を強調し、負の値はその特徴を積極的に削ぎ落とします）")
+        prompt_parts.append("（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）")
         
         # 特徴ベクトルから主要な属性を抽出（負値も含める）
         top_attributes = self.attr_space.get_top_attributes(vector, top_k=20, threshold=0.0)
@@ -374,10 +387,7 @@ Output: A seamless clay sculpture where the parts are naturally merged."""
                 # 属性を整形
                 attrs_formatted = []
                 for name, weight in grouped_attrs[group_name][:Config.MAX_ATTRS_PER_GROUP]:
-                    if weight >= 0:
-                        attrs_formatted.append(f"{name}({weight:.2f})")
-                    else:
-                        attrs_formatted.append(f"（{name}を避ける{weight:.2f}）")
+                    attrs_formatted.append(f"{name}({weight:.2f})")
                 
                 if attrs_formatted:
                     attr_descriptions.append(f"{group_name}: {', '.join(attrs_formatted)}")

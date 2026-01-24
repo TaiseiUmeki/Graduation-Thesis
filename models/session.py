@@ -25,7 +25,8 @@ class ExplorationNode:
     prompt: Optional[str] = None
     mask_image_path: Optional[str] = None  # 部分編集に使用したマスク
     target_part_name: Optional[str] = None  # 編集対象の部位名
-    motif: Optional[str] = None  # モチーフ（固有名詞）
+    motif: Optional[str] = None  # 全体のモチーフ（固有名詞）
+    partial_motif: Optional[str] = None  # 部分編集のモチーフ（固有名詞）
     is_closed: bool = False
     timestamp: datetime = field(default_factory=datetime.now)
     note: str = ""
@@ -42,6 +43,7 @@ class ExplorationNode:
             "mask_image_path": self.mask_image_path,
             "target_part_name": self.target_part_name,
             "motif": self.motif,
+            "partial_motif": self.partial_motif,
             "is_closed": self.is_closed,
             "timestamp": self.timestamp.isoformat(),
             "note": self.note,
@@ -60,6 +62,7 @@ class ExplorationNode:
             mask_image_path=data.get("mask_image_path"),
             target_part_name=data.get("target_part_name"),
             motif=data.get("motif"),
+            partial_motif=data.get("partial_motif"),
             is_closed=data.get("is_closed", False),
             timestamp=datetime.fromisoformat(data["timestamp"]),
             note=data.get("note", ""),
@@ -189,11 +192,13 @@ class Session:
         )
         self.exploration_nodes.append(node)
         self.current_node_id = node.node_id
+        # 追加: ルート作成時に current_vector を更新しておく
+        self.current_vector = self._clone_vector(vector)
         self._next_node_id += 1
         self.updated_at = datetime.now()
         return node.node_id
 
-    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None, motif: Optional[str] = None) -> int:
+    def add_child_node(self, vector: AttributeVector, constraints: List['Constraint'], note: str = "", *, partial_vector: Optional[AttributeVector] = None, mask_image_path: Optional[str] = None, target_part_name: Optional[str] = None, motif: Optional[str] = None, partial_motif: Optional[str] = None) -> int:
         """現在のノードの子ノードを追加"""
         # motifが指定されていない場合、親のmotifを継承
         if motif is None:
@@ -210,10 +215,13 @@ class Session:
             mask_image_path=mask_image_path,
             target_part_name=target_part_name,
             motif=motif,
+            partial_motif=partial_motif,
             note=note,
         )
         self.exploration_nodes.append(node)
         self.current_node_id = node.node_id
+        # 追加: 子ノード追加時も current_vector を更新しておく
+        self.current_vector = self._clone_vector(vector)
         self._next_node_id += 1
         self.updated_at = datetime.now()
         return node.node_id

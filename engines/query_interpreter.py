@@ -305,3 +305,111 @@ class QueryInterpreter:
         ])
         
         return refined.strip()
+
+    def interpret_synthesis_method(
+        self,
+        part_name: str,       # 追加
+        body_name: str,       # 追加
+        user_intent: str,     # 従来のinstruction
+        # synthesis_instruction: str,
+        image_path: Optional[str] = None,
+        num_methods: int = 3
+    ) -> List[Interpretation]:
+        """
+        合成の接合方法を解釈し（物体名を考慮）、複数の案を生成
+        
+        Args:
+            synthesis_instruction: 合成指示テキスト（例: "左のパーツを右の本体にくっつけて"）
+            image_path: 合成元画像のパス（2つの物体を含む）
+            num_methods: 生成する接合方法の数
+        
+        Returns:
+            接合方法の解釈案のリスト
+        """
+        prompt = f"""あなたはプロダクトデザイナーです。画像に写っている2つの粘土パーツを合成する際の「接合部のニュアンス」について、3つの異なる案を提案してください。
+
+【対象物】
+- 左側のパーツ: {part_name}
+- 右側の本体: {body_name}
+- ユーザーの意図: {user_intent}
+
+【タスク】
+1. まず、画像を観察して「{part_name}」と「{body_name}」の形状的特徴や関係性を分析してください。
+   - 2つのパーツの形状的特徴（メカニカル、有機的、幾何学的など）
+   - 素材感やスタイル（工業製品風、自然物風、抽象的など）
+   - マスクで示された接合箇所の特徴
+
+2. その上で、この2つを物理的に結合するのに最適な方法を3つ提案してください。
+   - 固定のテンプレートは使わず、画像から読み取った特徴に合わせてカスタマイズしてください
+   - 例1: 戦車のような機械 → 「溶接風の頑丈な接合」「旋回機構のような隙間を残す接合」「一体成型のような滑らかな接合」
+   - 例2: 生物的なフォルム → 「骨格のように内部で結合」「皮膚が伸びて繋がるように融合」「関節のように可動域を想像させる接合」
+   - 例3: 抽象的な彫刻 → 「段差を活かしたメリハリのある接合」「境界をぼかした統合」「レイヤーが重なるような接合」
+
+3. それぞれの案について、**具体的な視覚的イメージ**を含めて説明してください。
+
+【出力形式】
+各案を以下のJSON形式で記述してください：
+{{
+  "method_name": "接合方法の名前（日本語、3-8文字）",
+  "method_en": "接合方法の名前（英語、1-3単語）",
+  "description": "接合部をどのように処理するかの具体的な説明（画像の特徴を踏まえた2-3文）",
+  "reasoning": "この画像の2つのパーツに対して、なぜこの方法が適切か（1-2文）"
+}}
+
+JSON配列形式で3つの案をすべて返してください。```json ... ```で囲んでください。"""
+
+        # 画像がある場合はGPT-4 Visionで解析
+        if image_path:
+            response_text = self.client.analyze_image_with_text(image_path, prompt)
+        else:
+            # 画像がない場合はテキストのみで処理
+            response_text = self.client.chat_completion([
+                {"role": "user", "content": prompt}
+            ])
+
+        # JSONをパース
+        try:
+            import json
+            # JSONの抽出（```json...```または```...```で囲まれている場合）
+            json_str = response_text
+            if "```json" in json_str:
+                json_str = json_str.split("```json")[1].split("```")[0]
+            elif "```" in json_str:
+                json_str = json_str.split("```")[1].split("```")[0]
+            
+            methods_data = json.loads(json_str)
+            
+            # Interpretationオブジェクトに変換
+            interpretations = []
+            for idx, method in enumerate(methods_data):
+                interp = Interpretation(
+                    id=f"synthesis_{idx}",
+                    text=method.get("method_name", method.get("description", "")),
+                    reasoning=method.get("reasoning", ""),
+                    motif=None  # 合成の場合はモチーフなし
+                )
+                # 追加情報をテキストに含める
+                interp.text = f"{method.get('method_name', '')}: {method.get('description', '')}"
+                interpretations.append(interp)
+            
+            return interpretations
+        except (json.JSONDecodeError, KeyError, IndexError) as e:
+            print(f"接合方法の解析に失敗: {e}")
+            # フォールバック: 3つのデフォルト案を返す
+            return [
+                Interpretation(
+                    id="synthesis_0",
+                    text="有機的融合: ヌルっと滑らかに融合させる",
+                    reasoning="自然な繋がり"
+                ),
+                Interpretation(
+                    id="synthesis_1",
+                    text="工業的接合: 接合部の境界をはっきり残す",
+                    reasoning="明確な構造"
+                ),
+                Interpretation(
+                    id="synthesis_2",
+                    text="パテ充填: 段階的に滑らかに接合する",
+                    reasoning="中間的な処理"
+                )
+            ]

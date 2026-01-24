@@ -1,0 +1,22 @@
+{
+  "session_id": "dd27d218-97a0-4faf-8e4e-0831cd7399cc",
+  "created_at": "2026-01-24T01:29:58.810626",
+  "updated_at": "2026-01-24T01:29:58.811722",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260124_012958_1680612c.png",
+  "initial_query": "本体の前方に付けて",
+  "concept": "戦車",
+  "query_history": [
+    "本体の前方に付けて"
+  ],
+  "interpretations": [],
+  "selected_interpretation": null,
+  "additional_image_path": null,
+  "current_vector": null,
+  "recommended_attributes": [],
+  "generated_images": [],
+  "constraints": [],
+  "current_phase": "A",
+  "exploration_nodes": [],
+  "current_node_id": null,
+  "next_node_id": 0
+}

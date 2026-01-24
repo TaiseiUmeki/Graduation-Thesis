@@ -651,7 +651,7 @@ ATTRIBUTE_GROUPS = {
 @dataclass
 class AttributeVector:
     """特徴ベクトルを表すクラス"""
-    weights: Dict[str, float]  # 属性名: 重み（-1.0～1.0、正:強調、負:回避）
+    weights: Dict[str, float]  # 属性名: 重み（0.0～1.0、値が大きいほど強調）
     
     def to_dict(self) -> Dict:
         """辞書形式に変換"""
@@ -707,7 +707,7 @@ class AttributeSpace:
         vector = self.zero_vector()
         for attr, weight in weights.items():
             if attr in self.all_attributes:
-                vector.weights[attr] = np.clip(weight, -1.0, 1.0)
+                vector.weights[attr] = np.clip(weight, 0.0, 1.0)
         return vector
     
     def get_attribute_name(self, attr_key: str) -> Optional[str]:
@@ -717,6 +717,10 @@ class AttributeSpace:
                 if f"{group_name}:{key}" == attr_key:
                     return name
         return None
+    
+    def has_attribute(self, attr_key: str) -> bool:
+        """属性キーが存在するかチェック"""
+        return attr_key in self.all_attributes
     
     def get_group_attributes(self, group_name: str) -> Dict[str, str]:
         """指定グループの属性を取得"""

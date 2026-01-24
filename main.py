@@ -431,7 +431,7 @@ class TrueCodingSystem:
         updated_weights = dict(self.session.current_vector.weights)
         for attr_key, delta, reason in adjustments:
             before = updated_weights.get(attr_key, 0.0)
-            after = float(np.clip(before + delta, -1.0, 1.0))
+            after = float(np.clip(before + delta, 0.0, 1.0))
             updated_weights[attr_key] = after
             attr_name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
             print(f"  {attr_name}: {before:+.2f} -> {after:+.2f} (delta {delta:+.2f}) {reason if reason else ''}")

@@ -18,6 +18,13 @@ class Config:
     IMAGES_DIR = DATA_DIR / "images"
     OUTPUTS_DIR = DATA_DIR / "outputs"
     
+    # 入力・マスク関連ディレクトリ
+    INPUT_IMAGES_DIR = DATA_DIR / "input_images"  # UIからアップロードされた画像
+    MASKS_DIR = DATA_DIR / "masks"  # マスク画像全般
+    MASKS_PARTIAL_A_DIR = MASKS_DIR / "partialA"  # Phase A部分編集
+    MASKS_PARTIAL_D_DIR = MASKS_DIR / "partialD"  # Phase D部分編集
+    MASKS_SYNTHESIS_DIR = MASKS_DIR / "synthesis"  # 合成モード
+    
     # OpenAI API設定
     OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
     
@@ -40,7 +47,18 @@ class Config:
     @classmethod
     def ensure_directories(cls):
         """必要なディレクトリを作成"""
-        for dir_path in [cls.DATA_DIR, cls.SESSIONS_DIR, cls.IMAGES_DIR, cls.OUTPUTS_DIR]:
+        dir_list = [
+            cls.DATA_DIR,
+            cls.SESSIONS_DIR,
+            cls.IMAGES_DIR,
+            cls.OUTPUTS_DIR,
+            cls.INPUT_IMAGES_DIR,
+            cls.MASKS_DIR,
+            cls.MASKS_PARTIAL_A_DIR,
+            cls.MASKS_PARTIAL_D_DIR,
+            cls.MASKS_SYNTHESIS_DIR,
+        ]
+        for dir_path in dir_list:
             dir_path.mkdir(parents=True, exist_ok=True)
         
         if not cls.OPENAI_API_KEY:
