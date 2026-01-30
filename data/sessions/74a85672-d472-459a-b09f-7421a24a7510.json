@@ -1,0 +1,216 @@
+{
+  "session_id": "74a85672-d472-459a-b09f-7421a24a7510",
+  "created_at": "2026-01-25T22:58:55.245240",
+  "updated_at": "2026-01-25T23:09:38.183520",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260125_225855_41ac9cda.png",
+  "initial_query": "女王様が座ってそうな椅子にして",
+  "concept": "椅子",
+  "query_history": [
+    "女王様が座ってそうな椅子にして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "背もたれを高くし、上部を王冠のような形にすることで、威厳を感じさせるデザインにします。背もたれの上部中央に尖った突起を作り、側面は緩やかなカーブで持ち上げます。",
+      "reasoning": "『女王様』という言葉から、王座のような威厳を連想したためです。",
+      "motif": "King",
+      "timestamp": "2026-01-25T22:59:22.522422"
+    },
+    {
+      "id": 2,
+      "text": "座面を細長くし、脚部を優雅な曲線で外側に広げることで、エレガントなデザインにします。さらに、アームレスト部分を少し外側に広げ、曲線的にすることで、優雅さを強調します。",
+      "reasoning": "『女王様』という言葉から、優雅で洗練された形状を連想したためです。",
+      "motif": "King",
+      "timestamp": "2026-01-25T22:59:22.522436"
+    },
+    {
+      "id": 3,
+      "text": "全体を有機的な曲線で構成し、背もたれとアームレストを滑らかに繋げることで、囲まれた安心感を与えるデザインにします。背もたれの上部は緩やかに波打たせて、柔らかな印象を作ります。",
+      "reasoning": "『女王様』という言葉から、包み込むような優しさと気品を連想したためです。",
+      "motif": "King",
+      "timestamp": "2026-01-25T22:59:22.522439"
+    },
+    {
+      "id": 1,
+      "text": "背もたれを細長比が高い形状にし、全体を直線的で幾何学的にする。背もたれのエッジを直角にして、モダンでシャープな印象を与える。",
+      "reasoning": "『長くして』という要求から、背もたれの高さを強調するために細長比を高くし、直線的かつ幾何学的な形状を選択しました。",
+      "motif": null,
+      "timestamp": "2026-01-25T23:09:06.874699"
+    },
+    {
+      "id": 2,
+      "text": "背もたれを円柱状の形状にし、上部に向かって徐々に細くなる円錐状のトップを追加する。全体を曲線的にして、エレガントな印象を与える。",
+      "reasoning": "『長くして』という指示から、背もたれを視覚的に引き伸ばすため、円柱状から円錐状へ移行する形状を選びました。曲線的な要素でエレガントさを加えています。",
+      "motif": null,
+      "timestamp": "2026-01-25T23:09:06.874737"
+    },
+    {
+      "id": 3,
+      "text": "背もたれを有機的な曲線で長く伸ばし、上部にかけて幅を広げる。側面から見るとS字カーブになるようにすることで、自然な流れを感じさせるデザインに。",
+      "reasoning": "『長くして』という要望から、高さを強調しながら自然な流れを取り入れるために、有機的な曲線でS字カーブを描く形状を選びました。",
+      "motif": null,
+      "timestamp": "2026-01-25T23:09:06.874740"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "背もたれを細長比が高い形状にし、全体を直線的で幾何学的にする。背もたれのエッジを直角にして、モダンでシャープな印象を与える。",
+    "reasoning": "『長くして』という要求から、背もたれの高さを強調するために細長比を高くし、直線的かつ幾何学的な形状を選択しました。",
+    "motif": null,
+    "timestamp": "2026-01-25T23:09:06.874699"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "surface:spiked": 1.0,
+      "line:vertical": 0.75,
+      "balance:top_heavy": 0.75,
+      "form:assembly": 0.7,
+      "line:curved": 0.5,
+      "balance:symmetrical": 0.7,
+      "texture:smooth": 0.5,
+      "line:straight": 0.75
+    }
+  },
+  "recommended_attributes": [
+    "line:vertical",
+    "surface:spiked",
+    "line:curved",
+    "balance:top_heavy",
+    "balance:symmetrical",
+    "form:solid",
+    "form:frame",
+    "edge:sharp_angle",
+    "texture:smooth",
+    "surface:embossed"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260125_230152_bf878142.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY.。It is designed with the distinct motif of a King.。Incorporate the characteristic shape and silhouette of a King into the design.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）。form: 複合体（複数の部品の結合）(0.70)、line: 垂直志向(0.80), 曲線的(0.70)、surface: 棘状の突起(1.00)、balance: トップヘビー（上部が大きい）(0.80), 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "form:assembly": 0.7,
+          "line:curved": 0.7,
+          "line:vertical": 0.8,
+          "surface:spiked": 1.0,
+          "balance:top_heavy": 0.8,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-25T23:01:53.282087"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260125_230617_ebdc399f.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY.。It is designed with the distinct motif of a King.。Incorporate the characteristic shape and silhouette of a King into the design.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）。form: 複合体（複数の部品の結合）(0.70)、line: 垂直志向(0.75), 直線的(0.75), 曲線的(0.50)、surface: 棘状の突起(1.00)、balance: トップヘビー（上部が大きい）(0.75), 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "vector": {
+        "weights": {
+          "surface:spiked": 1.0,
+          "line:vertical": 0.75,
+          "balance:top_heavy": 0.75,
+          "form:assembly": 0.7,
+          "line:curved": 0.5,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5,
+          "line:straight": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "line:straight",
+          "constraint_type": "greater_than",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-25T23:05:04.862221"
+        }
+      ],
+      "timestamp": "2026-01-25T23:06:17.883713"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "line:straight",
+      "constraint_type": "greater_than",
+      "value": 0.75,
+      "min_value": null,
+      "max_value": null,
+      "description": "",
+      "is_active": true,
+      "timestamp": "2026-01-25T23:05:04.862221"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:assembly": 0.7,
+          "line:curved": 0.7,
+          "line:vertical": 0.8,
+          "surface:spiked": 1.0,
+          "balance:top_heavy": 0.8,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260125_230152_bf878142.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY.。It is designed with the distinct motif of a King.。Incorporate the characteristic shape and silhouette of a King into the design.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）。form: 複合体（複数の部品の結合）(0.70)、line: 垂直志向(0.80), 曲線的(0.70)、surface: 棘状の突起(1.00)、balance: トップヘビー（上部が大きい）(0.80), 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "King",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-25T23:00:35.065022",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "surface:spiked": 1.0,
+          "line:vertical": 0.75,
+          "balance:top_heavy": 0.75,
+          "form:assembly": 0.7,
+          "line:curved": 0.5,
+          "balance:symmetrical": 0.7,
+          "texture:smooth": 0.5,
+          "line:straight": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "line:straight",
+          "constraint_type": "greater_than",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "",
+          "is_active": true,
+          "timestamp": "2026-01-25T23:05:04.862221"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260125_230617_ebdc399f.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY.。It is designed with the distinct motif of a King.。Incorporate the characteristic shape and silhouette of a King into the design.。Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.。【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.。（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）。form: 複合体（複数の部品の結合）(0.70)、line: 垂直志向(0.75), 直線的(0.75), 曲線的(0.50)、surface: 棘状の突起(1.00)、balance: トップヘビー（上部が大きい）(0.75), 対称（シンメトリー）(0.70)、texture: 平滑（凹凸なし）(0.50)。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "King",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-25T23:05:08.727585",
+      "note": "add_constraint:line:straight"
+    }
+  ],
+  "current_node_id": 1,
+  "next_node_id": 2
+}
