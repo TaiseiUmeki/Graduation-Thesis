@@ -10,6 +10,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from PIL import Image, ImageOps
+from io import BytesIO
 
 # ページ設定は最初のStreamlitコマンドとして実行
 st.set_page_config(page_title="梅木卒論 GUI", layout="wide")
@@ -44,11 +45,23 @@ def _save_uploaded_image(uploaded_file, prefix: str = "uploaded") -> str:
         f.write(uploaded_file.getbuffer())
     return str(fpath)
 
-# ヘルパ: 画像を開く（キャッシュ付き）
-@st.cache_resource
-def _load_image(image_path: str):
-    """画像をキャッシュして読み込む（PIL Imageオブジェクトとして）"""
-    return Image.open(image_path)
+# ヘルパ: 画像を開く（Streamlit media キャッシュ不整合を避けるため bytes を cache）
+@st.cache_data
+def _read_image_bytes(image_path: str) -> bytes:
+    return Path(image_path).read_bytes()
+
+def _load_image(image_path: str) -> Image.Image:
+    """
+    画像を読み込む（PIL Imageオブジェクトとして）
+    - bytes を cache して、PIL Image は毎回新規生成する（MediaFileHandler: Missing file 対策）
+    """
+    img = Image.open(BytesIO(_read_image_bytes(image_path)))
+    # Lazy-loadのままだと、Streamlit側のシリアライズ/配信タイミングで不整合が出ることがあるため先に読み込む
+    img.load()
+    # streamlit-drawable-canvas 側の扱いが安定しやすいようRGBAに統一
+    if img.mode != "RGBA":
+        img = img.convert("RGBA")
+    return img
 
 # ヘルパ: 現在の特徴ベクトルの上位をDataFrame化
 def _vector_top_df(weights: dict, top_k: int = 10) -> pd.DataFrame:
@@ -126,6 +139,8 @@ if "system" not in st.session_state:
     st.session_state.selected_synthesis_method = None
     st.session_state.synthesis_description = None
     st.session_state.synthesis_phase_d_ready = False
+    # Media warmup flag for Phase D
+    st.session_state.phase_d_media_warmup_done = False
 
 system: TrueCodingSystem = st.session_state.system
 phase: str = st.session_state.phase
@@ -177,7 +192,8 @@ if phase == "A":
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
-                    key="partial_canvas",
+                    # base画像が変わるときに同一keyだと古いmedia参照が残りやすいので、画像ごとにkeyを分ける
+                    key=f"partial_canvas_{Path(base_path).name}",
                 )
 
                 colp1, colp2, colp3 = st.columns([1,1,1])
@@ -404,7 +420,7 @@ if phase == "A":
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
-                    key="canvas_synthesis",
+                    key=f"canvas_synthesis_{Path(synthesis_base_path).name}",
                 )
                 
                 # ユーザー意図（任意）
@@ -703,6 +719,16 @@ elif phase == "B":
 elif phase == "D":
     st.header("Phase D: 生成と探索")
 
+    # StreamlitのMediaFileHandlerが「Missing file」を出して画像が表示されないことがあるため、
+    # Phase D突入直後に一度だけリレンダーしてmedia登録を安定させる（特に初回生成直後に発生しやすい）
+    if "phase_d_media_warmup_done" not in st.session_state:
+        st.session_state.phase_d_media_warmup_done = False
+    if not st.session_state.phase_d_media_warmup_done:
+        latest_for_warmup = system.session.get_latest_image() if system.session else None
+        if latest_for_warmup and latest_for_warmup.image_path:
+            st.session_state.phase_d_media_warmup_done = True
+            st.rerun()
+
     # 上部: 画像2カラム
     import os
     col1, col2 = st.columns(2)
@@ -771,12 +797,83 @@ elif phase == "D":
         st.session_state.selected_interpretation_id = None
         st.session_state.analysis_text = ""
         st.session_state.search_results = []
+        st.session_state.phase_d_media_warmup_done = False
         st.success("セッションを終了しました。新しいセッションを開始できます。")
         st.rerun()
 
     # サイドバー: 全体調整（制約）
     st.sidebar.subheader("調整タブ")
-    st.sidebar.markdown("#### 制約を追加（グローバルベクトル）")
+    st.sidebar.markdown("#### 全体編集（スライダー / Set）")
+
+    # 基準ベクトル（V0）はルートを優先
+    root_node = system.session.get_root_node() if system.session else None
+    base_v0 = None
+    if root_node:
+        base_v0 = root_node.vector
+    elif system.session and system.session.current_vector:
+        base_v0 = system.session.current_vector
+
+    if base_v0 is None:
+        st.sidebar.info("先に Phase C でベクトルを生成してください")
+    else:
+        # セッションごとにスライダー値を保持
+        session_id = system.session.session_id if system.session else "unknown"
+        if (
+            "global_edit_session_id" not in st.session_state
+            or st.session_state.global_edit_session_id != session_id
+        ):
+            st.session_state.global_edit_session_id = session_id
+            st.session_state.global_edit_values = {
+                k: float(base_v0.weights.get(k, 0.0)) for k in ATTR_SPACE.all_attributes
+            }
+
+        # グループごとにスライダーを表示
+        for gname, items in ATTR_SPACE.groups.items():
+            with st.sidebar.expander(f"{gname}", expanded=False):
+                for k, jp_name in items.items():
+                    attr_key = f"{gname}:{k}"
+                    default_val = float(st.session_state.global_edit_values.get(attr_key, 0.0))
+                    v = st.slider(
+                        jp_name,
+                        min_value=0.0,
+                        max_value=1.0,
+                        value=float(max(0.0, min(1.0, default_val))),
+                        step=0.05,
+                        key=f"global_slider_{session_id}_{attr_key}",
+                    )
+                    st.session_state.global_edit_values[attr_key] = float(v)
+
+        if st.sidebar.button("全体編集を適用して再生成", type="primary", key="apply_global_edit_btn"):
+            try:
+                from models.constraints import Constraint, ConstraintType
+
+                # 差分のみを制約として生成（EQUAL）
+                constraints = []
+                for attr_key in ATTR_SPACE.all_attributes:
+                    target = float(st.session_state.global_edit_values.get(attr_key, 0.0))
+                    base = float(base_v0.weights.get(attr_key, 0.0))
+                    if abs(target - base) < 1e-6:
+                        continue
+                    constraints.append(
+                        Constraint(
+                            attribute=attr_key,
+                            constraint_type=ConstraintType.EQUAL,
+                            value=target,
+                            description=f"{ATTR_SPACE.get_attribute_name(attr_key) or attr_key} = {target:.2f}",
+                        )
+                    )
+
+                with st.spinner("全体編集を適用して再生成中..."):
+                    system.apply_global_edit(constraints)
+                st.success("全体編集を適用しました")
+                st.rerun()
+            except Exception as e:
+                st.error(f"全体編集に失敗: {e}")
+                import traceback
+                st.error(traceback.format_exc())
+
+    st.sidebar.markdown("---")
+    st.sidebar.markdown("#### 旧: 制約を追加（グローバルベクトル）")
     
     # セレクトボックス用オプション（グループ順を保持）
     all_attrs: List[Tuple[str, str]] = []  # (display, key)
@@ -1080,7 +1177,7 @@ elif phase == "D":
             col_img, col_form = st.columns([1, 1])
             with col_img:
                 st.caption("編集対象の画像")
-                st.image(base_path, use_column_width=True)
+                st.image(_read_image_bytes(base_path), use_column_width=True)
             
             with col_form:
                 st.caption("マスク描画（赤色で編集領域を指定）")
@@ -1098,7 +1195,8 @@ elif phase == "D":
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
-                    key="partial_canvas_main",
+                    # 全体編集などでベース画像が切り替わるので、画像ごとにkeyを変えてcanvasをリマウントする
+                    key=f"partial_canvas_main_{Path(base_path).name}",
                 )
             
             col_input1, col_input2 = st.columns(2)

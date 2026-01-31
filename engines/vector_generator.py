@@ -9,7 +9,7 @@ import numpy as np
 from utils.openai_client import OpenAIClient
 from models.attribute_space import AttributeVector, ATTR_SPACE
 from models.session import Interpretation
-from models.constraints import Constraint
+from models.constraints import Constraint, ConstraintType
 from config import Config
 
 
@@ -182,6 +182,51 @@ JSON形式で返してください:
         updated_vector = self._parse_vector_response(response)
         
         return updated_vector
+
+    def update_vector_with_constraints(
+        self,
+        base_vector: AttributeVector,
+        constraints: List[Constraint]
+    ) -> AttributeVector:
+        """
+        複数制約を決定論的に適用して特徴ベクトルを更新（LLM不使用）
+
+        Phase D（Global）のスライダー操作に対応するため、ConstraintType に従って
+        base_vector の重みを更新する。
+        """
+        if not constraints:
+            return base_vector
+
+        updated_weights = dict(base_vector.weights)
+
+        for c in constraints:
+            if not getattr(c, "is_active", True):
+                continue
+
+            attr_key = c.attribute
+            if not self.attr_space.has_attribute(attr_key):
+                continue
+
+            current_val = float(updated_weights.get(attr_key, 0.0))
+
+            ctype = getattr(c.constraint_type, "value", c.constraint_type)
+
+            if ctype == ConstraintType.EQUAL.value and c.value is not None:
+                updated_weights[attr_key] = float(np.clip(float(c.value), 0.0, 1.0))
+            elif ctype == ConstraintType.GREATER_THAN.value and c.value is not None:
+                updated_weights[attr_key] = float(np.clip(max(current_val, float(c.value)), 0.0, 1.0))
+            elif ctype == ConstraintType.LESS_THAN.value and c.value is not None:
+                updated_weights[attr_key] = float(np.clip(min(current_val, float(c.value)), 0.0, 1.0))
+            elif (
+                ctype == ConstraintType.RANGE.value
+                and c.min_value is not None
+                and c.max_value is not None
+            ):
+                updated_weights[attr_key] = float(
+                    np.clip(current_val, float(c.min_value), float(c.max_value))
+                )
+
+        return AttributeVector(weights=updated_weights)
     
     def _get_vector_system_prompt(self) -> str:
         """ベクトル生成用のシステムプロンプト"""

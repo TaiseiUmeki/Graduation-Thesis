@@ -337,3 +337,8 @@ A 3D render of a マグカップ made of CLAY.。It is designed with the distinc
 Last login: Fri Jan 30 04:01:08 on ttys001
 Restored session: 2026年 1月30日 金曜日 04時00分15秒 JST
 (base) umeking5@TaiseinoMacBook-Pro truecoding % 
+
+
+イメージ実際に具体化させられたか
+
+

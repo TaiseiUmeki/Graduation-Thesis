@@ -2,7 +2,7 @@
 画像生成エンジン（フェーズD）
 特徴ベクトルから画像を生成し、批評ループを管理
 """
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Dict
 from pathlib import Path
 
 from utils.openai_client import OpenAIClient
@@ -15,6 +15,344 @@ from config import Config
 
 class ImageGenerator:
     """画像生成エンジン"""
+
+    # ------------------------------------------------------------------
+    # Attribute to Adjective Mapping (Phase D - Global / Differential)
+    # Thresholds: (Value, Adjective Phrase)
+    # Order: Descending (Largest value first)
+    # NOTE: Must cover all keys in ATTR_SPACE.all_attributes.
+    # ------------------------------------------------------------------
+    PROMPT_MAPPING: Dict[str, List[Tuple[float, str]]] = {
+        # --- [FORM] Basic geometry ---
+        "form:cubic": [
+            (0.85, "strongly cubic, box-like silhouette with flat faces"),
+            (0.60, "boxy, cubic overall form"),
+            (0.30, "slightly box-like proportions"),
+            (0.00, "avoid a boxy cube-like silhouette; prefer non-cubic forms"),
+        ],
+        "form:cylindrical": [
+            (0.85, "strongly cylindrical body, clear round cross-section"),
+            (0.60, "cylindrical overall shape"),
+            (0.30, "somewhat cylindrical profile"),
+            (0.00, "avoid a cylinder-like profile; prefer non-cylindrical forms"),
+        ],
+        "form:spherical": [
+            (0.85, "nearly spherical mass, ball-like volume"),
+            (0.60, "rounded spherical overall form"),
+            (0.30, "somewhat rounded, sphere-influenced volume"),
+            (0.00, "avoid a ball-like spherical mass; prefer non-spherical forms"),
+        ],
+        "form:conical": [
+            (0.85, "distinct conical form, clear taper to a point"),
+            (0.60, "conical silhouette with a noticeable taper"),
+            (0.30, "slightly conical, subtle tapering"),
+            (0.00, "avoid a cone-like taper; prefer non-conical forms"),
+        ],
+        "form:planar": [
+            (0.85, "strongly planar, plate-like, broad flat surfaces"),
+            (0.60, "flat, planar form with wide faces"),
+            (0.30, "somewhat planar, slightly flattened profile"),
+            (0.00, "avoid an overly flat planar plate-like form; prefer volumetric mass"),
+        ],
+        "form:hollow": [
+            (0.85, "clearly hollow interior, pronounced cavity or void"),
+            (0.60, "hollow structure with visible internal space"),
+            (0.30, "somewhat hollow, hint of internal void"),
+            (0.00, "solid filled volume; avoid hollow cavities and voids"),
+        ],
+        "form:solid": [
+            (0.85, "solid monolithic volume, fully filled mass"),
+            (0.60, "solid, dense filled form"),
+            (0.30, "somewhat solid, reduced hollowness"),
+            (0.00, "avoid a fully solid block; allow hollowness and internal voids"),
+        ],
+        "form:mesh": [
+            (0.85, "intricate lattice mesh structure, open grid-like body"),
+            (0.60, "mesh-like structure with grid openings"),
+            (0.30, "light perforations or sparse mesh quality"),
+            (0.00, "solid surface with no mesh; avoid grid openings and lattice"),
+        ],
+        "form:frame": [
+            (0.85, "exposed skeletal frame, strut-based structure"),
+            (0.60, "frame-like construction with visible supports"),
+            (0.30, "partly frame-based, some exposed supports"),
+            (0.00, "avoid exposed framing; prefer continuous surfaces"),
+        ],
+        "form:shell": [
+            (0.85, "thin shell-like curved surface, lightweight skin"),
+            (0.60, "shell structure with thin curved surfaces"),
+            (0.30, "somewhat shell-like, partial thin surface skin"),
+            (0.00, "avoid thin shell skin; prefer thicker volumetric structure"),
+        ],
+        "form:single_mass": [
+            (0.85, "single uninterrupted mass, no seams or separations"),
+            (0.60, "mostly single-piece, continuous mass"),
+            (0.30, "somewhat continuous mass with minimal segmentation"),
+            (0.00, "assembled from multiple parts; avoid a single uninterrupted mass"),
+        ],
+        "form:assembly": [
+            (0.85, "clearly assembled multi-part structure, distinct components"),
+            (0.60, "composed of multiple parts, modular assembly feel"),
+            (0.30, "slight multi-part impression"),
+            (0.00, "single continuous mass; avoid visible component assembly"),
+        ],
+
+        # --- [LINE] Silhouette & flow ---
+        "line:straight": [
+            (0.85, "dominantly straight lines, rigid linear silhouette"),
+            (0.60, "straight-edged linework and linear contours"),
+            (0.30, "some straight segments in the outline"),
+            (0.00, "avoid straight rigid lines; prefer curved flowing contours"),
+        ],
+        "line:curved": [
+            (0.85, "strongly curved outline, smooth flowing curvature"),
+            (0.60, "curved contours and rounded line flow"),
+            (0.30, "slightly curved, gentle arcs"),
+            (0.00, "avoid excessive curvature; prefer straighter, more linear contours"),
+        ],
+        "line:s_curve": [
+            (0.85, "pronounced S-curve flow, dynamic serpentine silhouette"),
+            (0.60, "S-shaped curves and sinuous lines"),
+            (0.30, "subtle S-curve accents"),
+            (0.00, "avoid S-shaped serpentine flow; prefer simpler single-direction curves"),
+        ],
+        "line:geometric_curve": [
+            (0.85, "precise geometric curves (perfect arcs), engineered curvature"),
+            (0.60, "geometric arc-like curves, controlled curvature"),
+            (0.30, "slightly geometric, orderly curvature"),
+            (0.00, "avoid perfect geometric arcs; prefer irregular organic curvature"),
+        ],
+        "line:organic_curve": [
+            (0.85, "highly organic irregular curves, natural flowing linework"),
+            (0.60, "organic curves, irregular flowing contours"),
+            (0.30, "slightly organic line quality"),
+            (0.00, "geometric and regular linework; avoid organic irregular curves"),
+        ],
+        "line:vertical": [
+            (0.85, "strong vertical emphasis, upright proportions"),
+            (0.60, "vertical orientation and upward flow"),
+            (0.30, "slight vertical tendency"),
+            (0.00, "avoid vertical emphasis; prefer horizontal or radial orientation"),
+        ],
+        "line:horizontal": [
+            (0.85, "strong horizontal emphasis, wide sideways flow"),
+            (0.60, "horizontal orientation and lateral spread"),
+            (0.30, "slight horizontal tendency"),
+            (0.00, "avoid horizontal emphasis; prefer vertical or radial orientation"),
+        ],
+        "line:radial": [
+            (0.85, "strong radial organization, spokes radiating from a center"),
+            (0.60, "radial layout with elements radiating outward"),
+            (0.30, "slight radial accents"),
+            (0.00, "avoid radial organization; prefer parallel or directional flow"),
+        ],
+        "line:parallel": [
+            (0.85, "strong parallel alignment, repeated parallel lines"),
+            (0.60, "parallel line rhythm and aligned elements"),
+            (0.30, "some parallel alignment"),
+            (0.00, "avoid parallel repetition; prefer varied non-parallel directions"),
+        ],
+        "line:tapered": [
+            (0.85, "strong tapering, clearly narrowing toward an end"),
+            (0.60, "noticeable taper, narrowing profile"),
+            (0.30, "slight tapering"),
+            (0.00, "avoid tapering; keep thickness more uniform"),
+        ],
+        "line:constricted": [
+            (0.85, "strong constriction, pronounced waist and pinch"),
+            (0.60, "constricted midsection, clear necking-in"),
+            (0.30, "slight constriction"),
+            (0.00, "avoid a pinched waist; keep cross-section more uniform"),
+        ],
+
+        # --- [EDGE] Edge & corner treatment ---
+        "edge:sharp_angle": [
+            (0.85, "extremely sharp angles, razor-like crisp corners"),
+            (0.60, "sharp angular corners, crisp edges"),
+            (0.30, "slightly angular corners"),
+            (0.00, "rounded edges, soft corners, filleted transitions"),
+        ],
+        "edge:right_angle": [
+            (0.85, "dominant right angles (90°), orthogonal geometry"),
+            (0.60, "mostly right-angled corners, orthogonal structure"),
+            (0.30, "some right-angled features"),
+            (0.00, "avoid strict right angles; prefer oblique angles or rounded corners"),
+        ],
+        "edge:obtuse_angle": [
+            (0.85, "broad obtuse angles, open blunt corners"),
+            (0.60, "mostly obtuse-angled corners"),
+            (0.30, "slightly obtuse corners"),
+            (0.00, "avoid blunt obtuse corners; prefer sharper or more defined angles"),
+        ],
+        "edge:chamfered": [
+            (0.85, "strong chamfers, flat beveled edge cuts"),
+            (0.60, "chamfered edges, noticeable bevels"),
+            (0.30, "slight chamfering on edges"),
+            (0.00, "no chamfers; keep edges either sharp or smoothly filleted"),
+        ],
+        "edge:filleted": [
+            (0.85, "large fillets, generous radius transitions on corners"),
+            (0.60, "filleted corners with smooth radius"),
+            (0.30, "slightly rounded fillets"),
+            (0.00, "crisp corners with minimal rounding; avoid filleted transitions"),
+        ],
+        "edge:rounded_fully": [
+            (0.85, "overall fully rounded, soft blob-like corners everywhere"),
+            (0.60, "mostly rounded with soft overall edge treatment"),
+            (0.30, "slightly rounded overall"),
+            (0.00, "avoid fully rounded blob-like edges; prefer defined corners or bevels"),
+        ],
+        "edge:knife_edge": [
+            (0.85, "knife-edge thin tips, very thin sharp terminating edges"),
+            (0.60, "thin knife-like edges and tips"),
+            (0.30, "some thin-edged details"),
+            (0.00, "avoid thin knife edges; use thicker blunt terminations"),
+        ],
+
+        # --- [SURFACE] Surface topology ---
+        "surface:convex": [
+            (0.85, "strong convex bulges, pronounced swelling surfaces"),
+            (0.60, "convex surface bulging outward"),
+            (0.30, "slight convex swelling"),
+            (0.00, "avoid bulging convexity; keep surfaces flatter or slightly concave"),
+        ],
+        "surface:spiked": [
+            (0.85, "many sharp spikes and thorn-like protrusions"),
+            (0.60, "spiky protrusions, pointed surface details"),
+            (0.30, "a few small spikes"),
+            (0.00, "smooth safe surface; avoid spikes and thorn-like protrusions"),
+        ],
+        "surface:ribbed": [
+            (0.85, "strong ribbing, deep repeated ridges"),
+            (0.60, "ribbed surface with noticeable ridges"),
+            (0.30, "light ribbing, subtle ridges"),
+            (0.00, "no ribbing; avoid repeated ridge patterns"),
+        ],
+        "surface:embossed": [
+            (0.85, "strong embossing, bold raised relief patterns"),
+            (0.60, "embossed raised details on the surface"),
+            (0.30, "subtle embossed relief"),
+            (0.00, "flat surface without embossed relief; avoid raised patterns"),
+        ],
+        "surface:concave": [
+            (0.85, "strong concave hollows, deep inward curving surfaces"),
+            (0.60, "concave surface indentations"),
+            (0.30, "slight concave dimpling"),
+            (0.00, "avoid deep concavities; prefer outward convex or flat surfaces"),
+        ],
+        "surface:dimpled": [
+            (0.85, "dense dimples, many small pit-like dents"),
+            (0.60, "dimpled surface with multiple small dents"),
+            (0.30, "a few dimples"),
+            (0.00, "smooth surface; avoid pitted dimple texture"),
+        ],
+        "surface:grooved": [
+            (0.85, "deep grooves and slits, strong carved channels"),
+            (0.60, "grooved surface with noticeable channels"),
+            (0.30, "light grooves, subtle channels"),
+            (0.00, "no grooves; avoid slit-like channels and carved lines"),
+        ],
+        "surface:perforated": [
+            (0.85, "many through-holes, heavily perforated body"),
+            (0.60, "perforated surface with multiple holes"),
+            (0.30, "a few perforations"),
+            (0.00, "solid surface; no holes or perforations"),
+        ],
+        "surface:twisted": [
+            (0.85, "strong twisting deformation, torsion along the body"),
+            (0.60, "twisted form with visible torsion"),
+            (0.30, "slight twist"),
+            (0.00, "avoid twisting; keep geometry untwisted and aligned"),
+        ],
+        "surface:bent": [
+            (0.85, "strong bending, clearly curved by bending deformation"),
+            (0.60, "bent form with a noticeable bend"),
+            (0.30, "slight bend"),
+            (0.00, "avoid bending; keep form straight and unbent"),
+        ],
+        "surface:warped": [
+            (0.85, "strong warping, distorted and uneven surface flow"),
+            (0.60, "warped surface, visibly distorted"),
+            (0.30, "slight warping"),
+            (0.00, "avoid warping; keep surfaces even and undistorted"),
+        ],
+        "surface:crumpled": [
+            (0.85, "strongly crumpled, irregular folded dents and creases"),
+            (0.60, "crumpled surface with irregular folds"),
+            (0.30, "slightly crumpled, a few creases"),
+            (0.00, "smooth continuous surface; avoid crumples and irregular folds"),
+        ],
+
+        # --- [BALANCE] Balance & proportion ---
+        "balance:symmetrical": [
+            (0.85, "highly symmetrical, mirrored left-right balance"),
+            (0.60, "mostly symmetrical overall balance"),
+            (0.30, "slightly symmetrical structure"),
+            (0.00, "asymmetrical, irregular balance; avoid strict symmetry"),
+        ],
+        "balance:asymmetrical": [
+            (0.85, "strongly asymmetrical, intentionally unbalanced arrangement"),
+            (0.60, "asymmetrical overall form"),
+            (0.30, "slightly asymmetrical details"),
+            (0.00, "symmetrical and evenly balanced; avoid asymmetry"),
+        ],
+        "balance:top_heavy": [
+            (0.85, "prominent oversized upper mass, strongly top-heavy"),
+            (0.60, "top-heavy balance with larger upper portion"),
+            (0.30, "slightly top-heavy"),
+            (0.00, "visually balanced vertical weight distribution, stable and neutral"),
+        ],
+        "balance:bottom_heavy": [
+            (0.85, "wide stable base, massive bottom, strongly bottom-heavy"),
+            (0.60, "bottom-heavy balance with weighted base"),
+            (0.30, "slightly bottom-weighted"),
+            (0.00, "visually balanced vertical weight distribution, straight stable profile"),
+        ],
+        "balance:slender": [
+            (0.85, "very slender, high aspect ratio, tall and thin"),
+            (0.60, "slender proportions, elongated"),
+            (0.30, "slightly slender"),
+            (0.00, "avoid slenderness; prefer broader, lower aspect ratio proportions"),
+        ],
+        "balance:wide": [
+            (0.85, "very wide proportions, low aspect ratio, broad footprint"),
+            (0.60, "wide and broad proportions"),
+            (0.30, "slightly wide"),
+            (0.00, "avoid wide squat proportions; prefer slimmer or taller proportions"),
+        ],
+        "balance:flat": [
+            (0.85, "strongly flattened, thin vertical thickness, low profile"),
+            (0.60, "flat, low-profile form"),
+            (0.30, "slightly flattened"),
+            (0.00, "avoid flatness; prefer thicker, more volumetric height"),
+        ],
+        "balance:thick": [
+            (0.85, "very thick and chunky, substantial thickness"),
+            (0.60, "thick, bulky proportions"),
+            (0.30, "slightly thick"),
+            (0.00, "avoid bulkiness; prefer thinner or lighter proportions"),
+        ],
+
+        # --- [TEXTURE] Tactile surface texture ---
+        "texture:smooth": [
+            (0.85, "very smooth surface, minimal micro-relief"),
+            (0.60, "smooth surface with little roughness"),
+            (0.30, "slightly smooth surface"),
+            (0.00, "roughened surface with visible irregularities; avoid smooth finish"),
+        ],
+        "texture:rough": [
+            (0.85, "very rough surface, strong irregular micro-relief"),
+            (0.60, "rough surface with noticeable texture"),
+            (0.30, "slightly rough texture"),
+            (0.00, "smooth surface; avoid rough irregular micro-relief"),
+        ],
+        "texture:granular": [
+            (0.85, "highly granular surface, many small grains and bumps"),
+            (0.60, "granular surface with fine grains"),
+            (0.30, "slight graininess"),
+            (0.00, "smooth non-granular surface; avoid grainy bumps"),
+        ],
+    }
     
     def __init__(self, client: Optional[OpenAIClient] = None):
         self.client = client or OpenAIClient()
@@ -28,7 +366,9 @@ class ImageGenerator:
         constraints: Optional[List[Constraint]] = None,
         output_dir: Optional[Path] = None,
         concept: Optional[str] = None,
-        motif: Optional[str] = None
+        motif: Optional[str] = None,
+        base_interpretation: Optional[str] = None,
+        initial_vector: Optional[AttributeVector] = None
     ) -> GeneratedImage:
         """
         特徴ベクトルから画像を生成
@@ -47,7 +387,16 @@ class ImageGenerator:
         output_dir = output_dir or Config.IMAGES_DIR
         
         # ベクトルからプロンプトを生成
-        prompt = self._build_image_prompt(vector, constraints, concept, motif)
+        prompt = self._build_image_prompt(
+            vector,
+            constraints,
+            concept,
+            motif,
+            base_interpretation=base_interpretation,
+            initial_vector=initial_vector,
+            current_vector=vector,
+            active_constraints=constraints,
+        )
         
         print(f"\n画像生成プロンプト:\n{prompt}\n")
         
@@ -76,6 +425,42 @@ class ImageGenerator:
         )
         
         return generated_image
+
+    def generate_from_prompt(
+        self,
+        base_image_path: str,
+        prompt: str,
+        output_dir: Optional[Path] = None,
+        *,
+        vector: Optional[AttributeVector] = None,
+        constraints: Optional[List[Constraint]] = None
+    ) -> GeneratedImage:
+        """
+        参照画像 + 任意のプロンプトで画像を生成（Phase D - Global用）
+        """
+        output_dir = output_dir or Config.IMAGES_DIR
+
+        result = self.client.generate_image_from_image(base_image_path, prompt)
+
+        if result.get("b64_json"):
+            image_path = self.image_utils.save_base64_image(
+                result["b64_json"],
+                output_dir,
+                prefix="generated"
+            )
+        else:
+            image_path = self.image_utils.download_image_from_url(
+                result["url"],
+                output_dir,
+                prefix="generated"
+            )
+
+        return GeneratedImage(
+            image_path=image_path,
+            prompt=prompt,
+            vector=vector or AttributeVector(weights={}),
+            constraints=constraints or []
+        )
     
     def generate_synthesis(
         self,
@@ -361,82 +746,147 @@ class ImageGenerator:
     
     def _build_image_prompt(
         self,
-        vector: AttributeVector,
+        vector: Optional[AttributeVector] = None,
         constraints: Optional[List[Constraint]] = None,
         concept: Optional[str] = None,
-        motif: Optional[str] = None
+        motif: Optional[str] = None,
+        base_interpretation: Optional[str] = None,
+        initial_vector: Optional[AttributeVector] = None,
+        current_vector: Optional[AttributeVector] = None,
+        active_constraints: Optional[List[Constraint]] = None
     ) -> str:
-        """画像生成用のプロンプトを構築"""
+        """
+        画像生成用のプロンプトを構築
+
+        - base_interpretation + initial_vector + current_vector が与えられた場合:
+          差分駆動（Differential Prompting）で形容詞注入を行う（Phase D - Global）。
+        - それ以外:
+          既存の属性列挙スタイル（互換）。
+        """
+        if base_interpretation is not None and initial_vector is not None and current_vector is not None:
+            return self._build_image_prompt_differential(
+                base_interpretation=base_interpretation,
+                initial_vector=initial_vector,
+                current_vector=current_vector,
+                active_constraints=active_constraints or constraints or [],
+                concept=concept,
+                motif=motif,
+            )
+
+        if vector is None:
+            vector = AttributeVector(weights={})
+
+        # ----- legacy prompt -----
         prompt_parts = []
-        
-        # Subject: コンセプトがあれば明示
+
         if concept:
             prompt_parts.append(f"A 3D render of a {concept} made of CLAY.")
         else:
             prompt_parts.append("A 3D render of an object made of CLAY.")
-        
-        # Motif Injection: モチーフが指定されている場合、形状の比喩として組み込む
-        if motif:
-            prompt_parts.append(f"It is designed with the distinct motif of a {motif}.")
-            prompt_parts.append(f"Incorporate the characteristic shape and silhouette of a {motif} into the design.")
-        
-        # フレーミング: 画角内に収める
+
+        # if motif:
+        #     prompt_parts.append(f"It is designed with the distinct motif of a {motif}.")
+        #     prompt_parts.append(f"Incorporate the characteristic shape and silhouette of a {motif} into the design.")
+
         prompt_parts.append("Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.")
-        
-        # 制約: 材質は粘土のまま、形状だけを変更
         prompt_parts.append("【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours) based on the following attributes.")
         prompt_parts.append("（注：各属性の値は0.0～1.0の範囲です。値が大きいほどその特徴を強調します）")
-        
-        # 特徴ベクトルから主要な属性を抽出（負値も含める）
+
         top_attributes = self.attr_space.get_top_attributes(vector, top_k=20, threshold=0.0)
-        
+
         if top_attributes:
-            # 属性をグループごとに整理（重み値付き、負値対応）
             grouped_attrs = {}
             for attr_key, weight in top_attributes:
                 group_name = attr_key.split(':')[0]
                 attr_name = self.attr_space.get_attribute_name(attr_key)
-                
+
                 if attr_name:
                     if group_name not in grouped_attrs:
                         grouped_attrs[group_name] = []
                     grouped_attrs[group_name].append((attr_name, weight))
-            
-            # グループごとに記述（ATTR_SPACE.groupsの順序を保持）
+
             attr_descriptions = []
-            
-            # グループの順序に従って処理
             for group_name in self.attr_space.groups.keys():
                 if group_name not in grouped_attrs:
                     continue
-                
-                # 属性を整形
+
                 attrs_formatted = []
                 for name, weight in grouped_attrs[group_name][:Config.MAX_ATTRS_PER_GROUP]:
                     attrs_formatted.append(f"{name}({weight:.2f})")
-                
+
                 if attrs_formatted:
                     attr_descriptions.append(f"{group_name}: {', '.join(attrs_formatted)}")
-            
+
             if attr_descriptions:
                 prompt_parts.append("、".join(attr_descriptions))
-        
-        # 制約の追加
+
         if constraints:
-            active_constraints = [c for c in constraints if c.is_active]
-            if active_constraints:
-                constraint_texts = []
-                for c in active_constraints:
-                    if c.description:
-                        constraint_texts.append(c.description)
-                
+            active_cs = [c for c in constraints if c.is_active]
+            if active_cs:
+                constraint_texts = [c.description for c in active_cs if c.description]
                 if constraint_texts:
                     prompt_parts.append(f"制約: {', '.join(constraint_texts)}")
-        
-        # プロンプトを結合
-        full_prompt = "。".join(prompt_parts) + "。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。"
-        
-        return full_prompt
+
+        return "。".join(prompt_parts) + "。粘土のテクスチャを保持した、高品質で詳細な3Dレンダリング。"
+
+    def _build_image_prompt_differential(
+        self,
+        base_interpretation: str,
+        initial_vector: AttributeVector,
+        current_vector: AttributeVector,
+        active_constraints: List[Constraint],
+        concept: Optional[str] = None,
+        motif: Optional[str] = None
+    ) -> str:
+        """
+        差分駆動（Differential Prompting）でプロンプトを構築
+        - ユーザーが操作した属性（制約）または値が大きく変化した属性のみを注入
+        - 値が低い（0.0付近）場合は、対義語 or ニュートラル表現で上書きを狙う
+        """
+        prompt_parts: List[str] = []
+
+        obj_name = concept if concept else "object"
+        prompt_parts.append(f"A 3D render of a {obj_name} made of CLAY.")
+
+        # if motif:
+        #     prompt_parts.append(f"It is designed with the distinct motif of a {motif}.")
+        #     prompt_parts.append(f"Incorporate the characteristic shape and silhouette of a {motif} into the design.")
+
+        prompt_parts.append(base_interpretation)
+
+        prompt_parts.append("Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject.")
+        prompt_parts.append("【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours).")
+
+        constrained_keys = {c.attribute for c in active_constraints if getattr(c, "is_active", True)}
+        added_adjectives: List[str] = []
+        delta_threshold = 0.2
+
+        for attr_key, mappings in self.PROMPT_MAPPING.items():
+            current_val = float(current_vector.weights.get(attr_key, 0.0))
+            initial_val = float(initial_vector.weights.get(attr_key, 0.0))
+
+            is_constrained = attr_key in constrained_keys
+            is_changed = abs(current_val - initial_val) >= delta_threshold
+
+            if not (is_constrained or is_changed):
+                continue
+
+            prompt_text = ""
+            for threshold, text in mappings:
+                if current_val >= threshold:
+                    prompt_text = text
+                    break
+
+            if prompt_text:
+                added_adjectives.append(prompt_text)
+
+        if added_adjectives:
+            distinct_adjectives = list(dict.fromkeys(added_adjectives))
+            prompt_parts.append(f"Modified features: {', '.join(distinct_adjectives)}.")
+
+        prompt_parts.append("High quality, detailed clay texture, neutral studio lighting.")
+
+        return " ".join(prompt_parts)
     
     def extract_description_from_image(
         self,

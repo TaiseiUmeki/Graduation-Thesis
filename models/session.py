@@ -282,6 +282,13 @@ class Session:
         """クローズド（探索終了）ノードのリストを取得"""
         return [n for n in self.exploration_nodes if n.is_closed]
 
+    def get_root_node(self) -> Optional[ExplorationNode]:
+        """探索木のルートノードを取得（parent_id が None の最初のノード）"""
+        for n in self.exploration_nodes:
+            if n.parent_id is None:
+                return n
+        return None
+
     def _clone_constraints(self, constraints: List['Constraint']) -> List['Constraint']:
         return [Constraint.from_dict(c.to_dict()) for c in constraints]
 

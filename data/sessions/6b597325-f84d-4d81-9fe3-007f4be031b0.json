@@ -1,0 +1,276 @@
+{
+  "session_id": "6b597325-f84d-4d81-9fe3-007f4be031b0",
+  "created_at": "2026-01-31T11:29:48.934679",
+  "updated_at": "2026-01-31T11:33:58.507648",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_112948_92435b9d.jpg",
+  "initial_query": "王様が座ってそうなかっこいい感じにして",
+  "concept": "椅子",
+  "query_history": [
+    "王様が座ってそうなかっこいい感じにして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。",
+      "reasoning": "『王様』という言葉から、威厳と権威を連想し、高く尖った背もたれをデザインに取り入れた。",
+      "motif": "King",
+      "timestamp": "2026-01-31T11:30:02.229949"
+    },
+    {
+      "id": 2,
+      "text": "全体を直線的なラインで構成し、エッジを鋭角にすることで、シャープで威厳のある印象を与える。",
+      "reasoning": "『かっこいい』というキーワードから、洗練されたデザインをイメージし、直線的で鋭角な形状にした。",
+      "motif": "King",
+      "timestamp": "2026-01-31T11:30:02.229956"
+    },
+    {
+      "id": 3,
+      "text": "座面を円柱状にし、背もたれを球状にして、全体を対称的に整えることで、堂々とした印象を与える。",
+      "reasoning": "『王様』に関連し、安定感と風格を持たせるため、対称的でボリュームのある形状にした。",
+      "motif": "King",
+      "timestamp": "2026-01-31T11:30:02.229958"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。",
+    "reasoning": "『王様』という言葉から、威厳と権威を連想し、高く尖った背もたれをデザインに取り入れた。",
+    "motif": "King",
+    "timestamp": "2026-01-31T11:30:02.229949"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:cubic": 0.5,
+      "form:single_mass": 0.5,
+      "line:straight": 0.7,
+      "line:vertical": 0.7,
+      "edge:sharp_angle": 0.7,
+      "surface:spiked": 1.0,
+      "balance:symmetrical": 0.8,
+      "balance:bottom_heavy": 0.7,
+      "balance:wide": 0.7,
+      "balance:thick": 0.8
+    }
+  },
+  "recommended_attributes": [
+    "surface:spiked",
+    "balance:wide",
+    "line:vertical",
+    "line:straight",
+    "balance:bottom_heavy",
+    "form:solid",
+    "surface:embossed",
+    "edge:sharp_angle",
+    "line:radial",
+    "texture:smooth"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_113115_072aae46.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T11:31:16.229499"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_113343_4f6692fb.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: thick, bulky proportions. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7,
+          "balance:thick": 0.8
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:thick",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "肉厚 = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:33:06.608868"
+        }
+      ],
+      "timestamp": "2026-01-31T11:33:43.945644"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_113357_67c14026.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: thick, bulky proportions. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7,
+          "balance:thick": 0.8
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:thick",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "肉厚 = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:33:05.125019"
+        }
+      ],
+      "timestamp": "2026-01-31T11:33:58.507630"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "balance:thick",
+      "constraint_type": "equal",
+      "value": 0.8,
+      "min_value": null,
+      "max_value": null,
+      "description": "肉厚 = 0.80",
+      "is_active": true,
+      "timestamp": "2026-01-31T11:33:06.608868"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_113115_072aae46.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "King",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:30:14.242950",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7,
+          "balance:thick": 0.8
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "balance:thick",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "肉厚 = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:33:05.125019"
+        }
+      ],
+      "generated_image_path": null,
+      "prompt": null,
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "King",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:33:05.125481",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "form:cubic": 0.5,
+          "form:single_mass": 0.5,
+          "line:straight": 0.7,
+          "line:vertical": 0.7,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 1.0,
+          "balance:symmetrical": 0.8,
+          "balance:bottom_heavy": 0.7,
+          "balance:wide": 0.7,
+          "balance:thick": 0.8
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "balance:thick",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "肉厚 = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:33:06.608868"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_113357_67c14026.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 背もたれを高くし、王冠のような尖った装飾を加える。座面を広くして安定感を出す。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: thick, bulky proportions. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "King",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:33:06.609573",
+      "note": "global_edit"
+    }
+  ],
+  "current_node_id": 2,
+  "next_node_id": 3
+}

@@ -288,12 +288,19 @@ class TrueCodingSystem:
         print("\n画像を生成中...")
         current_node = self.session._get_current_node()
         motif = current_node.motif if current_node else None
+
+        root_node = self.session.get_root_node()
+        initial_vector = root_node.vector if root_node else None
+        base_interpretation = self.session.selected_interpretation.text if self.session.selected_interpretation else ""
+
         generated = self.image_generator.generate_from_vector(
             self.session.initial_image_path,
             self.session.current_vector,
             self.session.get_active_constraints(),
             concept=self.session.concept,
-            motif=motif
+            motif=motif,
+            base_interpretation=base_interpretation,
+            initial_vector=initial_vector
         )
         
         self.session.add_generated_image(generated)
@@ -320,6 +327,69 @@ class TrueCodingSystem:
         # セッションを保存
         self.session.save(Config.SESSIONS_DIR)
         
+        return generated.image_path
+
+    def apply_global_edit(self, constraints: List[Constraint]) -> str:
+        """
+        全体編集（Phase D - Global）
+        - 基準ベクトル（V0）は探索木のルート（なければ current_vector）
+        - 制約（基本は EQUAL）を決定論的に適用
+        - クローズドノードからの斥力を適用
+        - 差分駆動プロンプトで初期画像から再生成
+        """
+        if not self.session or not self.session.selected_interpretation:
+            raise ValueError("セッションまたは解釈案がありません")
+
+        root_node = self.session.get_root_node()
+        if root_node:
+            v0 = root_node.vector
+        elif self.session.current_vector:
+            v0 = self.session.current_vector
+        else:
+            raise ValueError("基準ベクトルが見つかりません")
+
+        # 型/モジュール再読み込み差によるEnum不一致を避けるため、制約を一度正規化
+        normalized_constraints = [Constraint.from_dict(c.to_dict()) for c in constraints]
+
+        # 1) V0 に制約を適用（LLM不使用）
+        v1_temp = self.vector_generator.update_vector_with_constraints(v0, normalized_constraints)
+
+        # 2) クローズドノードからの斥力
+        closed_nodes = self.session.get_closed_nodes()
+        v1_final = self.vector_generator.apply_repulsion(
+            v1_temp,
+            [n.vector for n in closed_nodes],
+            repulsion_strength=0.3
+        )
+        # 斥力で EQUAL 制約がズレる可能性があるため、最後に制約を再適用して確定させる
+        v1_final = self.vector_generator.update_vector_with_constraints(v1_final, normalized_constraints)
+
+        # セッションへ反映（"追加" ではなく "指定"）
+        self.session.constraints = [Constraint.from_dict(c.to_dict()) for c in normalized_constraints]
+        self.session.set_vector(v1_final)
+
+        # 探索木に子ノードを追加（現在ノードの子として記録）
+        self.session.add_child_node(
+            v1_final,
+            self.session.constraints,
+            note="global_edit"
+        )
+
+        base_interpretation = self.session.selected_interpretation.text
+
+        generated = self.image_generator.generate_from_vector(
+            self.session.initial_image_path,
+            v1_final,
+            self.session.get_active_constraints(),
+            concept=self.session.concept,
+            base_interpretation=base_interpretation,
+            initial_vector=v0
+        )
+
+        self.session.add_generated_image(generated)
+        self.session.update_current_node_image(generated.image_path, generated.prompt)
+        self.session.save(Config.SESSIONS_DIR)
+
         return generated.image_path
     
     def add_constraint(

@@ -1,0 +1,364 @@
+{
+  "session_id": "4c270bce-b6ba-44fb-afd6-d00bdbdbc50e",
+  "created_at": "2026-01-31T10:59:28.725745",
+  "updated_at": "2026-01-31T11:11:18.704114",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_105928_e65fbb7b.png",
+  "initial_query": "薔薇のような美しい感じにして",
+  "concept": "マグカップ",
+  "query_history": [
+    "薔薇のような美しい感じにして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を曲線的にねじり、有機的な花びらの形状にする。",
+      "reasoning": "薔薇の花びらの自然な曲線からインスピレーションを受け、マグカップの全体を有機的な曲線でねじることで花びらのような美しい形状を表現。",
+      "motif": "Rose",
+      "timestamp": "2026-01-31T10:59:51.472609"
+    },
+    {
+      "id": 2,
+      "text": "エッジを面取りして、柔らかな曲線を持つ円柱状に近づける。",
+      "reasoning": "薔薇の花の柔らかく優雅な印象を表現するために、エッジを面取りし、全体を円柱状にすることで滑らかさを強調。",
+      "motif": "Rose",
+      "timestamp": "2026-01-31T10:59:51.472624"
+    },
+    {
+      "id": 3,
+      "text": "上部を波打つようにして、花の開花する様子を模倣する。",
+      "reasoning": "薔薇の花が開く様子を模倣するために、上部を波打つようにし、動きのある形状を持たせることで視覚的な美しさを表現。",
+      "motif": "Rose",
+      "timestamp": "2026-01-31T10:59:51.472627"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "上部を波打つようにして、花の開花する様子を模倣する。",
+    "reasoning": "薔薇の花が開く様子を模倣するために、上部を波打つようにし、動きのある形状を持たせることで視覚的な美しさを表現。",
+    "motif": "Rose",
+    "timestamp": "2026-01-31T10:59:51.472627"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:shell": 0.7,
+      "line:organic_curve": 1.0,
+      "line:radial": 0.7,
+      "surface:convex": 0.8,
+      "balance:asymmetrical": 0.5,
+      "texture:smooth": 0.5,
+      "surface:ribbed": 0.8
+    }
+  },
+  "recommended_attributes": [
+    "line:organic_curve",
+    "surface:convex",
+    "balance:top_heavy",
+    "form:conical",
+    "line:curved",
+    "line:radial",
+    "edge:rounded_fully",
+    "balance:symmetrical",
+    "surface:twisted",
+    "texture:smooth"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110157_e9196b46.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. It is designed with the distinct motif of a Rose. Incorporate the characteristic shape and silhouette of a Rose into the design. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T11:01:58.079967"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110600_dd30e466.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: constricted midsection, clear necking-in, ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:constricted": 0.8,
+          "surface:ribbed": 0.8
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "line:constricted",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "くびれ = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:05:29.025204"
+        },
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:05:29.025264"
+        }
+      ],
+      "timestamp": "2026-01-31T11:06:01.235982"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110936_4d5e24b7.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: constricted midsection, clear necking-in, ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:constricted": 0.8,
+          "surface:ribbed": 0.8
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "line:constricted",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "くびれ = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:09:02.424415"
+        },
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:09:02.424471"
+        }
+      ],
+      "timestamp": "2026-01-31T11:09:37.373975"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_111118_ac12c346.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "surface:ribbed": 0.8
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:10:51.697028"
+        }
+      ],
+      "timestamp": "2026-01-31T11:11:18.704103"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "surface:ribbed",
+      "constraint_type": "equal",
+      "value": 0.8,
+      "min_value": null,
+      "max_value": null,
+      "description": "リブ（畝状の隆起） = 0.80",
+      "is_active": true,
+      "timestamp": "2026-01-31T11:10:51.697028"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110157_e9196b46.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. It is designed with the distinct motif of a Rose. Incorporate the characteristic shape and silhouette of a Rose into the design. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Rose",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:01:07.863023",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:constricted": 0.8,
+          "surface:ribbed": 0.8
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "line:constricted",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "くびれ = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:05:29.025204"
+        },
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:05:29.025264"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110600_dd30e466.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: constricted midsection, clear necking-in, ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Rose",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:05:29.025662",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:constricted": 0.8,
+          "surface:ribbed": 0.8
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "line:constricted",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "くびれ = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:09:02.424415"
+        },
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:09:02.424471"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_110936_4d5e24b7.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: constricted midsection, clear necking-in, ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Rose",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:09:02.424985",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "line:organic_curve": 1.0,
+          "line:radial": 0.7,
+          "surface:convex": 0.8,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "surface:ribbed": 0.8
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "surface:ribbed",
+          "constraint_type": "equal",
+          "value": 0.8,
+          "min_value": null,
+          "max_value": null,
+          "description": "リブ（畝状の隆起） = 0.80",
+          "is_active": true,
+          "timestamp": "2026-01-31T11:10:51.697028"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_111118_ac12c346.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を波打つようにして、花の開花する様子を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: ribbed surface with noticeable ridges. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Rose",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T11:10:51.697556",
+      "note": "global_edit"
+    }
+  ],
+  "current_node_id": 3,
+  "next_node_id": 4
+}
