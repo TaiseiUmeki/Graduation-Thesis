@@ -1,0 +1,20 @@
+# Fdb version 4
+["dvipdf"] 0 "out/paper_v2.dvi" "out/paper_v2.pdf" "out/paper_v2" 0 -1
+  "out/paper_v2.dvi" 0 -1 0 "latex"
+  (generated)
+  "out/paper_v2.pdf"
+  (rewritten before read)
+["latex"] 1769872631.70577 "/Users/umeking5/university/lab_research/truecoding/thesis/make_chapter/paper_v2.tex" "out/paper_v2.dvi" "paper_v2" 1769872631.76768 2
+  "/Users/umeking5/university/lab_research/truecoding/thesis/make_chapter/paper_v2.tex" 1769872631.45533 49018 6352ca1ee30686eb9c779c042bbeae3c ""
+  "/usr/local/texlive/2025basic/texmf-dist/web2c/texmf.cnf" 1749313668 42213 4e2ca030e8e2640502016e9e45868dcb ""
+  "/usr/local/texlive/2025basic/texmf-var/web2c/euptex/platex.fmt" 1769005184 3225515 1b86485c80a5e3fae78a2ffe9180fe9f ""
+  "/usr/local/texlive/2025basic/texmf.cnf" 1741448314 628 81d1ada0f601fb1ffa62f1323192d946 ""
+  "kuisthesis.cls" 0 -1 0 ""
+  "out/kuisthesis.cls" 0 -1 0 ""
+  "out/paper_v2.aux" 1769872623.70525 32 3985256e7290058c681f74d7a3565a19 "latex"
+  "paper_v2.tex" 1769872631.45533 49018 6352ca1ee30686eb9c779c042bbeae3c ""
+  (generated)
+  "out/paper_v2.aux"
+  "out/paper_v2.dvi"
+  "out/paper_v2.log"
+  (rewritten before read)

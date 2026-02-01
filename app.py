@@ -119,16 +119,11 @@ if "system" not in st.session_state:
     st.session_state.selected_interpretation_id = None
     st.session_state.analysis_text = ""
     st.session_state.search_results = []
+
     # Phase A用の追加状態
     st.session_state.uploaded_image_path = None
     st.session_state.synthesis_result_path = None
-    # 部分編集用の状態
-    st.session_state.partial_interpretations = []
-    st.session_state.selected_partial_interpretation_id = None
-    st.session_state.partial_edit_mask_path = None
-    st.session_state.partial_edit_target_name = None
-    st.session_state.partial_edit_base_path = None
-    st.session_state.partial_edit_query = None
+
     # 合成モード用の状態
     st.session_state.synthesis_base_path = None
     st.session_state.synthesis_mask_path = None
@@ -139,8 +134,6 @@ if "system" not in st.session_state:
     st.session_state.selected_synthesis_method = None
     st.session_state.synthesis_description = None
     st.session_state.synthesis_phase_d_ready = False
-    # Media warmup flag for Phase D
-    st.session_state.phase_d_media_warmup_done = False
 
 system: TrueCodingSystem = st.session_state.system
 phase: str = st.session_state.phase
@@ -153,8 +146,10 @@ st.title(" 梅木卒論 実験用GUI")
 if phase == "A":
     st.sidebar.subheader("Phase A: 初期入力")
     
-    # タブ構成: 通常 / 部分編集 / 合成
-    input_tab1, input_tab2, input_tab3 = st.tabs(["📤 通常モード", "✂️ 部分編集モード", "🔨 合成モード"])
+    # タブ構成: 新規作成 / 形状修正 / 部分編集(体験) / 合成
+    input_tab1, input_tab2, input_tab3, input_tab4 = st.tabs(
+        ["📤 新規作成", "🔄 形状修正", "✂️ 部分編集(体験)", "🔨 合成"]
+    )
     
     # --- タブ1: 通常アップロード ---
     with input_tab1:
@@ -166,8 +161,47 @@ if phase == "A":
             st.session_state.uploaded_image_path = img_path
             st.image(img_path, caption="アップロードされた画像", use_column_width=True)
 
-    # --- タブ2: 部分編集モード ---
+    # --- タブ2: 形状修正（Direct Phase D Entry） ---
     with input_tab2:
+        st.subheader("🔄 物理モデルを再入力して調整")
+        st.caption("手元で修正した粘土模型の写真をアップロードしてください。AIが現在の形状を分析し、Phase D から編集を開始します。")
+
+        refine_up = st.file_uploader(
+            "現在の粘土画像",
+            type=["png", "jpg", "jpeg"],
+            key="refine_mode_uploader",
+        )
+
+        if refine_up:
+            refine_path = _save_uploaded_image(refine_up, prefix="refine_input")
+            st.image(refine_path, caption="入力画像", use_column_width=True)
+
+            refine_concept = st.text_input(
+                "モチーフ（必須）",
+                placeholder="Chair, Tank, Bird...",
+                key="refine_concept",
+                help="英語の単数形推奨（例: Chair, Tank）。",
+            )
+
+            if st.button("画像を解析して編集を開始", type="primary", key="start_refine_btn"):
+                if not refine_concept.strip():
+                    st.warning("モチーフを入力してください")
+                else:
+                    with st.spinner("画像を解析してパラメータを抽出中..."):
+                        system.start_refinement_session(
+                            image_path=refine_path,
+                            concept=refine_concept.strip(),
+                        )
+
+                    st.session_state.phase = "D"
+                    st.session_state.interpretations = []
+                    st.session_state.selected_interpretation_id = None
+                    st.session_state.analysis_text = ""
+                    st.success("解析完了！Phase D へ移動します。")
+                    st.rerun()
+
+    # --- タブ3: 部分編集モード（体験） ---
+    with input_tab3:
         st.subheader("部分編集（インペインティング）")
         try:
             from streamlit_drawable_canvas import st_canvas
@@ -196,29 +230,49 @@ if phase == "A":
                     key=f"partial_canvas_{Path(base_path).name}",
                 )
 
-                colp1, colp2, colp3 = st.columns([1,1,1])
-                concept_partial = colp1.text_input("モチーフ (例: tank)", value="")
-                target_name = colp2.text_input("部位名 (例: turret)", value="")
-                partial_query = colp3.text_input("編集意図（クエリ）", value="")
-
-                # 部分編集用の状態を初期化
-                if "phase_a_partial_interpretations" not in st.session_state:
-                    st.session_state.phase_a_partial_interpretations = []
+                # Phase A: 部分編集は「操作(Action)」として直接 inpainting（解釈生成は行わない）
+                if "phase_a_partial_options" not in st.session_state:
+                    st.session_state.phase_a_partial_options = []
                     st.session_state.phase_a_partial_mask_path = None
                     st.session_state.phase_a_partial_base_path = None
                     st.session_state.phase_a_partial_concept = None
                     st.session_state.phase_a_partial_target_name = None
-                    st.session_state.phase_a_partial_query = None
+                    st.session_state.phase_a_partial_attribute_key = None
+                    st.session_state.phase_a_partial_delta_value = None
 
-                # ステップ1: 意図を解釈
-                if st.button("意図を解釈（Interpret）", type="primary", key="phase_a_partial_interpret_btn"):
-                    if not (concept_partial.strip() and target_name.strip() and partial_query.strip()):
-                        st.warning("モチーフ・部位名・編集意図を入力してください")
+                colp1, colp2 = st.columns([1, 1])
+                concept_partial = colp1.text_input("モチーフ (例: cup, chair)", value="")
+                target_name = colp2.text_input("部位名 (例: handle, legs)", value="")
+
+                all_attrs: List[Tuple[str, str]] = []
+                for gname, items in ATTR_SPACE.groups.items():
+                    for k, v in items.items():
+                        key = f"{gname}:{k}"
+                        display = f"{v} ({key})"
+                        all_attrs.append((display, key))
+                selected_display = st.selectbox(
+                    "操作したい属性",
+                    options=[d for d, _ in all_attrs],
+                    key="phase_a_partial_attr_select",
+                )
+                attribute_key = dict(all_attrs)[selected_display]
+
+                delta_value = st.slider(
+                    "調整量（-1.0 〜 +1.0）",
+                    min_value=-1.0,
+                    max_value=1.0,
+                    value=0.5,
+                    step=0.05,
+                    key="phase_a_partial_delta",
+                )
+
+                if st.button("候補を表示 (Show Options)", type="primary", key="phase_a_partial_show_options"):
+                    if not (concept_partial.strip() and target_name.strip()):
+                        st.warning("モチーフと部位名を入力してください")
                     elif canvas_result.image_data is None:
                         st.warning("マスクを描画してください")
                     else:
-                        with st.spinner("マスク生成と意図解釈中..."):
-                            # 透過マスク生成
+                        with st.spinner("候補を生成中..."):
                             mask_data = canvas_result.image_data
                             alpha_channel = mask_data[:, :, 3]
                             mask_bool = alpha_channel > 0
@@ -229,137 +283,54 @@ if phase == "A":
                             final_mask.putalpha(mask_alpha)
                             mask_path = Config.MASKS_PARTIAL_A_DIR / f"mask_{uuid.uuid4().hex}.png"
                             final_mask.save(mask_path)
-                            
-                            # セッション開始
-                            try:
-                                system.start_session(
-                                    image_path=base_path,
-                                    query=partial_query.strip(),
-                                    concept=concept_partial.strip()
-                                )
-                            except Exception as e:
-                                st.error(f"セッション開始に失敗: {e}")
-                                st.stop()
-                            
-                            # クエリを解釈
-                            try:
-                                part_query = f"{target_name}: {partial_query}"
-                                interps = system.interpret_query(query_override=part_query, use_image_context=False)
-                                st.session_state.phase_a_partial_interpretations = [(i.id, i.text, i.reasoning) for i in interps]
-                                st.session_state.phase_a_partial_mask_path = str(mask_path)
-                                st.session_state.phase_a_partial_base_path = base_path
-                                st.session_state.phase_a_partial_concept = concept_partial.strip()
-                                st.session_state.phase_a_partial_target_name = target_name.strip()
-                                st.session_state.phase_a_partial_query = partial_query.strip()
-                                st.success("解釈を生成しました")
-                                st.rerun()
-                            except Exception as e:
-                                st.error(f"解釈生成に失敗: {e}")
-                
-                # ステップ2: 解釈を選択して生成実行
-                if st.session_state.phase_a_partial_interpretations:
+
+                            options = system.image_generator.generate_partial_edit_options(
+                                target_part_name=target_name.strip(),
+                                concept=concept_partial.strip(),
+                                attribute_key=attribute_key,
+                                delta_value=float(delta_value),
+                            )
+
+                            st.session_state.phase_a_partial_options = options
+                            st.session_state.phase_a_partial_mask_path = str(mask_path)
+                            st.session_state.phase_a_partial_base_path = base_path
+                            st.session_state.phase_a_partial_concept = concept_partial.strip()
+                            st.session_state.phase_a_partial_target_name = target_name.strip()
+                            st.session_state.phase_a_partial_attribute_key = attribute_key
+                            st.session_state.phase_a_partial_delta_value = float(delta_value)
+                            st.rerun()
+
+                if st.session_state.phase_a_partial_options:
                     st.markdown("---")
-                    st.subheader("📋 解釈候補を選択")
-                    options = [f"[{i}] {t}" for (i, t, r) in st.session_state.phase_a_partial_interpretations]
-                    choice = st.radio("解釈を選んでください", options=options, index=0, key="phase_a_partial_interp_choice")
-                    chosen_id = int(choice.split(']')[0][1:]) if choice else None
-                    
-                    with st.expander("根拠（Reasoning）"):
-                        for (i, t, r) in st.session_state.phase_a_partial_interpretations:
-                            st.markdown(f"- [{i}] {r}")
-                    
-                    if st.button("生成実行", type="primary", key="phase_a_partial_generate_btn"):
-                        if chosen_id is None:
-                            st.warning("解釈を選択してください")
-                        else:
-                            with st.spinner("Root作成と部分編集を実行中..."):
-                                try:
-                                    # 選択された解釈を適用
-                                    system.select_interpretation(chosen_id)
-                                    
-                                    # 選択された解釈からモチーフを取得
-                                    partial_motif = None
-                                    if system.session.selected_interpretation:
-                                        partial_motif = system.session.selected_interpretation.motif
-                                    
-                                    # Rootノード（グローバルベクトル）を画像分析から生成
-                                    global_vec = system.vector_generator.generate_global_from_image(
-                                        st.session_state.phase_a_partial_base_path,
-                                        concept=st.session_state.phase_a_partial_concept
-                                    )
-                                    system.session.set_vector(global_vec)
-                                    system.session.add_root_node(global_vec, system.session.constraints, note="root")
-                                    
-                                    # 部分ベクトル生成（選択された解釈から）
-                                    if system.session.selected_interpretation:
-                                        partial_vec = system.vector_generator.generate_vector_from_interpretation(
-                                            system.session.selected_interpretation,
-                                            constraints=[]
-                                        )
-                                    else:
-                                        chosen_interpretation = next((i for i in st.session_state.phase_a_partial_interpretations if i[0] == chosen_id), None)
-                                        part_text = chosen_interpretation[1] if chosen_interpretation else f"{st.session_state.phase_a_partial_target_name}: {st.session_state.phase_a_partial_query}"
-                                        partial_vec = system.vector_generator.generate_from_text(
-                                            part_text,
-                                            concept=st.session_state.phase_a_partial_concept,
-                                            max_attrs=8
-                                        )
-                                    
-                                    # インペインティングで部分編集
-                                    result_path = system.image_generator.generate_part_from_vector(
+                    st.subheader("🎛️ 候補を選択して実行")
+
+                    cols = st.columns(3)
+                    for idx, opt in enumerate(st.session_state.phase_a_partial_options[:3]):
+                        with cols[idx]:
+                            st.markdown(f"**{opt['type']}**")
+                            st.caption(opt.get("description", ""))
+                            if st.button(opt.get("label", opt["type"]), key=f"phase_a_opt_{opt['type']}"):
+                                with st.spinner("部分編集を実行中..."):
+                                    result_path = system.image_generator.generate_part_with_prompt(
                                         base_image_path=st.session_state.phase_a_partial_base_path,
                                         mask_path=st.session_state.phase_a_partial_mask_path,
-                                        partial_vector=partial_vec,
-                                        concept=st.session_state.phase_a_partial_concept,
-                                        target_part_name=st.session_state.phase_a_partial_target_name,
-                                        partial_motif=partial_motif
+                                        prompt=opt["prompt"],
                                     )
-                                    
-                                    # 子ノード作成
-                                    from models.session import GeneratedImage
-                                    system.session.add_child_node(
-                                        vector=global_vec,
-                                        constraints=system.session.constraints,
-                                        note=f"partial_edit:{st.session_state.phase_a_partial_target_name}",
-                                        partial_vector=partial_vec,
-                                        mask_image_path=st.session_state.phase_a_partial_mask_path,
-                                        target_part_name=st.session_state.phase_a_partial_target_name,
-                                        partial_motif=partial_motif
-                                    )
-                                    system.session.update_current_node_image(result_path)
-                                    system.session.add_generated_image(
-                                        GeneratedImage(
-                                            image_path=result_path,
-                                            prompt="partial_edit",
-                                            vector=partial_vec,
-                                            constraints=system.session.constraints
-                                        )
-                                    )
-                                    
-                                    # 状態をリセット
-                                    st.session_state.phase_a_partial_interpretations = []
-                                    st.session_state.phase_a_partial_mask_path = None
-                                    st.session_state.phase_a_partial_base_path = None
-                                    st.session_state.phase_a_partial_concept = None
-                                    st.session_state.phase_a_partial_target_name = None
-                                    st.session_state.phase_a_partial_query = None
-                                    
-                                    st.success("部分編集を完了しました！")
-                                    st.image(result_path, caption="部分編集結果", use_column_width=True)
-                                    st.session_state.phase = "D"
-                                    st.rerun()
-                                except Exception as e:
-                                    st.error(f"部分編集に失敗: {e}")
-                    
-                    if st.button("解釈をやり直す", key="phase_a_partial_reset_btn"):
-                        st.session_state.phase_a_partial_interpretations = []
-                        st.rerun()
+                                st.success("部分編集が完了しました")
+                                st.image(result_path, caption="部分編集結果", use_column_width=True)
+                                # この結果を Phase A の入力として使えるようにする
+                                st.session_state.uploaded_image_path = result_path
+                                # 候補をクリア
+                                st.session_state.phase_a_partial_options = []
+
+                            with st.expander("プロンプトを見る"):
+                                st.code(opt.get("prompt", ""), language=None)
         except ImportError:
             st.error("streamlit-drawable-canvas がインストールされていません。")
             st.code("pip install streamlit-drawable-canvas")
     
-    # --- タブ3: 合成モード ---
-    with input_tab3:
+    # --- タブ4: 合成モード ---
+    with input_tab4:
         st.subheader("粘土パーツを合成")
         
         # 合成モード用の状態初期化
@@ -719,16 +690,6 @@ elif phase == "B":
 elif phase == "D":
     st.header("Phase D: 生成と探索")
 
-    # StreamlitのMediaFileHandlerが「Missing file」を出して画像が表示されないことがあるため、
-    # Phase D突入直後に一度だけリレンダーしてmedia登録を安定させる（特に初回生成直後に発生しやすい）
-    if "phase_d_media_warmup_done" not in st.session_state:
-        st.session_state.phase_d_media_warmup_done = False
-    if not st.session_state.phase_d_media_warmup_done:
-        latest_for_warmup = system.session.get_latest_image() if system.session else None
-        if latest_for_warmup and latest_for_warmup.image_path:
-            st.session_state.phase_d_media_warmup_done = True
-            st.rerun()
-
     # 上部: 画像2カラム
     import os
     col1, col2 = st.columns(2)
@@ -797,7 +758,6 @@ elif phase == "D":
         st.session_state.selected_interpretation_id = None
         st.session_state.analysis_text = ""
         st.session_state.search_results = []
-        st.session_state.phase_d_media_warmup_done = False
         st.success("セッションを終了しました。新しいセッションを開始できます。")
         st.rerun()
 
@@ -914,279 +874,66 @@ elif phase == "D":
                 max_value=float(max_val) if max_val is not None else None,
                 description=desc,
             )
-            
-            # 現在のノードが部分編集ノードかどうかをチェック
-            current_node = None
-            if system.session and system.session.current_node_id is not None:
-                current_node = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
-            
-            if current_node and current_node.partial_vector and current_node.mask_image_path:
-                # 部分編集ノードの場合：部分ベクトルに制約を適用して再編集
-                from models.attribute_space import AttributeVector
-                import os
-                
-                # 親ノードの画像をベースとして取得
-                base_path = None
-                if current_node.parent_id is not None:
-                    parent_node = next((n for n in system.session.exploration_nodes if n.node_id == current_node.parent_id), None)
-                    if parent_node and parent_node.generated_image_path and os.path.exists(parent_node.generated_image_path):
-                        base_path = parent_node.generated_image_path
-                
-                # フォールバック1: 最新の生成画像
-                if not base_path:
-                    latest = system.session.get_latest_image()
-                    if latest and latest.image_path and os.path.exists(latest.image_path):
-                        base_path = latest.image_path
-                
-                # フォールバック2: 初期画像
-                if not base_path and system.session.initial_image_path and os.path.exists(system.session.initial_image_path):
-                    base_path = system.session.initial_image_path
-                
-                if not base_path or not os.path.exists(base_path):
-                    st.sidebar.error(f"ベース画像が見つかりません（親: {current_node.parent_id}, パス: {base_path}）")
-                else:
-                    # 部分ベクトルのコピーを作成し、制約に従って調整
-                    partial_weights = dict(current_node.partial_vector.weights)
-                    
-                    # 最新の制約を適用（シンプルな実装）
-                    for constraint in system.session.constraints:
-                        attr_key = constraint.attribute_key
-                        if constraint.constraint_type == "greater_than" and constraint.value is not None:
-                            if attr_key in partial_weights:
-                                partial_weights[attr_key] = max(partial_weights[attr_key], constraint.value)
-                            else:
-                                partial_weights[attr_key] = constraint.value
-                        elif constraint.constraint_type == "less_than" and constraint.value is not None:
-                            if attr_key in partial_weights:
-                                partial_weights[attr_key] = min(partial_weights[attr_key], constraint.value)
-                            else:
-                                partial_weights[attr_key] = constraint.value
-                        elif constraint.constraint_type == "equal" and constraint.value is not None:
-                            partial_weights[attr_key] = constraint.value
-                        elif constraint.constraint_type == "range" and constraint.min_value is not None and constraint.max_value is not None:
-                            if attr_key in partial_weights:
-                                partial_weights[attr_key] = max(constraint.min_value, min(constraint.max_value, partial_weights[attr_key]))
-                            else:
-                                partial_weights[attr_key] = (constraint.min_value + constraint.max_value) / 2
-                    
-                    updated_partial_vec = AttributeVector(weights=partial_weights)
-                    
-                    with st.spinner("制約を適用して部分編集を再生成中..."):
-                        result_path = system.image_generator.generate_part_from_vector(
-                            base_image_path=base_path,
-                            mask_path=str(current_node.mask_image_path),
-                            partial_vector=updated_partial_vec,
-                            concept=system.session.concept,
-                            target_part_name=current_node.target_part_name,
-                            partial_motif=current_node.partial_motif
-                        )
-                        
-                        # 子ノードを作成
-                        from models.session import GeneratedImage
-                        system.session.add_child_node(
-                            vector=current_node.vector,
-                            constraints=system.session.constraints,
-                            note=f"constraint_partial:{current_node.target_part_name}",
-                            partial_vector=updated_partial_vec,
-                            mask_image_path=current_node.mask_image_path,
-                            target_part_name=current_node.target_part_name,
-                            partial_motif=current_node.partial_motif
-                        )
-                        system.session.update_current_node_image(result_path)
-                        system.session.add_generated_image(
-                            GeneratedImage(
-                                image_path=result_path,
-                                prompt="constraint_partial",
-                                vector=updated_partial_vec,
-                                constraints=system.session.constraints
-                            )
-                        )
-                        st.success("制約を適用して部分編集を再生成しました")
-            else:
-                # 通常の全体画像として再生成
-                with st.spinner("制約を適用して全体画像を再生成中..."):
-                    system.generate_image()
-                    st.success("画像を再生成しました")
-            
+
+            # 制約追加はグローバル編集として扱う（部分ベクトルの再編集は廃止）
+            with st.spinner("制約を適用して全体画像を再生成中..."):
+                system.generate_image()
+                st.success("画像を再生成しました")
+
             st.rerun()
         except Exception as e:
             st.error(f"制約の適用に失敗: {e}")
             import traceback
             st.error(traceback.format_exc())
 
-    # サイドバー: 微調整セクション
     st.sidebar.markdown("---")
-    st.sidebar.markdown("#### 制約ベース微調整（部分編集ノード）")
-    try:
-        # 現在ノードを取得
-        selected_node_detail_for_tuning = None
-        if system.session and system.session.current_node_id is not None:
-            selected_node_detail_for_tuning = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
-        if selected_node_detail_for_tuning and getattr(selected_node_detail_for_tuning, "partial_vector", None):
-            pv = selected_node_detail_for_tuning.partial_vector
-            from models.attribute_space import AttributeVector
-            from models.constraints import Constraint, ConstraintType
-            
-            # 現在の属性値を表示（読み取り専用）
-            st.sidebar.markdown("**現在の部分ベクトル:**")
-            top_items = sorted(pv.weights.items(), key=lambda x: abs(x[1]), reverse=True)[:8]
-            for attr_key, weight in top_items:
-                name = ATTR_SPACE.get_attribute_name(attr_key) or attr_key
-                st.sidebar.text(f"{name}: {weight:.3f}")
-            
-            st.sidebar.markdown("---")
-            st.sidebar.markdown("**制約を設定:**")
-            
-            # 属性選択（上位属性+全属性から選択可能）
-            all_attrs = ATTR_SPACE.all_attributes  # これはList[str]
-            top_attr_keys = [item[0] for item in top_items]
-            # 上位属性を最初に、残りをアルファベット順で
-            attr_options = top_attr_keys + [k for k in sorted(all_attrs) if k not in top_attr_keys]
-            attr_names = [f"{ATTR_SPACE.get_attribute_name(k) or k} ({k})" for k in attr_options]
-            
-            selected_attr_idx = st.sidebar.selectbox(
-                "調整したい属性",
-                range(len(attr_options)),
-                format_func=lambda i: attr_names[i],
-                key=f"constraint_attr_{selected_node_detail_for_tuning.node_id}"
-            )
-            selected_attr_key = attr_options[selected_attr_idx]
-            
-            # 不等号選択
-            operator = st.sidebar.radio(
-                "制約タイプ",
-                [">=", "<=", "=="],
-                index=0,
-                key=f"constraint_op_{selected_node_detail_for_tuning.node_id}",
-                horizontal=True
-            )
-            
-            # 値設定
-            current_value = pv.weights.get(selected_attr_key, 0.0)
-            target_value = st.sidebar.slider(
-                "目標値",
-                min_value=0.0,
-                max_value=1.0,
-                value=float(max(0.0, min(1.0, current_value))),
-                step=0.05,
-                key=f"constraint_val_{selected_node_detail_for_tuning.node_id}"
-            )
-            
-            # 制約説明
-            attr_name = ATTR_SPACE.get_attribute_name(selected_attr_key) or selected_attr_key
-            st.sidebar.caption(f"制約: {attr_name} {operator} {target_value}")
+    st.sidebar.markdown("#### 部分編集の微調整（廃止）")
+    st.sidebar.caption("Phase D - Local は「属性×Δ（-1〜+1）」の操作として扱うため、部分ベクトルの微調整UIは廃止しました。")
 
-            if st.sidebar.button("制約を適用して再編集", key=f"constraint_apply_{selected_node_detail_for_tuning.node_id}"):
-                if not selected_node_detail_for_tuning.mask_image_path or not selected_node_detail_for_tuning.target_part_name:
-                    st.sidebar.warning("このノードにはマスクまたは部位名情報がありません")
-                else:
-                    base_path = None
-                    latest = system.session.get_latest_image() if system.session else None
-                    if latest and latest.image_path:
-                        base_path = latest.image_path
-                    elif system.session and system.session.initial_image_path:
-                        base_path = system.session.initial_image_path
-                    if not base_path:
-                        st.sidebar.warning("ベース画像が見つかりません")
-                    else:
-                        # 制約を作成
-                        constraint_type = {
-                            ">=": ConstraintType.GREATER_THAN,
-                            "<=": ConstraintType.LESS_THAN, 
-                            "==": ConstraintType.EQUAL
-                        }[operator]
-                        
-                        constraint = Constraint(
-                            attribute=selected_attr_key,
-                            constraint_type=constraint_type,
-                            value=target_value,
-                            description=f"{attr_name} {operator} {target_value}"
-                        )
-                        
-                        # 制約を適用して部分ベクトルを更新
-                        updated_pv = system.vector_generator.update_vector_with_constraint(
-                            current_vector=pv,
-                            constraint=constraint,
-                            interpretation=None
-                        )
-                        
-                        # 画像生成
-                        result_path = system.image_generator.generate_part_from_vector(
-                            base_image_path=base_path,
-                            mask_path=str(selected_node_detail_for_tuning.mask_image_path),
-                            partial_vector=updated_pv,
-                            concept=system.session.concept,
-                            target_part_name=selected_node_detail_for_tuning.target_part_name,
-                            partial_motif=selected_node_detail_for_tuning.partial_motif
-                        )
-                        
-                        # 子ノード作成
-                        from models.session import GeneratedImage
-                        system.session.add_child_node(
-                            vector=selected_node_detail_for_tuning.vector,
-                            constraints=system.session.constraints + [constraint],
-                            note=f"constraint_tune:{selected_node_detail_for_tuning.target_part_name}",
-                            partial_vector=updated_pv,
-                            mask_image_path=selected_node_detail_for_tuning.mask_image_path,
-                            target_part_name=selected_node_detail_for_tuning.target_part_name,
-                            partial_motif=selected_node_detail_for_tuning.partial_motif
-                        )
-                        system.session.update_current_node_image(result_path)
-                        system.session.add_generated_image(GeneratedImage(image_path=result_path, prompt="constraint_tune", vector=updated_pv, constraints=system.session.constraints + [constraint]))
-                        
-                        st.sidebar.success(f"制約「{attr_name} {operator} {target_value}」を適用して再編集しました")
-                        st.rerun()
-        else:
-            st.sidebar.info("部分編集ノードを選択すると制約ベース微調整UIが表示されます")
-    except Exception as e:
-        st.sidebar.error(f"微調整に失敗: {e}")
-
-    # メインエリア: 新規部分編集セクション（2段階フロー）
     st.markdown("---")
-    st.subheader("✂️ 新規部分編集")
-    
-    # 部分編集用の状態を初期化（初回のみ）
-    if "partial_interpretations" not in st.session_state:
-        st.session_state.partial_interpretations = []
-        st.session_state.selected_partial_interpretation_id = None
-        st.session_state.partial_edit_mask_path = None
-        st.session_state.partial_edit_target_name = None
-        st.session_state.partial_edit_base_path = None
-        st.session_state.partial_edit_query = None
-    
+    st.subheader("✂️ 部分編集（Phase D - Local）")
+
+    if "partial_local_options" not in st.session_state:
+        st.session_state.partial_local_options = []
+        st.session_state.partial_local_mask_path = None
+        st.session_state.partial_local_base_path = None
+        st.session_state.partial_local_target_name_saved = None
+        st.session_state.partial_local_attribute_key = None
+        st.session_state.partial_local_delta_value = None
+
     try:
         from streamlit_drawable_canvas import st_canvas
         import os
-        
-        # ベースは現在ノードの画像を使用
+
+        # ベースは「現在のノード画像」を優先（なければ最新/初期）
         base_path = None
         if system.session and system.session.current_node_id is not None:
             current_node = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
             if current_node and current_node.generated_image_path and os.path.exists(current_node.generated_image_path):
                 base_path = current_node.generated_image_path
-        # フォールバック：現在ノードに画像がない場合は最新画像または初期画像
+
         if not base_path:
             latest = system.session.get_latest_image() if system.session else None
             if latest and latest.image_path and os.path.exists(latest.image_path):
                 base_path = latest.image_path
             elif system.session and system.session.initial_image_path and os.path.exists(system.session.initial_image_path):
                 base_path = system.session.initial_image_path
-        
-        if base_path:
-            # ステップ1: マスク描画と意図入力
+
+        if not base_path:
+            st.info("まずPhase A/Bで画像を用意してください")
+        else:
             col_img, col_form = st.columns([1, 1])
             with col_img:
-                st.caption("編集対象の画像")
+                st.caption("編集対象の画像（Current Image）")
                 st.image(_read_image_bytes(base_path), use_column_width=True)
-            
+
             with col_form:
                 st.caption("マスク描画（赤色で編集領域を指定）")
                 base_img = _load_image(base_path)
                 canvas_width = 300
                 canvas_height = int(base_img.height * (canvas_width / base_img.width))
-                # Image オブジェクトをキャッシュ付きで読み込む（GC対策）
                 canvas_image = _load_image(base_path)
-                
+
                 canvas_result = st_canvas(
                     fill_color="rgba(255, 0, 0, 0.3)",
                     stroke_width=15,
@@ -1195,23 +942,42 @@ elif phase == "D":
                     height=canvas_height,
                     width=canvas_width,
                     drawing_mode="freedraw",
-                    # 全体編集などでベース画像が切り替わるので、画像ごとにkeyを変えてcanvasをリマウントする
                     key=f"partial_canvas_main_{Path(base_path).name}",
                 )
-            
-            col_input1, col_input2 = st.columns(2)
-            target_name = col_input1.text_input("部位名（例: turret）", value="", key="partial_target_name")
-            partial_query = col_input2.text_input("編集意図（例: 砲塔を追加）", value="", key="partial_query_input")
-            
-            # ステップ2: 意図を解釈
-            if st.button("意図を解釈（Interpret）", type="primary", key="partial_interpret_btn"):
-                if not (target_name.strip() and partial_query.strip()):
-                    st.warning("部位名と編集意図を入力してください")
+
+            target_name_raw = st.text_input("部位名（例: legs, handle）", value="", key="partial_local_target_name")
+            target_name = target_name_raw.strip()
+
+            all_attrs: List[Tuple[str, str]] = []
+            for gname, items in ATTR_SPACE.groups.items():
+                for k, v in items.items():
+                    key = f"{gname}:{k}"
+                    display = f"{v} ({key})"
+                    all_attrs.append((display, key))
+
+            selected_display = st.selectbox(
+                "操作したい属性",
+                options=[d for d, _ in all_attrs],
+                key="partial_local_attr_select",
+            )
+            attribute_key = dict(all_attrs)[selected_display]
+
+            delta_value = st.slider(
+                "調整量（-1.0 〜 +1.0）",
+                min_value=-1.0,
+                max_value=1.0,
+                value=0.5,
+                step=0.05,
+                key="partial_local_delta",
+            )
+
+            if st.button("候補を表示 (Show Options)", type="primary", key="partial_local_show_options"):
+                if not target_name:
+                    st.warning("部位名を入力してください")
                 elif canvas_result.image_data is None:
                     st.warning("マスクを描画してください")
                 else:
-                    with st.spinner("編集意図を解釈中..."):
-                        # マスク生成して保存
+                    with st.spinner("候補を生成中..."):
                         mask_data = canvas_result.image_data
                         alpha_channel = mask_data[:, :, 3]
                         mask_bool = alpha_channel > 0
@@ -1222,122 +988,50 @@ elif phase == "D":
                         final_mask.putalpha(mask_alpha)
                         mask_path = Config.MASKS_PARTIAL_D_DIR / f"mask_{uuid.uuid4().hex}.png"
                         final_mask.save(mask_path)
-                        
-                        # セッション状態に保存
-                        st.session_state.partial_edit_mask_path = str(mask_path)
-                        st.session_state.partial_edit_target_name = target_name.strip()
-                        st.session_state.partial_edit_base_path = base_path
-                        st.session_state.partial_edit_query = partial_query.strip()
-                        
-                        # クエリを解釈（部位名を含めたクエリで解釈）
-                        try:
-                            part_query = f"{target_name}: {partial_query}"
-                            interps = system.interpret_query(query_override=part_query, use_image_context=False)
-                            st.session_state.partial_interpretations = [(i.id, i.text, i.reasoning) for i in interps]
-                            st.success("解釈を生成しました")
+
+                        concept = system.session.concept if system.session and system.session.concept else "object"
+                        options = system.image_generator.generate_partial_edit_options(
+                            target_part_name=target_name.strip(),
+                            concept=concept,
+                            attribute_key=attribute_key,
+                            delta_value=float(delta_value),
+                        )
+
+                        st.session_state.partial_local_options = options
+                        st.session_state.partial_local_mask_path = str(mask_path)
+                        st.session_state.partial_local_base_path = base_path
+                        # NOTE: `partial_local_target_name` は widget key なのでここでは書き換えない
+                        st.session_state.partial_local_target_name_saved = target_name
+                        st.session_state.partial_local_attribute_key = attribute_key
+                        st.session_state.partial_local_delta_value = float(delta_value)
+                        st.rerun()
+
+            if st.session_state.partial_local_options:
+                st.markdown("#### 候補を選択して実行")
+                cols = st.columns(3)
+                for idx, opt in enumerate(st.session_state.partial_local_options[:3]):
+                    with cols[idx]:
+                        st.markdown(f"**{opt['type']}**")
+                        st.caption(opt.get("description", ""))
+                        if st.button(opt.get("label", opt["type"]), key=f"partial_local_opt_{opt['type']}"):
+                            with st.spinner("部分編集を実行中..."):
+                                system.apply_partial_edit(
+                                    base_image_path=st.session_state.partial_local_base_path,
+                                    mask_path=st.session_state.partial_local_mask_path,
+                                    target_part_name=st.session_state.partial_local_target_name_saved or target_name,
+                                    selected_option=opt,
+                                    attribute_key=st.session_state.partial_local_attribute_key,
+                                    delta_value=float(st.session_state.partial_local_delta_value),
+                                )
+                            st.session_state.partial_local_options = []
+                            st.session_state.partial_local_mask_path = None
+                            st.session_state.partial_local_base_path = None
+                            st.session_state.partial_local_target_name_saved = None
                             st.rerun()
-                        except Exception as e:
-                            st.error(f"解釈生成に失敗: {e}")
-            
-            # ステップ3: 解釈を選択して生成実行
-            if st.session_state.partial_interpretations:
-                st.markdown("---")
-                st.subheader("📋 解釈候補を選択")
-                options = [f"[{i}] {t}" for (i, t, r) in st.session_state.partial_interpretations]
-                choice = st.radio("解釈を選んでください", options=options, index=0, key="partial_interp_choice")
-                chosen_id = int(choice.split(']')[0][1:]) if choice else None
-                
-                with st.expander("根拠（Reasoning）"):
-                    for (i, t, r) in st.session_state.partial_interpretations:
-                        st.markdown(f"- [{i}] {r}")
-                
-                if st.button("生成実行", type="primary", key="partial_generate_btn"):
-                    if chosen_id is None:
-                        st.warning("解釈を選択してください")
-                    else:
-                        with st.spinner("部分編集を実行中..."):
-                            try:
-                                # 選択された解釈を適用
-                                system.select_interpretation(chosen_id)
-                                
-                                # 選択された解釈からモチーフを取得
-                                partial_motif = None
-                                if system.session.selected_interpretation:
-                                    partial_motif = system.session.selected_interpretation.motif
-                                
-                                # 部分ベクトル生成（選択された解釈から）
-                                if system.session.selected_interpretation:
-                                    partial_vec = system.vector_generator.generate_vector_from_interpretation(
-                                        system.session.selected_interpretation,
-                                        constraints=[]
-                                    )
-                                else:
-                                    # フォールバック
-                                    chosen_interpretation = next((i for i in st.session_state.partial_interpretations if i[0] == chosen_id), None)
-                                    part_text = chosen_interpretation[1] if chosen_interpretation else f"{st.session_state.partial_edit_target_name}: {st.session_state.partial_edit_query}"
-                                    partial_vec = system.vector_generator.generate_from_text(
-                                        part_text, 
-                                        concept=system.session.concept, 
-                                        max_attrs=8
-                                    )
-                                
-                                # 実行
-                                result_path = system.image_generator.generate_part_from_vector(
-                                    base_image_path=st.session_state.partial_edit_base_path,
-                                    mask_path=st.session_state.partial_edit_mask_path,
-                                    partial_vector=partial_vec,
-                                    concept=system.session.concept,
-                                    target_part_name=st.session_state.partial_edit_target_name,
-                                    partial_motif=partial_motif
-                                )
-                                
-                                # 親ノードのグローバルベクトルを取得
-                                parent_vector = system.session.current_vector
-                                if system.session.current_node_id is not None:
-                                    parent_node = next((n for n in system.session.exploration_nodes if n.node_id == system.session.current_node_id), None)
-                                    if parent_node and parent_node.vector:
-                                        parent_vector = parent_node.vector
-                                
-                                # 子ノード作成
-                                from models.session import GeneratedImage
-                                system.session.add_child_node(
-                                    vector=parent_vector or partial_vec,
-                                    constraints=system.session.constraints,
-                                    note=f"partial_edit:{st.session_state.partial_edit_target_name}",
-                                    partial_vector=partial_vec,
-                                    mask_image_path=st.session_state.partial_edit_mask_path,
-                                    target_part_name=st.session_state.partial_edit_target_name,
-                                    partial_motif=partial_motif
-                                )
-                                system.session.update_current_node_image(result_path)
-                                system.session.add_generated_image(
-                                    GeneratedImage(
-                                        image_path=result_path, 
-                                        prompt="partial_edit", 
-                                        vector=partial_vec, 
-                                        constraints=system.session.constraints
-                                    )
-                                )
-                                
-                                # 状態をリセット
-                                st.session_state.partial_interpretations = []
-                                st.session_state.selected_partial_interpretation_id = None
-                                st.session_state.partial_edit_mask_path = None
-                                st.session_state.partial_edit_target_name = None
-                                st.session_state.partial_edit_base_path = None
-                                st.session_state.partial_edit_query = None
-                                
-                                st.success("部分編集を適用しました")
-                                st.rerun()
-                            except Exception as e:
-                                st.error(f"生成に失敗: {e}")
-                
-                if st.button("解釈をやり直す", key="partial_reset_btn"):
-                    st.session_state.partial_interpretations = []
-                    st.session_state.selected_partial_interpretation_id = None
-                    st.rerun()
-        else:
-            st.info("まずPhase A/Bで画像を用意してください")
+
+                        with st.expander("プロンプトを見る"):
+                            st.code(opt.get("prompt", ""), language=None)
+
     except ImportError:
         st.error("streamlit-drawable-canvas がインストールされていません。")
         st.code("pip install streamlit-drawable-canvas")

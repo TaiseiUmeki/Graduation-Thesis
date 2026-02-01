@@ -1,0 +1,112 @@
+{
+  "session_id": "5d5cce68-1f62-40b4-bce7-f3faf529243a",
+  "created_at": "2026-01-31T12:29:48.179393",
+  "updated_at": "2026-01-31T12:30:56.857495",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_122948_15651302.jpg",
+  "initial_query": "近未来的な感じ",
+  "concept": "椅子",
+  "query_history": [
+    "近未来的な感じ"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体をスリムにし、直線的なラインを強調することで未来的な印象を与える。エッジを鋭角にし、細長比を高める。",
+      "reasoning": "『近未来的』という言葉から、スタイリッシュでシャープな形状を連想したため。",
+      "motif": "Blade",
+      "timestamp": "2026-01-31T12:29:59.599917"
+    },
+    {
+      "id": 2,
+      "text": "シート部分を円盤状にし、脚を円柱状で中央に集める形にすることで、浮遊感を演出する。全体のバランスを対称にする。",
+      "reasoning": "『近未来的』という言葉から、反重力をイメージさせるデザインを考えたため。",
+      "motif": "UFO",
+      "timestamp": "2026-01-31T12:29:59.599923"
+    },
+    {
+      "id": 3,
+      "text": "エッジを曲線的にし、有機的な曲線を用いて全体に流線形を持たせる。表面を凸面にすることで柔らかさを加える。",
+      "reasoning": "『近未来的』という言葉から、滑らかで流れるような形状を連想したため。",
+      "motif": "Wave",
+      "timestamp": "2026-01-31T12:29:59.599924"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 2,
+    "text": "シート部分を円盤状にし、脚を円柱状で中央に集める形にすることで、浮遊感を演出する。全体のバランスを対称にする。",
+    "reasoning": "『近未来的』という言葉から、反重力をイメージさせるデザインを考えたため。",
+    "motif": "UFO",
+    "timestamp": "2026-01-31T12:29:59.599923"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:cylindrical": 0.7,
+      "form:planar": 0.5,
+      "line:geometric_curve": 0.7,
+      "line:radial": 0.5,
+      "balance:symmetrical": 1.0,
+      "texture:smooth": 0.7
+    }
+  },
+  "recommended_attributes": [
+    "form:cylindrical",
+    "form:shell",
+    "line:radial",
+    "line:curved",
+    "line:geometric_curve",
+    "balance:symmetrical",
+    "form:single_mass",
+    "balance:slender",
+    "form:assembly"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_123056_de63572a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. シート部分を円盤状にし、脚を円柱状で中央に集める形にすることで、浮遊感を演出する。全体のバランスを対称にする。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "form:planar": 0.5,
+          "line:geometric_curve": 0.7,
+          "line:radial": 0.5,
+          "balance:symmetrical": 1.0,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T12:30:56.857477"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 0.7,
+          "form:planar": 0.5,
+          "line:geometric_curve": 0.7,
+          "line:radial": 0.5,
+          "balance:symmetrical": 1.0,
+          "texture:smooth": 0.7
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_123056_de63572a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. シート部分を円盤状にし、脚を円柱状で中央に集める形にすることで、浮遊感を演出する。全体のバランスを対称にする。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "UFO",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T12:30:15.360235",
+      "note": "root"
+    }
+  ],
+  "current_node_id": 0,
+  "next_node_id": 1
+}

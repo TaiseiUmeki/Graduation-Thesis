@@ -353,6 +353,26 @@ class ImageGenerator:
             (0.00, "smooth non-granular surface; avoid grainy bumps"),
         ],
     }
+
+    # ------------------------------------------------------------------
+    # Attribute Synergy Map (Phase D - Local / Alternative option)
+    # Key: attribute_key in PROMPT_MAPPING, Value: additional adjective phrase
+    # ------------------------------------------------------------------
+    SYNERGY_MAP: Dict[str, str] = {
+        "edge:sharp_angle": "slender, elongated",
+        "edge:knife_edge": "geometric, precise",
+        "edge:filleted": "smooth, friendly",
+        "line:organic_curve": "asymmetrical, fluid",
+        "line:geometric_curve": "symmetrical, engineered",
+        "form:cubic": "heavy, solid",
+        "form:spherical": "smooth, polished",
+        "balance:top_heavy": "unstable, dynamic",
+        "balance:bottom_heavy": "stable, grounded",
+        "surface:ribbed": "industrial, mechanical",
+        "surface:twisted": "dynamic, flowing",
+        "texture:rough": "weathered, tactile",
+        "texture:smooth": "refined, minimal",
+    }
     
     def __init__(self, client: Optional[OpenAIClient] = None):
         self.client = client or OpenAIClient()
@@ -525,6 +545,170 @@ class ImageGenerator:
         
         return image_path
 
+    def generate_partial_edit_options(
+        self,
+        target_part_name: str,
+        concept: str,
+        attribute_key: str,
+        delta_value: float,
+    ) -> List[Dict[str, str]]:
+        """
+        Phase D - Local:
+        属性操作（-1.0〜+1.0）に基づき、部分編集用のプロンプト候補（3種類）を生成する。
+        画像生成は行わない（UIで選択してから generate_part_with_prompt を呼ぶ）。
+        """
+        mappings = self.PROMPT_MAPPING.get(attribute_key, [])
+        if not mappings:
+            return []
+
+        subject = f"A clay {concept}" if concept else "A clay object"
+        part_desc = f"The {target_part_name} is" if target_part_name else "The edited part is"
+
+        adj_literal = ""
+        adj_aggressive = ""
+
+        if delta_value > 0:
+            # Aggressive: strongest (first threshold >= 0.85)
+            for t, text in mappings:
+                if t >= 0.85:
+                    adj_aggressive = text
+                    break
+
+            # Literal: choose 0.60 when delta is large, else 0.30
+            target_threshold = 0.60 if delta_value > 0.5 else 0.30
+            for t, text in mappings:
+                if t >= target_threshold:
+                    adj_literal = text
+
+            if not adj_literal:
+                adj_literal = mappings[-1][1]  # fallback
+            if not adj_aggressive:
+                adj_aggressive = f"very {adj_literal}"
+        else:
+            # Negative delta: use antonym / neutral (0.00 line)
+            antonym = ""
+            for t, text in mappings:
+                if abs(t - 0.0) < 1e-9:
+                    antonym = text
+                    break
+            if not antonym:
+                antonym = mappings[-1][1]
+
+            adj_literal = antonym
+            adj_aggressive = f"extremely {antonym}"
+
+        synergy_word = self.SYNERGY_MAP.get(attribute_key, "detailed")
+
+        prompt_literal = f"{subject}. {part_desc} {adj_literal}."
+        prompt_aggressive = f"{subject}. {part_desc} {adj_aggressive}."
+        prompt_alternative = f"{subject}. {part_desc} {adj_literal} and {synergy_word}."
+
+        return [
+            {
+                "type": "Literal",
+                "label": "そのまま反映",
+                "description": f"指定通り: {adj_literal}",
+                "prompt": prompt_literal,
+            },
+            {
+                "type": "Aggressive",
+                "label": "大胆に強調",
+                "description": f"強く反映: {adj_aggressive}",
+                "prompt": prompt_aggressive,
+            },
+            {
+                "type": "Alternative",
+                "label": "派生アイデア",
+                "description": f"+ {synergy_word}",
+                "prompt": prompt_alternative,
+            },
+        ]
+
+    def generate_part_with_prompt(
+        self,
+        base_image_path: str,
+        mask_path: str,
+        prompt: str,
+        output_dir: Optional[Path] = None
+    ) -> str:
+        """
+        Phase D - Local:
+        確定したプロンプトで部分編集（Inpainting）を実行する。
+        """
+        output_dir = output_dir or Config.IMAGES_DIR
+
+        full_prompt = " ".join(
+            [
+                prompt,
+                "Edit only the masked region. Do not change other parts outside the mask.",
+                "Keep the entire object fully inside the frame; do not crop.",
+                "Keep the material as RAW CLAY throughout.",
+                "Output: coherent clay sculpture with the edited part seamlessly integrated.",
+            ]
+        )
+
+        print(f"\n部分編集実行プロンプト:\n{full_prompt}\n")
+
+        return self._inpaint_with_prompt(
+            base_image_path=base_image_path,
+            mask_path=mask_path,
+            prompt=full_prompt,
+            output_dir=output_dir,
+            prefix="partial",
+        )
+
+    def _inpaint_with_prompt(
+        self,
+        base_image_path: str,
+        mask_path: str,
+        prompt: str,
+        output_dir: Path,
+        prefix: str,
+    ) -> str:
+        """
+        マスクとベース画像のサイズ整合を取りつつ inpaint を実行する共通処理。
+        """
+        # マスクとベース画像のサイズを確認・調整
+        from PIL import Image
+
+        base_image = Image.open(base_image_path)
+        mask_image = Image.open(mask_path)
+
+        if base_image.size != mask_image.size:
+            print(f"サイズ不一致を検出: ベース画像 {base_image.size} vs マスク {mask_image.size}")
+            print("マスクをベース画像のサイズにリサイズしています...")
+
+            resized_mask = mask_image.resize(base_image.size, Image.Resampling.NEAREST)
+
+            import tempfile
+            import os
+
+            temp_mask_fd, temp_mask_path = tempfile.mkstemp(suffix=".png")
+            os.close(temp_mask_fd)
+            resized_mask.save(temp_mask_path)
+
+            try:
+                result = self.client.inpaint_image(base_image_path, temp_mask_path, prompt)
+            finally:
+                os.unlink(temp_mask_path)
+        else:
+            result = self.client.inpaint_image(base_image_path, mask_path, prompt)
+
+        if result.get("b64_json"):
+            image_path = self.image_utils.save_base64_image(
+                result["b64_json"],
+                output_dir,
+                prefix=prefix
+            )
+        else:
+            image_path = self.image_utils.download_image_from_url(
+                result["url"],
+                output_dir,
+                prefix=prefix
+            )
+
+        return image_path
+
     def generate_part_from_vector(
         self,
         base_image_path: str,
@@ -581,49 +765,13 @@ class ImageGenerator:
         prompt = " ".join(prompt_parts)
 
         print(f"\n部分編集プロンプト:\n{prompt}\n")
-
-        # マスクとベース画像のサイズを確認・調整
-        from PIL import Image
-        base_image = Image.open(base_image_path)
-        mask_image = Image.open(mask_path)
-        
-        # サイズが異なる場合はマスクをベース画像のサイズにリサイズ
-        if base_image.size != mask_image.size:
-            print(f"サイズ不一致を検出: ベース画像 {base_image.size} vs マスク {mask_image.size}")
-            print("マスクをベース画像のサイズにリサイズしています...")
-            
-            # マスクをベース画像のサイズにリサイズ
-            resized_mask = mask_image.resize(base_image.size, Image.Resampling.NEAREST)
-            
-            # 一時的なマスクファイルとして保存
-            import tempfile
-            import os
-            temp_mask_fd, temp_mask_path = tempfile.mkstemp(suffix='.png')
-            os.close(temp_mask_fd)
-            resized_mask.save(temp_mask_path)
-            
-            try:
-                result = self.client.inpaint_image(base_image_path, temp_mask_path, prompt)
-            finally:
-                # 一時ファイルを削除
-                os.unlink(temp_mask_path)
-        else:
-            result = self.client.inpaint_image(base_image_path, mask_path, prompt)
-
-        if result.get("b64_json"):
-            image_path = self.image_utils.save_base64_image(
-                result["b64_json"],
-                output_dir,
-                prefix="partial"
-            )
-        else:
-            image_path = self.image_utils.download_image_from_url(
-                result["url"],
-                output_dir,
-                prefix="partial"
-            )
-
-        return image_path
+        return self._inpaint_with_prompt(
+            base_image_path=base_image_path,
+            mask_path=mask_path,
+            prompt=prompt,
+            output_dir=output_dir,
+            prefix="partial",
+        )
     
     def suggest_constraint_attributes(
         self,

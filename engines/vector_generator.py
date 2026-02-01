@@ -115,12 +115,22 @@ JSON形式で返してください:
         画像分析からグローバルベクトルを生成（Phase AのRoot向け）
         - 画像をVisionで分析し、その説明テキストから属性重みを作成
         """
-        analysis_prompt = """この画像の粘土物体について、形状・エッジ・輪郭・材質に関する要点を簡潔に記述してください。
-（例: 角張り/丸み、直線/曲線、対称性、粗い/滑らか など）"""
-        description = self.client.analyze_image_with_text(image_path, analysis_prompt)
+        description = self.analyze_global_description_from_image(image_path)
 
         # 説明テキストから属性ベクトル（重要属性のみ）
         return self.generate_from_text(text=description, concept=concept, max_attrs=10)
+
+    def analyze_global_description_from_image(self, image_path: str) -> str:
+        """
+        画像から「形状の要点」を抽出する（Refinementモード/Global起点向け）
+        """
+        analysis_prompt = """この画像の粘土物体について、形状・エッジ・輪郭に関する要点を簡潔に記述してください。
+（例: 角張り/丸み、直線/曲線、対称性、ボリュームバランス など）
+
+【制約】
+- 材質や色、表面の質感の変更提案は不要です（粘土のまま）。
+- 1〜2文で短くまとめてください。"""
+        return self.client.analyze_image_with_text(image_path, analysis_prompt)
     
     def find_related_attributes(
         self,

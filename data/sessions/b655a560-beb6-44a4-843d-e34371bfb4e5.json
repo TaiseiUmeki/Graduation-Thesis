@@ -1,0 +1,698 @@
+{
+  "session_id": "b655a560-beb6-44a4-843d-e34371bfb4e5",
+  "created_at": "2026-01-31T18:07:16.441536",
+  "updated_at": "2026-01-31T18:20:58.962110",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_180716_6aa6232b.jpg",
+  "initial_query": "おしゃれ",
+  "concept": "マグカップ",
+  "query_history": [
+    "おしゃれ"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体をねじり、波状の有機的曲線を持たせることで動きのある形状にする。",
+      "reasoning": "『おしゃれ』という言葉から、動きのある流れるようなデザインを連想したため。",
+      "motif": null,
+      "timestamp": "2026-01-31T18:07:29.104444"
+    },
+    {
+      "id": 2,
+      "text": "直線的で鋭角なエッジを持たせ、幾何学的な立方体に近い形状にする。",
+      "reasoning": "『おしゃれ』という言葉から、モダンで洗練された幾何学的なデザインを連想したため。",
+      "motif": null,
+      "timestamp": "2026-01-31T18:07:29.104457"
+    },
+    {
+      "id": 3,
+      "text": "上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。",
+      "reasoning": "『おしゃれ』という言葉から、優雅さやエレガントさを連想したため。",
+      "motif": "Tulip",
+      "timestamp": "2026-01-31T18:07:29.104462"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 3,
+    "text": "上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。",
+    "reasoning": "『おしゃれ』という言葉から、優雅さやエレガントさを連想したため。",
+    "motif": "Tulip",
+    "timestamp": "2026-01-31T18:07:29.104462"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:conical": 1.0,
+      "line:curved": 0.7,
+      "edge:rounded_fully": 0.7,
+      "balance:top_heavy": 0.7,
+      "texture:smooth": 0.5,
+      "form:shell": 0.65,
+      "line:organic_curve": 1.0,
+      "balance:flat": 0.75
+    }
+  },
+  "recommended_attributes": [
+    "form:conical",
+    "line:curved",
+    "edge:rounded_fully",
+    "surface:convex",
+    "balance:top_heavy",
+    "balance:slender",
+    "texture:smooth",
+    "form:shell",
+    "line:tapered",
+    "balance:symmetrical"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_180858_30dbe155.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T18:08:58.727930"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181117_a026ae58.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:10:49.737788"
+        }
+      ],
+      "timestamp": "2026-01-31T18:11:18.523253"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181345_04fce840.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150143"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150525"
+        }
+      ],
+      "timestamp": "2026-01-31T18:13:46.227892"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_181647_1b9e03fe.png",
+      "prompt": "A clay マグカップ. The 取っ手 is very slender, high aspect ratio, tall and thin.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150143"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150525"
+        }
+      ],
+      "timestamp": "2026-01-31T18:16:48.372589"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181903_bfb2da25.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, organic curves, irregular flowing contours, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.852687"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.852766"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.853116"
+        }
+      ],
+      "timestamp": "2026-01-31T18:19:04.290554"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181946_b49dc366.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, highly organic irregular curves, natural flowing linework, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 1.0,
+          "balance:flat": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719063"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 1.00",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719145"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719476"
+        }
+      ],
+      "timestamp": "2026-01-31T18:19:47.434393"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182058_f279db44.png",
+      "prompt": "A clay マグカップ. The 取っ手 is very slender, high aspect ratio, tall and thin.",
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 1.0,
+          "balance:flat": 0.75
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719063"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 1.00",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719145"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719476"
+        }
+      ],
+      "timestamp": "2026-01-31T18:20:58.962110"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "form:shell",
+      "constraint_type": "equal",
+      "value": 0.65,
+      "min_value": null,
+      "max_value": null,
+      "description": "殻構造（薄い曲面） = 0.65",
+      "is_active": true,
+      "timestamp": "2026-01-31T18:19:20.719063"
+    },
+    {
+      "attribute": "line:organic_curve",
+      "constraint_type": "equal",
+      "value": 1.0,
+      "min_value": null,
+      "max_value": null,
+      "description": "有機的曲線（不規則なうねり） = 1.00",
+      "is_active": true,
+      "timestamp": "2026-01-31T18:19:20.719145"
+    },
+    {
+      "attribute": "balance:flat",
+      "constraint_type": "equal",
+      "value": 0.75,
+      "min_value": null,
+      "max_value": null,
+      "description": "扁平 = 0.75",
+      "is_active": true,
+      "timestamp": "2026-01-31T18:19:20.719476"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_180858_30dbe155.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:08:21.560137",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:10:49.737788"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181117_a026ae58.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:10:49.738463",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 1,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150143"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150525"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181345_04fce840.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:12:47.150946",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150143"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:12:47.150525"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_181647_1b9e03fe.png",
+      "prompt": "A clay マグカップ. The 取っ手 is very slender, high aspect ratio, tall and thin.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_ceebcd448e394f9a9d2fd10a967f67c3.png",
+      "target_part_name": "取っ手",
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:16:48.372579",
+      "note": "Partial(取っ手): balance:slender +0.5 [Aggressive]"
+    },
+    {
+      "node_id": 4,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 0.65,
+          "balance:flat": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.852687"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.852766"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:18:42.853116"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181903_bfb2da25.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, organic curves, irregular flowing contours, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:18:42.853426",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 5,
+      "parent_id": 4,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 1.0,
+          "balance:flat": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719063"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 1.00",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719145"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719476"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_181946_b49dc366.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 上部を広げて円錐状にし、全体的に曲線的なエッジを持たせて、優雅さを表現する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: shell structure with thin curved surfaces, highly organic irregular curves, natural flowing linework, flat, low-profile form. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:19:20.720104",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 6,
+      "parent_id": 5,
+      "vector": {
+        "weights": {
+          "form:conical": 1.0,
+          "line:curved": 0.7,
+          "edge:rounded_fully": 0.7,
+          "balance:top_heavy": 0.7,
+          "texture:smooth": 0.5,
+          "form:shell": 0.65,
+          "line:organic_curve": 1.0,
+          "balance:flat": 0.75
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "form:shell",
+          "constraint_type": "equal",
+          "value": 0.65,
+          "min_value": null,
+          "max_value": null,
+          "description": "殻構造（薄い曲面） = 0.65",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719063"
+        },
+        {
+          "attribute": "line:organic_curve",
+          "constraint_type": "equal",
+          "value": 1.0,
+          "min_value": null,
+          "max_value": null,
+          "description": "有機的曲線（不規則なうねり） = 1.00",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719145"
+        },
+        {
+          "attribute": "balance:flat",
+          "constraint_type": "equal",
+          "value": 0.75,
+          "min_value": null,
+          "max_value": null,
+          "description": "扁平 = 0.75",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:19:20.719476"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182058_f279db44.png",
+      "prompt": "A clay マグカップ. The 取っ手 is very slender, high aspect ratio, tall and thin.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_d15025171668496a8711f1b71bf85600.png",
+      "target_part_name": "取っ手",
+      "motif": "Tulip",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:20:58.962101",
+      "note": "Partial(取っ手): balance:slender +0.5 [Aggressive]"
+    }
+  ],
+  "current_node_id": 6,
+  "next_node_id": 7
+}

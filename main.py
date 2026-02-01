@@ -15,6 +15,7 @@ from engines.vector_generator import VectorGenerator
 from engines.image_generator import ImageGenerator
 from utils.openai_client import OpenAIClient
 from utils.image_utils import ImageUtils
+from models.session import GeneratedImage, Interpretation
 
 
 class TrueCodingSystem:
@@ -87,6 +88,86 @@ class TrueCodingSystem:
         # セッションを保存
         self.session.save(Config.SESSIONS_DIR)
         
+        return self.session
+
+    def start_refinement_session(self, image_path: str, concept: str) -> Session:
+        """
+        [形状修正モード] 画像からベクトルを逆算して Phase D を開始する
+
+        Phase A/B/C をスキップし、アップロード画像を「現在地」として探索木のルートに登録する。
+        """
+        print("=" * 60)
+        print(f"形状修正モード開始: {concept}")
+        print("=" * 60)
+
+        # 1) セッション初期化
+        self.session = Session()
+        self.session.concept = concept
+
+        # 2) 画像を保存（Initial Imageとして登録）
+        saved_path = self.image_utils.save_uploaded_image(
+            image_path,
+            Config.IMAGES_DIR,
+            prefix="refine_base",
+        )
+        self.session.initial_image_path = saved_path
+        print(f"画像を保存しました: {saved_path}")
+
+        # 3) 画像解析によるベクトル生成（Reverse Engineering）
+        print("\n画像を解析して特徴ベクトルを抽出中...")
+        analysis_text = ""
+        try:
+            analysis_text = self.vector_generator.analyze_global_description_from_image(saved_path)
+            initial_vector = self.vector_generator.generate_from_text(
+                text=analysis_text,
+                concept=concept,
+                max_attrs=10,
+            )
+        except Exception as e:
+            print(f"ベクトル生成エラー: {e} -> ゼロベクトルで代替します")
+            initial_vector = ATTR_SPACE.zero_vector()
+
+        # 解析テキストは「文脈（Base Prompt相当）」として使う
+        self.session.initial_query = analysis_text or "形状修正モード（画像解析）"
+        self.session.add_query(self.session.initial_query)
+
+        pseudo_interp = Interpretation(
+            id=0,
+            text=self.session.initial_query,
+            reasoning="アップロード画像を解析して現在の形状特徴を要約",
+            motif=concept,
+        )
+        self.session.add_interpretations([pseudo_interp])
+        self.session.selected_interpretation = pseudo_interp
+
+        self.session.set_vector(initial_vector)
+
+        # 4) 探索木のルートノード作成（アップロード画像を生成画像として紐付け）
+        self.session.add_root_node(
+            vector=initial_vector,
+            constraints=[],
+            note="refinement_start",
+            motif=concept,
+        )
+        self.session.update_current_node_image(saved_path, prompt="(Uploaded Image)")
+
+        # 履歴にも追加（UIの表示/DL用）
+        self.session.add_generated_image(
+            GeneratedImage(
+                image_path=saved_path,
+                prompt="(Uploaded Image Analysis)",
+                vector=initial_vector,
+                constraints=[],
+            )
+        )
+
+        # 5) フェーズDへ移行
+        self.session.current_phase = "D"
+        self.session.save(Config.SESSIONS_DIR)
+
+        print("解析完了。Phase Dへ移行します。")
+        self.show_vector(top_k=10)
+
         return self.session
     
     # ========== フェーズB: クエリ解釈 ==========
@@ -337,8 +418,8 @@ class TrueCodingSystem:
         - クローズドノードからの斥力を適用
         - 差分駆動プロンプトで初期画像から再生成
         """
-        if not self.session or not self.session.selected_interpretation:
-            raise ValueError("セッションまたは解釈案がありません")
+        if not self.session:
+            raise ValueError("セッションがありません")
 
         root_node = self.session.get_root_node()
         if root_node:
@@ -375,7 +456,10 @@ class TrueCodingSystem:
             note="global_edit"
         )
 
-        base_interpretation = self.session.selected_interpretation.text
+        if self.session.selected_interpretation and self.session.selected_interpretation.text:
+            base_interpretation = self.session.selected_interpretation.text
+        else:
+            base_interpretation = self.session.initial_query or ""
 
         generated = self.image_generator.generate_from_vector(
             self.session.initial_image_path,
@@ -391,6 +475,68 @@ class TrueCodingSystem:
         self.session.save(Config.SESSIONS_DIR)
 
         return generated.image_path
+
+    def apply_partial_edit(
+        self,
+        base_image_path: str,
+        mask_path: str,
+        target_part_name: str,
+        selected_option: dict,  # {type, label, prompt}
+        attribute_key: str,
+        delta_value: float,
+    ) -> str:
+        """
+        部分編集（Phase D - Local）
+        - ベクトル計算は行わず、画像上の操作（Action）として履歴に残す
+        - 探索木には「親のベクトル」をそのまま継承して記録する
+        """
+        if not self.session:
+            raise ValueError("セッションが開始されていません")
+
+        option_type = selected_option.get("type", "Unknown")
+        prompt = selected_option.get("prompt", "")
+        print(f"\n部分編集開始: {option_type}")
+
+        # 1) 画像生成（inpainting）
+        result_path = self.image_generator.generate_part_with_prompt(
+            base_image_path=base_image_path,
+            mask_path=mask_path,
+            prompt=prompt,
+        )
+
+        # 2) 探索木を更新（ベクトルは親を継承）
+        parent_node = self.session._get_current_node()
+        if parent_node and parent_node.vector:
+            current_vector = parent_node.vector
+        elif self.session.current_vector:
+            current_vector = self.session.current_vector
+        else:
+            current_vector = ATTR_SPACE.zero_vector()
+
+        note_text = f"Partial({target_part_name}): {attribute_key} {delta_value:+.1f} [{option_type}]"
+
+        self.session.add_child_node(
+            vector=current_vector,
+            constraints=self.session.constraints,
+            note=note_text,
+            mask_image_path=mask_path,
+            target_part_name=target_part_name,
+        )
+
+        # 3) 画像登録
+        self.session.update_current_node_image(result_path, prompt)
+        self.session.add_generated_image(
+            GeneratedImage(
+                image_path=result_path,
+                prompt=prompt,
+                vector=current_vector,
+                constraints=self.session.constraints,
+            )
+        )
+
+        self.session.save(Config.SESSIONS_DIR)
+
+        return result_path
     
     def add_constraint(
         self,

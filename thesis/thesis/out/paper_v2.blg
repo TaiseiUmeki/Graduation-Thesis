@@ -1,0 +1,48 @@
+This is upBibTeX, Version 0.99d-j0.36-u2.00 (TeX Live 2025)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: paper_v2.aux
+The style file: kuisunsrt.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: kuisthesis_jp.bib
+You've used 2 entries,
+            2159 wiz_defined-function locations,
+            529 strings with 4412 characters,
+and the built_in function-call counts, 785 in all, are:
+= -- 72
+> -- 20
+< -- 2
++ -- 8
+- -- 6
+* -- 52
+:= -- 102
+add.period$ -- 2
+call.type$ -- 2
+change.case$ -- 0
+chr.to.int$ -- 0
+cite$ -- 2
+duplicate$ -- 38
+empty$ -- 74
+format.name$ -- 12
+if$ -- 192
+int.to.chr$ -- 0
+int.to.str$ -- 2
+missing$ -- 2
+newline$ -- 9
+num.names$ -- 2
+pop$ -- 5
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 45
+stack$ -- 0
+substring$ -- 72
+swap$ -- 22
+text.length$ -- 2
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 8
+width$ -- 3
+write$ -- 18
+is.kanji.str$ -- 10

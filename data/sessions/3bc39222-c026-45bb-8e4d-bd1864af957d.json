@@ -1,0 +1,110 @@
+{
+  "session_id": "3bc39222-c026-45bb-8e4d-bd1864af957d",
+  "created_at": "2026-01-31T12:36:51.564814",
+  "updated_at": "2026-01-31T12:37:54.885291",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_123651_e9a41f8b.jpg",
+  "initial_query": "女王様が座ってそうな感じにして",
+  "concept": "椅子",
+  "query_history": [
+    "女王様が座ってそうな感じにして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "背もたれを高くし、上部を曲線的に広げて王冠のようにする。座面を広げて安定感を持たせる。",
+      "reasoning": "女王様の威厳を表現するため、王冠を連想させる形状にし、安定感を持たせるために座面を広げる。",
+      "motif": "Crown",
+      "timestamp": "2026-01-31T12:37:05.021500"
+    },
+    {
+      "id": 2,
+      "text": "全体的に曲線的で有機的なラインを取り入れ、背もたれに優雅なカーブを追加する。座面を少し持ち上げる。",
+      "reasoning": "女王様の優雅さを表現するために、有機的で流れるような曲線を採用し、全体を少し持ち上げることで優雅さを強調する。",
+      "motif": "Elegance",
+      "timestamp": "2026-01-31T12:37:05.021512"
+    },
+    {
+      "id": 3,
+      "text": "エッジを鋭角にして、立方体的な形状を強調する。背もたれを直線的に高くし、座面を広くしてボトムヘビーに。",
+      "reasoning": "女王の強さと威厳を直線と鋭いエッジで表現し、安定感を出すために座面を広げる。",
+      "motif": "Throne",
+      "timestamp": "2026-01-31T12:37:05.021515"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 2,
+    "text": "全体的に曲線的で有機的なラインを取り入れ、背もたれに優雅なカーブを追加する。座面を少し持ち上げる。",
+    "reasoning": "女王様の優雅さを表現するために、有機的で流れるような曲線を採用し、全体を少し持ち上げることで優雅さを強調する。",
+    "motif": "Elegance",
+    "timestamp": "2026-01-31T12:37:05.021512"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "line:curved": 0.3,
+      "line:organic_curve": 1.0,
+      "surface:convex": 0.5,
+      "balance:slender": 0.4,
+      "texture:smooth": 0.7
+    }
+  },
+  "recommended_attributes": [
+    "line:curved",
+    "line:organic_curve",
+    "form:shell",
+    "surface:convex",
+    "balance:symmetrical",
+    "edge:rounded_fully",
+    "balance:bottom_heavy",
+    "texture:smooth",
+    "form:single_mass",
+    "line:s_curve"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_123754_16ce4c4a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体的に曲線的で有機的なラインを取り入れ、背もたれに優雅なカーブを追加する。座面を少し持ち上げる。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "line:curved": 0.3,
+          "line:organic_curve": 1.0,
+          "surface:convex": 0.5,
+          "balance:slender": 0.4,
+          "texture:smooth": 0.7
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T12:37:54.885277"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "line:curved": 0.3,
+          "line:organic_curve": 1.0,
+          "surface:convex": 0.5,
+          "balance:slender": 0.4,
+          "texture:smooth": 0.7
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_123754_16ce4c4a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体的に曲線的で有機的なラインを取り入れ、背もたれに優雅なカーブを追加する。座面を少し持ち上げる。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Elegance",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T12:37:22.953131",
+      "note": "root"
+    }
+  ],
+  "current_node_id": 0,
+  "next_node_id": 1
+}

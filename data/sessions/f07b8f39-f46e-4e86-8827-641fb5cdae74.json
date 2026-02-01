@@ -1,0 +1,144 @@
+{
+  "session_id": "f07b8f39-f46e-4e86-8827-641fb5cdae74",
+  "created_at": "2026-01-31T13:13:47.651508",
+  "updated_at": "2026-01-31T13:17:26.466020",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_131347_6ab53fd1.jpg",
+  "initial_query": "女王様が座ってそうな椅子にして",
+  "concept": "椅子",
+  "query_history": [
+    "女王様が座ってそうな椅子にして"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を円柱状にし、背もたれの上部を王冠のように鋭角的にとがらせて、エッジを立てる。",
+      "reasoning": "女王様の椅子ということで、威厳や威力を感じさせる王冠をイメージしたため。",
+      "motif": "Crown",
+      "timestamp": "2026-01-31T13:14:02.728101"
+    },
+    {
+      "id": 2,
+      "text": "背もたれを高くし、細長比を高めて、エレガントな曲線を持たせる。座面を広くして、安定感を持たせる。",
+      "reasoning": "女王様の優雅さを表現するために、細長く流れるような優雅な曲線を取り入れた。",
+      "motif": "Elegance",
+      "timestamp": "2026-01-31T13:14:02.728109"
+    },
+    {
+      "id": 3,
+      "text": "側面に幾何学的曲線を持たせ、座面を球状に膨らませて、背もたれを凸面にする。",
+      "reasoning": "豪華さと存在感を持たせるために、全体にボリューム感を与える形状にした。",
+      "motif": "Opulence",
+      "timestamp": "2026-01-31T13:14:02.728112"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "全体を円柱状にし、背もたれの上部を王冠のように鋭角的にとがらせて、エッジを立てる。",
+    "reasoning": "女王様の椅子ということで、威厳や威力を感じさせる王冠をイメージしたため。",
+    "motif": "Crown",
+    "timestamp": "2026-01-31T13:14:02.728101"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:cylindrical": 1.0,
+      "edge:sharp_angle": 0.7,
+      "surface:spiked": 0.7,
+      "balance:top_heavy": 0.5
+    }
+  },
+  "recommended_attributes": [
+    "form:cylindrical",
+    "edge:sharp_angle",
+    "surface:spiked",
+    "balance:symmetrical",
+    "line:straight",
+    "line:vertical",
+    "edge:knife_edge",
+    "texture:smooth",
+    "form:solid",
+    "balance:top_heavy"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_131509_6259093a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を円柱状にし、背もたれの上部を王冠のように鋭角的にとがらせて、エッジを立てる。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 0.7,
+          "balance:top_heavy": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T13:15:10.320726"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_131725_2361fc97.png",
+      "prompt": "A clay 椅子. The 背もたれ is very wide proportions, low aspect ratio, broad footprint.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 0.7,
+          "balance:top_heavy": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T13:17:26.466018"
+    }
+  ],
+  "constraints": [],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 0.7,
+          "balance:top_heavy": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_131509_6259093a.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を円柱状にし、背もたれの上部を王冠のように鋭角的にとがらせて、エッジを立てる。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Crown",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T13:14:34.922296",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:sharp_angle": 0.7,
+          "surface:spiked": 0.7,
+          "balance:top_heavy": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_131725_2361fc97.png",
+      "prompt": "A clay 椅子. The 背もたれ is very wide proportions, low aspect ratio, broad footprint.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_2be7ab6abb06485eb35662c188279783.png",
+      "target_part_name": "背もたれ",
+      "motif": "Crown",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T13:17:26.466003",
+      "note": "Partial(背もたれ): balance:wide +0.7 [Aggressive]"
+    }
+  ],
+  "current_node_id": 1,
+  "next_node_id": 2
+}

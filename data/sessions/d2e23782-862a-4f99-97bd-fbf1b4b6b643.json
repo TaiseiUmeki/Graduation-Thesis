@@ -1,0 +1,225 @@
+{
+  "session_id": "d2e23782-862a-4f99-97bd-fbf1b4b6b643",
+  "created_at": "2026-01-31T19:16:05.824413",
+  "updated_at": "2026-01-31T19:17:54.149071",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_191605_60093ce8.jpg",
+  "initial_query": "おしゃれ",
+  "concept": "椅子",
+  "query_history": [
+    "おしゃれ"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を曲線的にねじり、流れるような形状に変更する。",
+      "reasoning": "「おしゃれ」という言葉から、動きや流れを感じる有機的な形状を連想したため。",
+      "motif": null,
+      "timestamp": "2026-01-31T19:16:18.197484"
+    },
+    {
+      "id": 2,
+      "text": "背もたれを放射状に広げ、座面を円形にして、全体を開放的かつ対称的にする。",
+      "reasoning": "「おしゃれ」という言葉から、開放感と調和を感じさせるデザインが適していると考えたため。",
+      "motif": null,
+      "timestamp": "2026-01-31T19:16:18.197490"
+    },
+    {
+      "id": 3,
+      "text": "エッジを鋭角にし、シンプルで洗練された幾何学的な形にする。",
+      "reasoning": "「おしゃれ」という言葉から、シンプルでモダンな印象を持つ幾何学的な形状を連想したため。",
+      "motif": null,
+      "timestamp": "2026-01-31T19:16:18.197493"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "全体を曲線的にねじり、流れるような形状に変更する。",
+    "reasoning": "「おしゃれ」という言葉から、動きや流れを感じる有機的な形状を連想したため。",
+    "motif": null,
+    "timestamp": "2026-01-31T19:16:18.197484"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:shell": 0.7,
+      "form:single_mass": 0.5,
+      "line:curved": 0.2,
+      "line:organic_curve": 0.7,
+      "surface:twisted": 1.0,
+      "balance:asymmetrical": 0.5,
+      "texture:smooth": 0.5,
+      "line:straight": 0.9
+    }
+  },
+  "recommended_attributes": [
+    "line:curved",
+    "surface:twisted",
+    "line:organic_curve",
+    "form:shell",
+    "edge:rounded_fully",
+    "balance:asymmetrical",
+    "balance:slender",
+    "texture:smooth",
+    "edge:filleted",
+    "balance:symmetrical"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_191701_4aec30c9.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を曲線的にねじり、流れるような形状に変更する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 0.8,
+          "line:organic_curve": 0.7,
+          "surface:twisted": 1.0,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T19:17:02.125296"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_191753_43da3c85.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を曲線的にねじり、流れるような形状に変更する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: dominantly straight lines, rigid linear silhouette, avoid excessive curvature; prefer straighter, more linear contours. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 0.2,
+          "line:organic_curve": 0.7,
+          "surface:twisted": 1.0,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:straight": 0.9
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "line:straight",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "直線的 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T19:17:27.137299"
+        },
+        {
+          "attribute": "line:curved",
+          "constraint_type": "equal",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "曲線的 = 0.20",
+          "is_active": true,
+          "timestamp": "2026-01-31T19:17:27.137327"
+        }
+      ],
+      "timestamp": "2026-01-31T19:17:54.149061"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "line:straight",
+      "constraint_type": "equal",
+      "value": 0.9,
+      "min_value": null,
+      "max_value": null,
+      "description": "直線的 = 0.90",
+      "is_active": true,
+      "timestamp": "2026-01-31T19:17:27.137299"
+    },
+    {
+      "attribute": "line:curved",
+      "constraint_type": "equal",
+      "value": 0.2,
+      "min_value": null,
+      "max_value": null,
+      "description": "曲線的 = 0.20",
+      "is_active": true,
+      "timestamp": "2026-01-31T19:17:27.137327"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 0.8,
+          "line:organic_curve": 0.7,
+          "surface:twisted": 1.0,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_191701_4aec30c9.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を曲線的にねじり、流れるような形状に変更する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": null,
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T19:16:34.782845",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:shell": 0.7,
+          "form:single_mass": 0.5,
+          "line:curved": 0.2,
+          "line:organic_curve": 0.7,
+          "surface:twisted": 1.0,
+          "balance:asymmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "line:straight": 0.9
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "line:straight",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "直線的 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T19:17:27.137299"
+        },
+        {
+          "attribute": "line:curved",
+          "constraint_type": "equal",
+          "value": 0.2,
+          "min_value": null,
+          "max_value": null,
+          "description": "曲線的 = 0.20",
+          "is_active": true,
+          "timestamp": "2026-01-31T19:17:27.137327"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_191753_43da3c85.png",
+      "prompt": "A 3D render of a 椅子 made of CLAY. 全体を曲線的にねじり、流れるような形状に変更する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: dominantly straight lines, rigid linear silhouette, avoid excessive curvature; prefer straighter, more linear contours. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": null,
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T19:17:27.138557",
+      "note": "global_edit"
+    }
+  ],
+  "current_node_id": 1,
+  "next_node_id": 2
+}

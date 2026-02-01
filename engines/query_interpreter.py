@@ -72,7 +72,7 @@ class QueryInterpreter:
         # 属性グループの情報を追加
         attr_groups_info = []
         for group_name, attrs in ATTR_SPACE.groups.items():
-            attr_list = list(attrs.values())[:5]  # 各グループから5個だけ例示
+            attr_list = list(attrs.values())[:10]  # 各グループから5個だけ例示
             attr_groups_info.append(f"- {group_name}: {', '.join(attr_list)}など")
         
         attr_groups_text = "\n".join(attr_groups_info)

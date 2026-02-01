@@ -1,0 +1,483 @@
+{
+  "session_id": "cce3a7f5-591b-4a0e-a3fc-9f1971e416de",
+  "created_at": "2026-01-31T18:22:34.541697",
+  "updated_at": "2026-01-31T18:33:56.615869",
+  "initial_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_182234_a8117dc2.png",
+  "initial_query": "英国風",
+  "concept": "マグカップ",
+  "query_history": [
+    "英国風"
+  ],
+  "interpretations": [
+    {
+      "id": 1,
+      "text": "全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。",
+      "reasoning": "「英国風」という言葉から、伝統的なティーカップの形状を連想したため。",
+      "motif": "Teacup",
+      "timestamp": "2026-01-31T18:22:43.848483"
+    },
+    {
+      "id": 2,
+      "text": "マグカップの上部を広げて曲線的にし、全体をボトムヘビーにする。",
+      "reasoning": "英国のティーカップはしばしば広がった口部を持ち、安定感のある形状をしているため。",
+      "motif": "Teacup",
+      "timestamp": "2026-01-31T18:22:43.848496"
+    },
+    {
+      "id": 3,
+      "text": "マグカップの取っ手を大きくし、全体を対称にする。",
+      "reasoning": "英国のティーカップはしばしば大きめの取っ手を持ち、均整の取れたデザインが多いため。",
+      "motif": "Teacup",
+      "timestamp": "2026-01-31T18:22:43.848501"
+    }
+  ],
+  "selected_interpretation": {
+    "id": 1,
+    "text": "全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。",
+    "reasoning": "「英国風」という言葉から、伝統的なティーカップの形状を連想したため。",
+    "motif": "Teacup",
+    "timestamp": "2026-01-31T18:22:43.848483"
+  },
+  "additional_image_path": null,
+  "current_vector": {
+    "weights": {
+      "form:cylindrical": 1.0,
+      "edge:filleted": 1.0,
+      "line:curved": 0.7,
+      "balance:symmetrical": 0.5,
+      "texture:smooth": 0.5,
+      "balance:top_heavy": 0.9,
+      "balance:wide": 0.9
+    }
+  },
+  "recommended_attributes": [
+    "form:cylindrical",
+    "edge:filleted",
+    "line:curved",
+    "balance:symmetrical",
+    "texture:smooth",
+    "form:hollow",
+    "surface:convex",
+    "line:geometric_curve",
+    "balance:bottom_heavy",
+    "form:single_mass"
+  ],
+  "generated_images": [
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_182330_2e47d5ec.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T18:23:31.492133"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_182503_f5ddafdb.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: very wide proportions, low aspect ratio, broad footprint. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:wide": 0.9
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:24:44.162369"
+        }
+      ],
+      "timestamp": "2026-01-31T18:25:04.327907"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182615_2f236b59.png",
+      "prompt": "A clay マグカップ. The 口 is very wide proportions, low aspect ratio, broad footprint.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T18:26:16.110327"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182738_3e517de7.png",
+      "prompt": "A clay マグカップ. The 胴体 is strongly flattened, thin vertical thickness, low profile.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T18:27:39.324375"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_183043_32380776.png",
+      "prompt": "A clay マグカップ. The 胴体中央 is slightly flattened.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "constraints": [],
+      "timestamp": "2026-01-31T18:30:44.048219"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_183204_f86a1f79.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: prominent oversized upper mass, strongly top-heavy, very wide proportions, low aspect ratio, broad footprint. High quality, detailed clay texture, neutral studio lighting.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:top_heavy": 0.9,
+          "balance:wide": 0.9
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "トップヘビー（上部が大きい） = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850301"
+        },
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850353"
+        }
+      ],
+      "timestamp": "2026-01-31T18:32:05.009267"
+    },
+    {
+      "image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_183356_9b8b26a7.png",
+      "prompt": "A clay マグカップ. The 口 is strong convex bulges, pronounced swelling surfaces.",
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:top_heavy": 0.9,
+          "balance:wide": 0.9
+        }
+      },
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "トップヘビー（上部が大きい） = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850301"
+        },
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850353"
+        }
+      ],
+      "timestamp": "2026-01-31T18:33:56.615868"
+    }
+  ],
+  "constraints": [
+    {
+      "attribute": "balance:top_heavy",
+      "constraint_type": "equal",
+      "value": 0.9,
+      "min_value": null,
+      "max_value": null,
+      "description": "トップヘビー（上部が大きい） = 0.90",
+      "is_active": true,
+      "timestamp": "2026-01-31T18:31:28.850301"
+    },
+    {
+      "attribute": "balance:wide",
+      "constraint_type": "equal",
+      "value": 0.9,
+      "min_value": null,
+      "max_value": null,
+      "description": "幅広 = 0.90",
+      "is_active": true,
+      "timestamp": "2026-01-31T18:31:28.850353"
+    }
+  ],
+  "current_phase": "D",
+  "exploration_nodes": [
+    {
+      "node_id": 0,
+      "parent_id": null,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_182330_2e47d5ec.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:22:59.678573",
+      "note": "root"
+    },
+    {
+      "node_id": 1,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:wide": 0.9
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:24:44.162369"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_182503_f5ddafdb.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: very wide proportions, low aspect ratio, broad footprint. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:24:44.162890",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 2,
+      "parent_id": 0,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182615_2f236b59.png",
+      "prompt": "A clay マグカップ. The 口 is very wide proportions, low aspect ratio, broad footprint.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_c37fc9d7a5a649ba9926d3ea42d3ee0d.png",
+      "target_part_name": "口",
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:26:16.110317",
+      "note": "Partial(口): balance:wide +0.5 [Aggressive]"
+    },
+    {
+      "node_id": 3,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_182738_3e517de7.png",
+      "prompt": "A clay マグカップ. The 胴体 is strongly flattened, thin vertical thickness, low profile.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_6bc1393bd88347be8080d099c0f80a64.png",
+      "target_part_name": "胴体",
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:27:39.324362",
+      "note": "Partial(胴体): balance:flat +0.5 [Aggressive]"
+    },
+    {
+      "node_id": 4,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5
+        }
+      },
+      "partial_vector": null,
+      "constraints": [],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_183043_32380776.png",
+      "prompt": "A clay マグカップ. The 胴体中央 is slightly flattened.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_3dc68929ef3a4dfe932b591ada8c1b9f.png",
+      "target_part_name": "胴体中央",
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:30:44.048208",
+      "note": "Partial(胴体中央): balance:flat +0.5 [Literal]"
+    },
+    {
+      "node_id": 5,
+      "parent_id": 2,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:top_heavy": 0.9,
+          "balance:wide": 0.9
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "トップヘビー（上部が大きい） = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850301"
+        },
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850353"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/generated_20260131_183204_f86a1f79.png",
+      "prompt": "A 3D render of a マグカップ made of CLAY. 全体を円柱状にして、エッジを角丸にすることで伝統的な英国ティーカップの形状を模倣する。 Keep the entire clay object fully inside the frame with no cropping or cut-off edges; center it with a small margin around the subject. 【最重要】Keep the material as raw clay. Only modify the GEOMETRY (shape, edges, contours). Modified features: prominent oversized upper mass, strongly top-heavy, very wide proportions, low aspect ratio, broad footprint. High quality, detailed clay texture, neutral studio lighting.",
+      "mask_image_path": null,
+      "target_part_name": null,
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:31:28.850823",
+      "note": "global_edit"
+    },
+    {
+      "node_id": 6,
+      "parent_id": 5,
+      "vector": {
+        "weights": {
+          "form:cylindrical": 1.0,
+          "edge:filleted": 1.0,
+          "line:curved": 0.7,
+          "balance:symmetrical": 0.5,
+          "texture:smooth": 0.5,
+          "balance:top_heavy": 0.9,
+          "balance:wide": 0.9
+        }
+      },
+      "partial_vector": null,
+      "constraints": [
+        {
+          "attribute": "balance:top_heavy",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "トップヘビー（上部が大きい） = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850301"
+        },
+        {
+          "attribute": "balance:wide",
+          "constraint_type": "equal",
+          "value": 0.9,
+          "min_value": null,
+          "max_value": null,
+          "description": "幅広 = 0.90",
+          "is_active": true,
+          "timestamp": "2026-01-31T18:31:28.850353"
+        }
+      ],
+      "generated_image_path": "/Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_183356_9b8b26a7.png",
+      "prompt": "A clay マグカップ. The 口 is strong convex bulges, pronounced swelling surfaces.",
+      "mask_image_path": "/Users/umeking5/university/lab_research/truecoding/data/masks/partialD/mask_10d9e2498523465f9ff6501a63f27bd4.png",
+      "target_part_name": "口",
+      "motif": "Teacup",
+      "partial_motif": null,
+      "is_closed": false,
+      "timestamp": "2026-01-31T18:33:56.615852",
+      "note": "Partial(口): surface:convex +0.5 [Aggressive]"
+    }
+  ],
+  "current_node_id": 6,
+  "next_node_id": 7
+}

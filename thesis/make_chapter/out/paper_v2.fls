@@ -1,0 +1,8 @@
+PWD /Users/umeking5/university/lab_research/truecoding/thesis/make_chapter
+INPUT /usr/local/texlive/2025basic/texmf.cnf
+INPUT /usr/local/texlive/2025basic/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2025basic/texmf.cnf
+INPUT /usr/local/texlive/2025basic/texmf-dist/web2c/texmf.cnf
+INPUT /usr/local/texlive/2025basic/texmf-var/web2c/euptex/platex.fmt
+INPUT /Users/umeking5/university/lab_research/truecoding/thesis/make_chapter/paper_v2.tex
+OUTPUT out/paper_v2.log
