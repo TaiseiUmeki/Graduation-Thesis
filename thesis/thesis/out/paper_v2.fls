@@ -215,6 +215,14 @@ INPUT /Users/umeking5/university/lab_research/truecoding/data/images/generated_2
 INPUT /Users/umeking5/university/lab_research/truecoding/data/images/generated_20260126_190711_4562329e.png
 INPUT /Users/umeking5/university/lab_research/truecoding/data/images/generated_20260126_190711_4562329e.png
 INPUT extractbb -B cropbox -O /Users/umeking5/university/lab_research/truecoding/data/images/generated_20260126_190711_4562329e.png
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg
+INPUT extractbb -B cropbox -O /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png
+INPUT /Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png
+INPUT extractbb -B cropbox -O /Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png
 INPUT out/paper_v2.bbl
 INPUT out/paper_v2.bbl
 INPUT out/paper_v2.bbl

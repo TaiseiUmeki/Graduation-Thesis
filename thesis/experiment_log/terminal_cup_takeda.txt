@@ -1,3 +1,7 @@
+竹田さん（被験者Q）が提案手法でカップを作った時のターミナルログ
+
+
+
 Last login: Mon Jan 26 14:47:36 on ttys022
 (base) umeking5@TaiseinoMacBook-Pro ~ % cd university/lab_research/truecoding 
 (base) umeking5@TaiseinoMacBook-Pro truecoding % source lab_env/bin/activate

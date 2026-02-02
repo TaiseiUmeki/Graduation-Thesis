@@ -1,4 +1,4 @@
-This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2026.1.21)  2 FEB 2026 00:49
+This is e-upTeX, Version 3.141592653-p4.1.2-u2.00-250202-2.6 (utf8.euc) (TeX Live 2025) (preloaded format=platex 2026.1.21)  2 FEB 2026 11:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -344,53 +344,61 @@ LaTeX Font Info:    Font shape `OT1/zpltlf/b/n' will be
 (Font)              scaled to size 14.4pt on input line 20.
 LaTeX Font Info:    Font shape `OT1/zpltlf/b/n' will be
 (Font)              scaled to size 12.0pt on input line 20.
-[1001] [1002] [1003] (out/paper_v2.toc)
+[1001] [1002] [1003] [1004] (out/paper_v2.toc)
 \tf@toc=\write3
 \openout3 = `paper_v2.toc'.
 
-[1004] [1] [2] [3] [4] [5]
+[1005] [1] [2] [3] [4]
 File: /Users/umeking5/university/lab_thesis/flows/flow2_entire.png Graphic file (type bmp)
 </Users/umeking5/university/lab_thesis/flows/flow2_entire.png>
-[6]
+[5]
 Overfull \vbox (0.99573pt too high) has occurred while \output is active []
 
-[7] [8]
+[6] [7]
 File: /Users/umeking5/university/lab_thesis/flows/flow2_abc.png Graphic file (type bmp)
 </Users/umeking5/university/lab_thesis/flows/flow2_abc.png>
-[9] [10] [11]
+[8] [9] [10]
 File: /Users/umeking5/university/lab_thesis/flows/flow2_d.png Graphic file (type bmp)
 </Users/umeking5/university/lab_thesis/flows/flow2_d.png>
-[12] [13] [14]
+[11] [12]
 LaTeX Font Info:    Font shape `OT1/zpltlf/m/n' will be
-(Font)              scaled to size 10.95pt on input line 338.
+(Font)              scaled to size 10.95pt on input line 321.
 LaTeX Font Info:    Font shape `JT1/mc/b/n' in size <10.95> not available
-(Font)              Font shape `JT1/mc/bx/n' tried instead on input line 343.
+(Font)              Font shape `JT1/mc/bx/n' tried instead on input line 326.
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <10.95> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 343.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 326.
 LaTeX Font Info:    Font shape `JY1/mc/b/n' in size <10.95> not available
-(Font)              Font shape `JY1/mc/bx/n' tried instead on input line 343.
+(Font)              Font shape `JY1/mc/bx/n' tried instead on input line 326.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <10.95> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 343.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 326.
 LaTeX Font Info:    Font shape `OT1/zpltlf/b/n' will be
-(Font)              scaled to size 10.95pt on input line 343.
-[15]
-Overfull \hbox (11.75314pt too wide) in paragraph at lines 402--427
+(Font)              scaled to size 10.95pt on input line 326.
+[13] [14]
+Overfull \hbox (11.75314pt too wide) in paragraph at lines 385--410
  [][][][] 
  []
 
-[16] [17]
+[15]
+Overfull \vbox (15.37436pt too high) has occurred while \output is active []
+
+[16]
 File: /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260126_190138_a11ae3d9.jpg Graphic file (type bmp)
 </Users/umeking5/university/lab_research/truecoding/data/images/initial_20260126_190138_a11ae3d9.jpg>
 File: /Users/umeking5/university/lab_research/truecoding/data/images/generated_20260126_190711_4562329e.png Graphic file (type bmp)
 </Users/umeking5/university/lab_research/truecoding/data/images/generated_20260126_190711_4562329e.png>
-[18] [19] [20] [21] [22] [23] (out/paper_v2.bbl
+[17]
+File: /Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg Graphic file (type bmp)
+</Users/umeking5/university/lab_research/truecoding/data/images/initial_20260131_195641_cc8298f2.jpg>
+File: /Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png Graphic file (type bmp)
+</Users/umeking5/university/lab_research/truecoding/data/images/partial_20260131_195452_44c97625.png>
+[18] [19] [20] [21] [22] [23] [24] [25] (out/paper_v2.bbl
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 4.
 LaTeX Font Info:    Font shape `OT1/zpltlf/m/it' will be
 (Font)              scaled to size 12.0pt on input line 4.
 LaTeX Font Info:    Kanji font shape `JY1/gt/m/it' undefined
 (Font)              No change on input line 7.
-[24]) [25] (out/paper_v2.aux)
+) [26] (out/paper_v2.aux)
  ***********
 pLaTeX2e <2023-02-14>+1, based on
 LaTeX2e <2025-11-01>
@@ -398,12 +406,12 @@ L3 programming layer <2020/03/25>
  ***********
  ) 
 Here is how much of TeX's memory you used:
- 5550 strings out of 469427
- 87517 string characters out of 5462453
+ 5561 strings out of 469427
+ 88616 string characters out of 5462453
  488042 words of memory out of 5000000
- 34247 multiletter control sequences out of 15000+600000
+ 34256 multiletter control sequences out of 15000+600000
  660919 words of font info for 124 fonts, out of 8000000 for 9000
  107 hyphenation exceptions out of 8191
- 94i,10n,95p,438b,402s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 94i,10n,95p,500b,402s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on out/paper_v2.dvi (30 pages, 89740 bytes).
+Output written on out/paper_v2.dvi (32 pages, 102560 bytes).
