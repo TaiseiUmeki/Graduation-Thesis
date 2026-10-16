@@ -1,4 +1,4 @@
-# SupportDesigning System
+# 梅木卒論システム
 
 粘土の中間生成物から最終的な創作物へ変換するインタラクティブ画像生成システムです。ユーザーが粘土で作った中間生成物の画像とテキストクエリを入力し、対話的に解釈を洗練させながら、属性空間上で最適な特徴ベクトルを探索し、最終的な創作物の画像を生成します。
 
@@ -21,7 +21,7 @@
                       ↓
 ┌─────────────────────────────────────────────────────────┐
 │ フェーズB: クエリ解釈                                    │
-│ - GPT-4がクエリから複数の解釈案を生成                  │
+│ - gpt-4oがクエリから複数の解釈案を生成                 │
 │ - ユーザーが最適な解釈を選択                           │
 │ - 必要に応じてクエリを詳細化して再解釈                │
 └─────────────────────┬─────────────────────────────────┘
@@ -35,7 +35,7 @@
                       ↓
 ┌─────────────────────────────────────────────────────────┐
 │ フェーズD: 画像生成と反復改善                            │
-│ - 特徴ベクトルから画像を生成（DALL-E 3）              │
+│ - 特徴ベクトルから画像を生成（gpt-image-1）           │
 │ - 属性に制約を追加                                     │
 │ - ベクトルを更新（クローズドノードから斥力を適用）    │
 │ - 新規ベクトルから画像を再生成                         │
@@ -46,11 +46,14 @@
 ## ディレクトリ構成
 
 ```
-truecoding/
-├── main.py                     # メインエントリーポイント（TrueCodingSystem）
-├── config.py                   # 設定管理
+umeki-sotsuron/
+├── app.py                      # Streamlit UI
+├── main.py                     # メインエントリーポイント（UmekiSotsuronSystem）
+├── config.py                   # 設定管理（.env を読み込む）
 ├── examples.py                 # 使用例
 ├── requirements.txt            # 依存パッケージ
+├── .env.example                # APIキー設定のひな形
+├── archaive_photo/             # サンプル画像（original_tank.jpg など）
 ├── models/                     # データモデル
 │   ├── attribute_space.py      # 属性空間定義（7グループ, 41属性）
 │   ├── session.py              # セッション管理（探索木含む）
@@ -62,8 +65,10 @@ truecoding/
 ├── utils/                      # ユーティリティ
 │   ├── openai_client.py        # OpenAI APIラッパー
 │   └── image_utils.py          # 画像処理
-├── data/                       # データディレクトリ
-│   ├── images/                 # 入力画像
+├── data/                       # 実行時に自動作成（リポジトリには含まれない）
+│   ├── images/                 # 生成画像
+│   ├── input_images/           # UI からアップロードされた画像
+│   ├── masks/                  # マスク画像
 │   ├── outputs/                # 出力画像
 │   └── sessions/               # セッションファイル
 └── tests/                      # テストディレクトリ
@@ -71,9 +76,13 @@ truecoding/
 
 ## セットアップ
 
+Python 3.9 以上を想定しています。
+
 ### 1. 依存パッケージのインストール
 
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -86,19 +95,25 @@ pip install -r requirements.txt
 
 ### 2. OpenAI API キー設定
 
-環境変数で設定（推奨）：
+`.env.example` をコピーして `.env` を作り、自分の API キーを記入します：
 
 ```bash
-export OPENAI_API_KEY='sk-...'
+cp .env.example .env
+# .env を開いて OPENAI_API_KEY=sk-... を記入
 ```
 
-または `.env` ファイルに記述：
-
-```
-OPENAI_API_KEY=sk-...
-```
+`.env` は `.gitignore` に含まれているので、コミットされません。**APIキーをコードや README に直接書かないでください。**
+環境変数 `export OPENAI_API_KEY='sk-...'` で設定しても動作します。
 
 ## 使用方法
+
+### UI（Streamlit）で実行
+
+```bash
+streamlit run app.py
+```
+
+ブラウザが開き、画像のアップロードからフェーズ A〜D までを UI 上で操作できます。
 
 ### ターミナルでのフロー実行方法
 
@@ -107,7 +122,7 @@ python -i main.py
 ```
 
 これを実行すると一連のフローが実行され、1 回目の画像生成後対話モードに移行。制約が追加できる。
-画像とクエリは main.py の 519 行目に入力できる。
+画像とクエリは `main.py` の `main()` 関数内の `image_path` / `query` で指定できる（デフォルトはサンプル画像 `archaive_photo/original_tank.jpg`）。
 
 ```
 1. system.generate_image() で画像生成
@@ -126,15 +141,15 @@ python -i main.py
 ### 最も簡単な実行例
 
 ```python
-from main import TrueCodingSystem
+from main import UmekiSotsuronSystem
 from pathlib import Path
 
 # システム初期化
-system = TrueCodingSystem()
+system = UmekiSotsuronSystem()
 
 # フェーズA: セッション開始
 system.start_session(
-    image_path="data/images/original_tank.jpg",
+    image_path="archaive_photo/original_tank.jpg",
     query="木製で温かみのある雰囲気にしたい"
 )
 
@@ -344,9 +359,10 @@ session = Session.load(
 
 **主な API 呼び出し:**
 
-- **GPT-4**: クエリ解釈、特徴ベクトル生成、ベクトル更新、画像分析
-- **GPT-4 Vision**: 画像理解・分析
-- **DALL-E 3**: 画像生成（1024x1024）
+- **gpt-4o**: クエリ解釈、特徴ベクトル生成、ベクトル更新、画像分析・理解
+- **gpt-image-1**: 画像生成・編集（1024x1024）
+
+モデルや画像サイズは `config.py` で変更できます。
 
 **コスト削減のコツ:**
 
@@ -364,19 +380,11 @@ ValueError: OpenAI API keyが設定されていません
 
 **解決方法:**
 
-```bash
-export OPENAI_API_KEY='sk-...'
-# または
-echo "OPENAI_API_KEY=sk-..." > .env
-```
+`.env` がリポジトリ直下にあり、`OPENAI_API_KEY=` にキーが入っているか確認してください（「セットアップ」の 2 を参照）。
 
-### 画像生成エラー（DALL-E 3）
+### 画像生成エラー
 
-DALL-E 3 の制限：
-
-- **サイズ**: 1024x1024, 1792x1024, 1024x1792 のみ
-- **言語**: 自動で英語に翻訳・拡張されます
-- **プロンプト長**: 上限は約 1000 文字
+`gpt-image-1` で指定できるサイズは 1024x1024, 1536x1024, 1024x1536 などに限られます。`config.py` の `IMAGE_SIZE` を確認してください。
 
 ### JSON パース エラー
 
@@ -389,11 +397,9 @@ logging.basicConfig(level=logging.DEBUG)
 
 ## 今後の拡張予定
 
-- [ ] フロントエンド UI（Flask/React）
 - [ ] リアルタイムプレビュー
 - [ ] 複数画像の同時生成・比較
 - [ ] 属性の自動学習
-- [ ] インペイント機能（DALL-E Inpaint）
 - [ ] ユーザーフィードバック機構
 
 ## ライセンス
@@ -406,4 +412,3 @@ logging.basicConfig(level=logging.DEBUG)
 
 - Grounded-Segment-Anything
 - OpenAI API Documentation
-- DALL-E 3 Guide

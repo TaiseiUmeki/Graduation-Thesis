@@ -27,7 +27,7 @@ if not os.getenv("OPENAI_API_KEY"):
         st.stop()
 
 # 既存システムの読み込み
-from main import TrueCodingSystem
+from main import UmekiSotsuronSystem
 from config import Config
 from models.attribute_space import ATTR_SPACE
 
@@ -113,7 +113,7 @@ def _display_attribute_reference():
 
 # セッション状態初期化
 if "system" not in st.session_state:
-    st.session_state.system = TrueCodingSystem()
+    st.session_state.system = UmekiSotsuronSystem()
     st.session_state.phase = "A"
     st.session_state.interpretations = []  # (id, text, reasoning)
     st.session_state.selected_interpretation_id = None
@@ -135,7 +135,7 @@ if "system" not in st.session_state:
     st.session_state.synthesis_description = None
     st.session_state.synthesis_phase_d_ready = False
 
-system: TrueCodingSystem = st.session_state.system
+system: UmekiSotsuronSystem = st.session_state.system
 phase: str = st.session_state.phase
 
 # サイドバー: 操作パネル
@@ -752,7 +752,7 @@ elif phase == "D":
             st.sidebar.error(f"最新画像の保存に失敗: {e}")
 
         # セッション状態を初期化してPhase Aへ戻す
-        st.session_state.system = TrueCodingSystem()
+        st.session_state.system = UmekiSotsuronSystem()
         st.session_state.phase = "A"
         st.session_state.interpretations = []
         st.session_state.selected_interpretation_id = None
@@ -1159,4 +1159,4 @@ else:
     st.warning("無効なフェーズです。最初からやり直してください。")
 
 st.markdown("---")
-st.caption("© TrueCoding Experimental UI (Streamlit)")
+st.caption("© 梅木卒論システム Experimental UI (Streamlit)")

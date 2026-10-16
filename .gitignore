@@ -1,3 +1,19 @@
-.env.env
-
+# 秘密情報（APIキー）
 .env
+.env.*
+!.env.example
+
+# 共有しないデータ・論文
+data/
+thesis/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+lab_env/
+venv/
+.venv/
+
+# macOS
+.DS_Store

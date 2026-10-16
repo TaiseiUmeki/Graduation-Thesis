@@ -1,4 +1,4 @@
-# TrueCoding System - Required Packages
+# 梅木卒論システム - Required Packages
 
 # OpenAI API
 openai>=1.0.0
@@ -10,6 +10,7 @@ streamlit-drawable-canvas>=0.9.3
 # Image Processing
 Pillow>=10.0.0
 numpy>=1.26.0
+pandas>=2.0.0
 
 # HTTP Requests
 requests>=2.31.0

@@ -18,7 +18,7 @@ from tests.test_image_utils import run_all_tests as test_image_utils
 def main():
     """全テストを実行"""
     print("\n" + "=" * 70)
-    print("TrueCoding システム - 全単体テスト実行")
+    print("梅木卒論システム - 全単体テスト実行")
     print("=" * 70)
     
     test_suites = [

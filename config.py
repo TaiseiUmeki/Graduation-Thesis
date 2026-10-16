@@ -6,6 +6,12 @@ import os
 from pathlib import Path
 from typing import Optional
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).parent / ".env")
+except ImportError:
+    pass
+
 class Config:
     """システム設定クラス"""
     

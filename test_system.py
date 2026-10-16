@@ -20,7 +20,7 @@ print("✅ APIキーが設定されました")
 
 # システムのインポート確認
 try:
-    from main import TrueCodingSystem
+    from main import UmekiSotsuronSystem
     from config import Config
     from models.attribute_space import ATTR_SPACE
     print("✅ すべてのモジュールが正常にインポートされました")
@@ -56,8 +56,8 @@ for group_name in ATTR_SPACE.groups.keys():
 # システム初期化テスト
 print("\n【システム初期化テスト】")
 try:
-    system = TrueCodingSystem()
-    print("✅ TrueCodingSystemが正常に初期化されました")
+    system = UmekiSotsuronSystem()
+    print("✅ UmekiSotsuronSystemが正常に初期化されました")
 except Exception as e:
     print(f"❌ システム初期化エラー: {e}")
     sys.exit(1)
@@ -66,6 +66,6 @@ print("\n" + "=" * 60)
 print("✅ すべてのテストに合格しました！")
 print("=" * 60)
 print("\n次のステップ:")
-print("1. テスト画像を用意: ~/university/lab_research/truecoding/test_image.jpg")
+print("1. テスト画像を用意: test_image.jpg")
 print("2. 以下のコマンドでシステムを実行:")
 print("   python examples.py")

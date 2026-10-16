@@ -18,8 +18,8 @@ from utils.image_utils import ImageUtils
 from models.session import GeneratedImage, Interpretation
 
 
-class TrueCodingSystem:
-    """TrueCodingシステムのメインクラス"""
+class UmekiSotsuronSystem:
+    """梅木卒論システムのメインクラス"""
     
     def __init__(self, api_key: Optional[str] = None):
         """
@@ -880,14 +880,14 @@ class TrueCodingSystem:
 
 def main():
     """デモ実行"""
-    print("TrueCoding System - デモ")
+    print("梅木卒論システム - デモ")
     print("=" * 60)
     
     # システムを初期化（APIキーは環境変数から取得）
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # ========== 以下を編集: 画像パスとクエリを指定 ==========
-    image_path = "data/images/original_tank.jpg"  # 粘土画像のパスを指定
+    image_path = "archaive_photo/original_tank.jpg"  # 粘土画像のパスを指定
     query = "「シャキーン!」という感じのかっこいいデザインにしたい"                  # クエリを指定
     
     # フェーズA: セッション開始

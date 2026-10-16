@@ -1,11 +1,11 @@
 """
-使用例: TrueCoding System のデモスクリプト
+使用例: 梅木卒論システム のデモスクリプト
 
 このスクリプトは、システムの基本的な使い方を示します。
 実際に実行するには、画像ファイルとOpenAI APIキーが必要です。
 """
 
-from main import TrueCodingSystem
+from main import UmekiSotsuronSystem
 from pathlib import Path
 
 
@@ -16,7 +16,7 @@ def example_basic_flow():
     print("=" * 70)
     
     # システムを初期化
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # フェーズA: セッション開始
     print("\n### フェーズA: 入力 ###")
@@ -71,7 +71,7 @@ def example_with_constraints():
     # system = ... (前のセッションの続き)
     
     # ここでは新しくシステムを作成
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # フェーズA〜Dを簡易的に実行
     system.start_session(
@@ -123,7 +123,7 @@ def example_query_refinement():
     print("例3: クエリの詳細化")
     print("=" * 70)
     
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # フェーズA
     session = system.start_session(
@@ -165,7 +165,7 @@ def example_attribute_exploration():
     print("例4: 属性の探索")
     print("=" * 70)
     
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # フェーズA〜Cを実行
     system.start_session(
@@ -207,7 +207,7 @@ def example_session_management():
     print("例5: セッション管理")
     print("=" * 70)
     
-    system = TrueCodingSystem()
+    system = UmekiSotsuronSystem()
     
     # セッション開始
     session = system.start_session(
@@ -247,10 +247,10 @@ def example_complete_workflow():
     # 以下のコメントを外して、実際の画像パスとAPIキーを設定してください
     
     """
-    from main import TrueCodingSystem
+    from main import UmekiSotsuronSystem
     
     # APIキーを設定（環境変数にない場合）
-    system = TrueCodingSystem(api_key='your-api-key-here')
+    system = UmekiSotsuronSystem(api_key='your-api-key-here')
     
     # 1. セッション開始
     session = system.start_session(
@@ -296,7 +296,7 @@ def example_complete_workflow():
 
 
 if __name__ == "__main__":
-    print("TrueCoding System - 使用例")
+    print("梅木卒論システム - 使用例")
     print("=" * 70)
     print("\n以下の例を確認してください：")
     print("1. example_basic_flow() - 基本的なフロー")
